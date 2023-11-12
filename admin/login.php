@@ -3,13 +3,14 @@
 <html lang="en">
 <?php require_once('inc/header.php'); ?>
 <link rel="stylesheet" href="loginstyle.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=Montserrat:wght@800&family=Poppins:wght@200;200&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- Montserrat Font (800 weight) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap">
 
 <!-- Julius Sans One Font -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
 
 <!-- Montserrat Font (800 weight) and Poppins Font (200 weight) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@200;200&display=swap">
@@ -37,9 +38,9 @@
     height: 60vh;
   }
 
-  label{
+  label {
     font-weight: normal;
-}
+  }
 
   .right-login {
     display: flex;
@@ -88,39 +89,32 @@
     height: 40px;
   }
 
-  
+
 
   .input-group-text {
     background-color: #609AC4;
     color: white;
     border: solid 1px #609AC4;
-   
-   
+
+
   }
 
-  .Signin-btn button{
+  .Signin-btn button {
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     margin-top: 100%;
     background-color: #B6DFF4;
     width: 100%;
     color: black;
     font-size: 15px;
-   
+
     border-radius: 20px;
     cursor: pointer;
     border: none;
-   
+
   }
-
- 
-
-
-  
-
-
 </style>
 
 <body>
@@ -141,21 +135,21 @@
 
       <form id="login-frm" action="" method="post">
         <div class="input-group">
-         <label class="label" for="username">Username</label>
+          <label class="label" for="username">Username</label>
           <input type="text" class="form-control" name="username" autofocus placeholder="Username">
-          
+
         </div>
         <div class="input-group">
-        <label class="label" for="password">Password</label>
+          <label class="label" for="password">Password</label>
           <input type="password" class="form-control" name="password" placeholder="Password">
-         
+
         </div>
-       
-         
-          <div class="Signin-btn">
-            <button type="submit" class="signin-btn">Log in</button>
-          </div>
-       
+
+
+        <div class="Signin-btn">
+          <button type="submit" class="signin-btn">Log in</button>
+        </div>
+
       </form>
     </div>
     <div class="right-login">
@@ -165,9 +159,10 @@
   <script src="plugins/jquery/jquery.min.js"></script>
   <script src="dist/js/adminlte.min.js"></script>
   <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
       end_loader();
     });
   </script>
 </body>
+
 </html>

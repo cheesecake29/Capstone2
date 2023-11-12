@@ -1,0 +1,104 @@
+
+    /* Add the provided CSS styles here */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 200px;
+        left: 0;
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: white;
+        margin-top: 30px;
+        margin-left: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #1A547E;
+        border-radius: 4px;
+    }
+
+    .left-signin {
+        background-color: #FFFFFF;
+        width: 50%;
+        height: 100vh;
+        overflow-y: auto;
+        max-height: 100vh;
+    }
+
+    .right-signin {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #609AC4;
+        width: 50%;
+        height: 100vh;
+    }
+
+    .right-signin img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .left-signin h1 {
+        display: flex;
+        justify-content: center;
+        margin: 3%;
+        margin-top: 8%;
+        font-family: 'Julius Sans One', sans-serif;
+        font-size: 40px;
+        font-weight: 100;
+    }
+
+    .label {
+        font-weight: 100;
+    }
+
+    .text-field {
+        display: flex;
+        flex-direction: column;
+        margin-top: 40px;
+        width: 75%;
+        height: 300px;
+    }
+
+    .signup-form {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+
+    .text-field input {
+        padding: 2%;
+        font-weight: 100;
+        border: solid 1px #609AC4;
+        border-radius: 3px;
+        width: 90%;
+        height: 20px;
+    }
+
+    .label-password-login {
+        margin-top: 50px;
+    }
+
+    .forgot-password {
+        text-align: left;
+        font-size: 12px;
+    }
+
+    #signin-btn {
+        margin-top: 8%;
+        background-color: #B6DFF4;
+        width: 30%;
+        color: black;
+        font-size: 15px;
+        padding: 1%;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+
+    #have-account {
+        font-size: 12px;
+        margin-top: 2%;
+    }

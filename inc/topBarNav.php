@@ -289,42 +289,78 @@ a {
                         <!-- Cart and user dropdown -->
                        
                        <div class="navbar-nav">
-                       <div class="dropdown">
-                            <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">
-                                <i class="fas fa-bell"></i>
-                                <span class="badge bg-danger notification-count">2</span>
-                            </a>
-                            
-                            <ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">
-                                <div class="notification-heading">
-                                    <span class="menu-title">Notifications</span>
-                                </div>
-                                <li class="divider"></li>
-                            <div class="notifications-wrapper">
-                                <a class="content" href="#">
-                                <div class="notification-item">
-                                    <h4 class="item-title">Your order is confirmed.</h4>
-                                    <p class="item-info">Sample text</p>
-                                </div>
-                                
-                                </a>
-                                <a class="content" href="#">
-                                <div class="notification-item">
-                                    <h4 class="item-title">Your order is confirmed.</h4>
-                                    <p class="item-info">Sample text</p>
-                                </div>
-                                </a>
-                                <a class="content" href="#">
-                                <div class="notification-item">
-                                    <h4 class="item-title">Your order is on the way.</h4>
-                                    <p class="item-info">Sample text</p>
-                                </div>
-                                </a>
+                        <div class="dropdown">
+                            <?php
+                                echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
+                                echo '<i class="fas fa-bell"></i>';
 
-                            </div>
+                                $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 1";
+                                $result = $conn->query($countQuery);
+
+                                if ($result) {
+                                    $row = $result->fetch_assoc();
+                                    $notificationCount = $row['notificationCount'];
+
+                                    echo '<span class="badge bg-danger notification-count">' . $notificationCount . '</span>';
+                                } else {
+                                    // Handle the case where the query failed
+                                    echo '<span class="badge bg-danger notification-count">Error</span>';
+                                }
+
+                                echo '</a>';
+
+                                $sql = "SELECT * FROM notifications WHERE `type` = 1";
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
+                                    echo '<div class="notification-heading"><span class="menu-title">Notifications</span></div>';
+                                    echo '<li class="divider"></li>';
+                                    echo '<div class="notifications-wrapper">';
+
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<a class="content" href="#">';
+                                        echo '<div class="notification-item">';
+                                        echo '<h4 class="item-title">' . $row['description'] . '</h4>';
+                                        // echo '<p class="item-info">' . $row['description'] . '</p>';
+                                        echo '</div>';
+                                        echo '</a>';
+                                    }
+
+                                    echo '</div>';
+                                    echo '</ul>';
+                                } else {
+                                    echo 'No notifications available.';
+                                }
+                            ?>
                                 
-                            </ul>
-                            
+                                <ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">
+                                    <div class="notification-heading">
+                                        <span class="menu-title">Notifications</span>
+                                    </div>
+                                    <li class="divider"></li>
+                                    <div class="notifications-wrapper">
+                                        <a class="content" href="#">
+                                        <div class="notification-item">
+                                            <h4 class="item-title">Your order is confirmed.</h4>
+                                            <p class="item-info">Sample text</p>
+                                        </div>
+                                        
+                                        </a>
+                                        <a class="content" href="#">
+                                        <div class="notification-item">
+                                            <h4 class="item-title">Your order is confirmed.</h4>
+                                            <p class="item-info">Sample text</p>
+                                        </div>
+                                        </a>
+                                        <a class="content" href="#">
+                                        <div class="notification-item">
+                                            <h4 class="item-title">Your order is on the way.</h4>
+                                            <p class="item-info">Sample text</p>
+                                        </div>
+                                        </a>
+                                    </div>
+                                </ul>
                             </div>
                         <div class="nav-item">
                             <a href="./?p=cart" class="nav-link">

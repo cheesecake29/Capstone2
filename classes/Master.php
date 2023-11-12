@@ -621,6 +621,9 @@ Class Master extends DBConnection {
 			$oid = $this->conn->insert_id;
 			$data = "";
 			$total_amount = 0;
+			$fullname = $this->settings->userdata('firstname').' '.$this->settings->userdata('lastname');
+			$desc = "{$fullname} ' ' has placed an order.";
+			$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2");
 			$cart = $this->conn->query("SELECT c.*,p.price FROM cart_list c inner join product_list p on c.product_id = p.id where c.client_id = '{$client_id}'");
 			while($row = $cart->fetch_assoc()){
 				if(!empty($data)) $data .= ", ";

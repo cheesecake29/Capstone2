@@ -693,37 +693,60 @@ Class Master extends DBConnection {
 	function update_order_status(){
 		extract($_POST);
 		$update = $this->conn->query("UPDATE `order_list` set `status` = '{$status}' where id = '{$id}'");
-		if($update){
-			$desc = "";
-			if($status == 0){
-				$desc = 'Your order is pending.';
-			}
-			if($status == 1){
-				$desc = 'Your order is confirmed.';
-			}
-			if($status == 2){
-				$desc = 'Your order is packed.';
-			}
-			if($status == 3){
-				$desc = 'Your order is for delivery.';
-			}
-			if($status == 4){
-				$desc = 'Your order is on the way.';
-			}
-			if($status == 5){
-				$desc = 'Your order was delivered.';
-			}
-			if($status == 6){
-				$desc = 'Your order was cancelled.';
-			}
-			$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
-			$resp['status'] ='success';
-			$resp['msg'] = " Order's status has been updated successfully.";
-		}else{
-			$resp['error'] = $this->conn->error;
-			$resp['status'] ='failed';
-			$resp['msg'] = " Order's status has failed to update.";
-		}
+		$result_product_id = $this->conn->query("SELECT `product_id` FROM `order_items` WHERE `order_id` = '{$id}'");
+
+if ($result_product_id) {
+    $row_product_id = $result_product_id->fetch_assoc();
+    $product_id = $row_product_id['product_id'];
+
+    // Fetch product_name from product_list table using the obtained product_id
+    $result_product_name = $this->conn->query("SELECT `name` FROM `product_list` WHERE `id` = '{$product_id}'");
+
+    if ($result_product_name) {
+        $row_product_name = $result_product_name->fetch_assoc();
+        $product_name = $row_product_name['name'];
+
+        if ($update) {
+            $desc = "";
+            if ($status == 0) {
+                $desc = 'Your order ' . $product_name . ' is pending.';
+            }
+            if ($status == 1) {
+                $desc = 'Your order ' . $product_name . ' is confirmed.';
+            }
+            if ($status == 2) {
+                $desc = 'Your order ' . $product_name . ' is packed.';
+            }
+            if ($status == 3) {
+                $desc = 'Your order ' . $product_name . ' is for delivery.';
+            }
+            if ($status == 4) {
+                $desc = 'Your order ' . $product_name . ' is on the way.';
+            }
+            if ($status == 5) {
+                $desc = 'Your order ' . $product_name . ' was delivered.';
+            }
+            if ($status == 6) {
+                $desc = 'Your order ' . $product_name . ' was cancelled.';
+            }
+            $notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
+            $resp['status'] = 'success';
+            $resp['msg'] = " Order's status has been updated successfully.";
+        } else {
+            $resp['error'] = $this->conn->error;
+            $resp['status'] = 'failed';
+            $resp['msg'] = " Order's status has failed to update.";
+        }
+    } else {
+        $resp['error'] = $this->conn->error;
+        $resp['status'] = 'failed';
+        $resp['msg'] = "Failed to fetch product_name.";
+    }
+} else {
+    $resp['error'] = $this->conn->error;
+    $resp['status'] = 'failed';
+    $resp['msg'] = "Failed to fetch product_id.";
+}
 		if($resp['status'] == 'success')
 		$this->settings->set_flashdata('success',$resp['msg']);
 		return json_encode($resp);

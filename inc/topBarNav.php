@@ -319,7 +319,7 @@ a {
                                     echo '<div class="notifications-wrapper">';
 
                                     while ($row = $result->fetch_assoc()) {
-                                        echo '<a class="content" href="#">';
+                                        echo '<a class="content" href="./?p=my_orders">';
                                         echo '<div class="notification-item">';
                                         echo '<h4 class="item-title">' . $row['description'] . '</h4>';
                                         // echo '<p class="item-info">' . $row['description'] . '</p>';

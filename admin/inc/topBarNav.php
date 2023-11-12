@@ -139,12 +139,9 @@
 
                         echo '</a>';
                         
-
-                        // Fetch data from the 'notifications' table
                         $sql = "SELECT * FROM notifications WHERE `type` = 2";
                         $result = $conn->query($sql);
 
-                        // Check if there are rows in the result set
                         if ($result->num_rows > 0) {
                             echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
                             echo '<div class="notification-heading"><span class="menu-title">Notifications</span></div>';
@@ -152,7 +149,7 @@
                             echo '<div class="notifications-wrapper">';
 
                             while ($row = $result->fetch_assoc()) {
-                                echo '<a class="content" href="#">';
+                                echo '<a class="content" href="./?page=orders/view_order&id='. $row['order_id'] . '">';
                                 echo '<div class="notification-item">';
                                 echo '<h4 class="item-title">' . $row['description'] . '</h4>';
                                 // echo '<p class="item-info">' . $row['description'] . '</p>';

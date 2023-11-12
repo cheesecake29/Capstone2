@@ -621,9 +621,6 @@ Class Master extends DBConnection {
 			$oid = $this->conn->insert_id;
 			$data = "";
 			$total_amount = 0;
-			$fullname = $this->settings->userdata('firstname').' '.$this->settings->userdata('lastname');
-			$desc = "{$fullname} ' ' has placed an order.";
-			$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2");
 			$cart = $this->conn->query("SELECT c.*,p.price FROM cart_list c inner join product_list p on c.product_id = p.id where c.client_id = '{$client_id}'");
 			while($row = $cart->fetch_assoc()){
 				if(!empty($data)) $data .= ", ";
@@ -637,6 +634,12 @@ Class Master extends DBConnection {
 					$resp['status'] = 'success';
 					$this->conn->query("DELETE FROM `cart_list` where client_id = '{$client_id}'");
 					$this->conn->query("UPDATE `order_list` set total_amount = '{$total_amount}' where id = '{$oid}'");
+					//Notification
+					
+					$fullname = $this->settings->userdata('firstname').' '.$this->settings->userdata('lastname');
+					$desc = "{$fullname} ' ' has placed an order.";
+					$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2, `order_id`='{$oid}'");
+
 					$resp['msg'] = " Order has been place successfully.";
 				}else{
 					$resp['status'] = 'failed';
@@ -692,6 +695,9 @@ Class Master extends DBConnection {
 		$update = $this->conn->query("UPDATE `order_list` set `status` = '{$status}' where id = '{$id}'");
 		if($update){
 			$desc = "";
+			if($status == 0){
+				$desc = 'Your order is pending.';
+			}
 			if($status == 1){
 				$desc = 'Your order is confirmed.';
 			}
@@ -710,7 +716,7 @@ Class Master extends DBConnection {
 			if($status == 6){
 				$desc = 'Your order was cancelled.';
 			}
-			$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}'");
+			$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
 			$resp['status'] ='success';
 			$resp['msg'] = " Order's status has been updated successfully.";
 		}else{

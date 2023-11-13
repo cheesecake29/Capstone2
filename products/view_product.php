@@ -13,6 +13,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
             $stocks = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$id'")->fetch_array()[0];
             $out = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
+            $cart_item_count = $conn->query("SELECT SUM(quantity) FROM cart_list where product_id = '$id'")->fetch_array()[0];
             $stocks = $stocks > 0 ? $stocks : 0;
             $out = $out > 0 ? $out : 0;
             $available = $stocks - $out;
@@ -204,7 +205,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                            
                         </div>
                         <div class="ab">
-                        <?php if ($available > 0): ?>
+                        <!-- <?php if ($available > 0): ?>
                             <div class="add-cart card-tools">
                                 <a href="javascript:void(0)" id="add_to_cart" class="cart">Add to Cart</a>
                             </div>
@@ -214,7 +215,15 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <div class="out-of-stock">
                                 <button class="btn btn-danger">Out of Stock</button>
                             </div>
-                        <?php endif; ?>
+                        <?php endif; ?> -->
+
+                            <div class="add-cart card-tools" id="available">
+                                <a href="javascript:void(0)" id="add_to_cart" class="cart">Add to Cart</a>
+                            </div>
+
+                            <div class="out-of-stock" id="unavailable">
+                                <button class="btn btn-danger">Out of Stock</button>
+                            </div>
                     </div>
 
                        
@@ -235,18 +244,54 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <script>
 
     $(function () {
-    $('#add_to_cart').click(function () {
+        fetch();
+        let availability = 0;
+        let cart_count = 0;
+        //initialize();
         addToCart();
-    });
 
-    $('#buy_now').click(function () {
-        buyNow();
-    });
+    function initialize(){
+        console.log("available:", availability );
+        console.log("cart_count:", cart_count );
+        var isAvailable = (availability > 0 && cart_count < availability);
+        var availableDiv = document.getElementById('available');
+        var unavailableDiv = document.getElementById('unavailable');
+
+        if (isAvailable) {
+            availableDiv.style.display = 'block';
+            unavailableDiv.style.display = 'none';
+        } else {
+            availableDiv.style.display = 'none';
+            unavailableDiv.style.display = 'block';
+        }
+    }
+
+    function fetch(){
+        $.ajax({
+            url: _base_url_+"products/fetch_products.php",
+            method: 'GET',
+            data:{id: '<?= isset($id) ? $id : "" ?>'},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                availability = data.available;
+                cart_count = data.cart_count;
+                initialize();
+            },
+            error: err => {
+                console.log(err);
+                alert_toast("An error occurred", "error");
+            },
+        });
+
+    }
 
     function addToCart() {
         $('#add_to_cart').click(function(){
             if("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1){
-                if('<?= $available > 0 ?>' == 1){
+                console.log(availability);
+
+                if(availability > 0){
                     start_loader()
                     $.ajax({
                         url:_base_url_+"classes/Master.php?f=save_to_cart",
@@ -261,6 +306,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         success:function(resp){
                             if(resp.status =='success'){
                                 update_cart_count(resp.cart_count);
+                                fetch();
                                 alert_toast(" Product has been added to cart.",'success')
                             }else if(!!resp.msg){
                                 alert_toast(resp.msg,'error')
@@ -270,6 +316,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             end_loader();
                         }
                     })
+                }
+                else{
+                    alert_toast("You have reached the maximum limit for this item", "error");
                 }
             }else{
                 alert_toast(" Please Login First!",'warning')

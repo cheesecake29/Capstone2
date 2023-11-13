@@ -372,7 +372,7 @@
                                 <i class="fas fa-shopping-cart"></i> 
                                 <?php
                                     if ($cart_count !== 0) {
-                                        echo '<span
+                                        echo '<span id="cart_count"
                                         class="badge bg-danger"
                                         style="width: 30px;
                                         height: 30px;

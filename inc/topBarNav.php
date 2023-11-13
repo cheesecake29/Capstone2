@@ -299,7 +299,7 @@
                                 echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
                                 echo '<i class="fas fa-bell"></i>';
 
-                                $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 1";
+                                $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}'";
                                 $result = $conn->query($countQuery);
 
                                 if ($result) {
@@ -314,7 +314,7 @@
 
                                 echo '</a>';
 
-                                $sql = "SELECT * FROM notifications WHERE `type` = 1";
+                                $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}'";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {
@@ -370,35 +370,6 @@
                         <div class="nav-item">
                             <a href="./?p=cart" class="nav-link">
                                 <i class="fas fa-shopping-cart"></i> 
-<<<<<<< Updated upstream
-                                <span
-                                    class="badge bg-danger"
-                                    style="width: 30px;
-                                    height: 30px;
-                                    padding: 15.2px 7.8px;
-                                    font-size: 27px;
-                                    border-radius: 26px;
-                                    transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
-                                    transform-origin: top;
-                                    padding-right: 0;
-                                    padding-top: 0.2px;
-                                    padding-left: 0.2px;
-                                    text-align: center;
-                                    border-width: 48px;
-                                    "><?= $cart_count ?></span>
-                            </a>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-user"></i> Welcome, <?= $_settings->userdata('firstname') ?>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                          <a class="dropdown-item" href="./?p=my_orders">My Orders</a>
-                          <a class="dropdown-item" href="./?p=my_services">My Service Requests</a>
-                          <a class="dropdown-item" href="./?p=manage_account">Manage Account</a>
-                          <a class="dropdown-item" href="./classes/Login.php?f=logout_client">Logout</a>
-                        </div>
-=======
                                 <?php
                                     if ($cart_count !== 0) {
                                         echo '<span
@@ -432,7 +403,6 @@
                                     <a class="dropdown-item" href="./classes/Login.php?f=logout_client">Logout</a>
                                 </div>
                             </div>
->>>>>>> Stashed changes
                         </div>
                     </div>
 

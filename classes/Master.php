@@ -615,7 +615,8 @@ Class Master extends DBConnection {
 			}
 		} 
 		$ref_code = $pref.$code;
-		$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`, `province`, `city`, `zipcode`) VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$province}','{$city}','{$zipcode}')";
+		$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`, `province`, `city`, `zipcode`, `order_type`, `pickup`)
+			VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$province}','{$city}','{$zipcode}','{$order_type}','{$pickup}')";
 		$save = $this->conn->query($sql1);
 		if($save){
 			$oid = $this->conn->insert_id;

@@ -207,9 +207,6 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                 
                     <div class="form-group">
 
-                   
-               
-
                     <div class ="input-form-name">
 
                     <div class ="fname">
@@ -223,9 +220,6 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                     </div>
 
                     </div>
-
-                   
-
                         <div class="order-type">
                      <p for="" class="ordertype">Order Type</p>
 
@@ -318,10 +312,37 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
                        </div>  <!--J&T-HOLDER-END-->
 
+                       <div class="pick-up-holder">
+                            <small class="label">Pick-Up Address</small>
+                            <select name="pickup" id="puAddressDropdown">
+                                <option value="pu_dasma">BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE</option>
+                                <option value="pu_makati">EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY</option>
+                            </select>
+                        </div>
+
+                        <div class="meet-up-holder">
+                            <small class="label">Meet Up Address</small>
+                            <select name="meetup" id="muAddressDropdown">
+                                <option value="mu_dasma" id="opt_dasma">DASMARINAS AREA</option>
+                                <option value="mu_imus" id="opt_imus">IMUS AGUINALDO HIGHWAY</option>
+                                <option value="mu_bacoor" id="opt_bacoor">BACOOR AGUINALDO HIGHWAY</option>
+                                <option value="mu_zapote" id="opt_zapote">ZAPOTE PALENGKE</option>
+                                <option value="mu_laspinas" id="opt_laspinas">LAS PINAS HOSPITAL</option>
+                                <option value="mu_sucat" id="opt_sucat">SM SUCAT BUILDING 2</option>
+                                <option value="mu_airport" id="opt_airport">AIRPORT ROAD</option>
+                                <option value="mu_other" id="opt_other">OTHER</option>
+                            </select>
+                        </div>
+
+                        <div class="other-meet-up">
+                            <input type="text" placeholder="Enter Meeting Point" name="othermu"/>
+                        </div>
                     
                     <div class="place-order form-group text-right">
                         <button class="btn btn-flat btn-primary">Place Order</button>
                     </div>
+
+                    <!-- TODO: saving of meet up address -->
 
             </div>
           
@@ -366,8 +387,11 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 </div>
 <script>
 $(function(){
-    
+    $('.pick-up-holder').hide('slow');
+    $('.meet-up-holder').hide('slow');
+    $('.other-meet-up').hide('slow');
     fetchCities();
+    setOtherMeetup();
     function fetchCities(){
         document.getElementById('provinces').addEventListener('change', function() {
         let dropdown = this;
@@ -405,16 +429,48 @@ $(function(){
             });
         });
     }
+
+    function setOtherMeetup(){
+        document.getElementById('muAddressDropdown').addEventListener('change', function() {
+        let selectedValue = this.value;
+        console.log(selectedValue);
+
+        if(selectedValue === 'mu_other'){
+            $('.other-meet-up').show('slow');
+        }else{
+            $('.other-meet-up').hide('slow');
+        }
+
+        });
+
+    }
     
 
 
-        $('[name="order_type"]').change(function(){
-       if($(this).val() ==2 || $(this).val() ==3 || $(this).val() ==4){
-            $('.jnt-holder').hide('slow')
-       }else{
-            $('.jnt-holder').show('slow')
-        }
-    })
+    $('[name="order_type"]').change(function() {
+    if ($(this).val() == 1) {
+        $('.jnt-holder').show('slow');
+        $('.pick-up-holder').hide('slow'); 
+        $('.meet-up-holder').hide('slow'); 
+    }
+    else if ($(this).val() == 2) {
+        $('.jnt-holder').hide('slow');
+        $('.pick-up-holder').hide('slow');
+        $('.meet-up-holder').hide('slow'); 
+    } else if ($(this).val() == 3) {
+        $('.jnt-holder').hide('slow');
+        $('.pick-up-holder').show('slow'); 
+        $('.meet-up-holder').hide('slow'); 
+    } else if ($(this).val() == 4) {
+        $('.jnt-holder').hide('slow');
+        $('.pick-up-holder').hide('slow'); 
+        $('.meet-up-holder').show('slow'); 
+    }else {
+        $('.jnt-holder').show('slow'); 
+        $('.pick-up-holder').hide('slow');
+        $('.meet-up-holder').hide('slow'); 
+    }
+});
 
 
 

@@ -256,26 +256,15 @@ class Master extends DBConnection
 		$_POST['description'] = htmlentities($_POST['description']);
 		extract($_POST);
 		$data = "";
-		$variationsNames = array();
-		$variationsStocks = array();
 		foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id'))) {
-				$v = $this->conn->real_escape_string($v);
 				if (!str_contains($k, 'variation')) {
+					$v = $this->conn->real_escape_string($v);
 					if (!empty($data)) $data .= ",";
 					$data .= " `{$k}`='{$v}' ";
-				} else {
-					if (str_contains($k, 'variation_name')) {
-						array_push($variationsNames, $v);
-					}
-					if (str_contains($k, 'variation_stock')) {
-						array_push($variationsStocks, $v);
-					}
 				}
 			}
 		}
-		// return json_encode($data);
-		$variations = array_combine($variationsNames, $variationsStocks);
 		$check = $this->conn->query("SELECT * FROM `product_list` where `name` = '{$name}' " . (!empty($id) ? " and id != {$id} " : "") . " ")->num_rows;
 		if ($this->capture_err())
 			return $this->capture_err();
@@ -285,18 +274,46 @@ class Master extends DBConnection
 			return json_encode($resp);
 			exit;
 		}
+
+
+		$totalStocks = 0;
 		if (empty($id)) {
 			$sql = "INSERT INTO `product_list` set {$data} ";
 			$save = $this->conn->query($sql);
 			$product_id = $this->conn->insert_id;
-			foreach ($variations as $k => $v) {
-				$variationData = "`product_id`='{$product_id}', `variation_name`='{$k}', `variation_stock`='{$v}' ";
-				$sqlProductVariation = "INSERT INTO `product_variations` set {$variationData} ";
-				$this->conn->query($sqlProductVariation);
+			foreach ($_POST['variation_name'] as $row => $value) {
+				$variation_id = $_POST['variation_id'][$row];
+				$variation_name = $_POST['variation_name'][$row];
+				$variation_stock = $_POST['variation_stock'][$row];
+				$totalStocks += $variation_stock;
+				if ($variation_id) {
+					$sqlProductVariationUpdate = "UPDATE `product_variations` set `variation_name` = '{$variation_name}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
+					$this->conn->query($sqlProductVariationUpdate);
+				} else {
+					$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`) VALUES ('{$product_id}', '{$variation_name}', '{$variation_stock}') ";
+					$this->conn->query($sqlProductVariationInsert);
+				}
 			}
+			$sqlInventoryInsert = "INSERT INTO `stock_list`  (`product_id`, `quantity`, `type`) VALUES ('{$product_id}', '{$totalStocks}', 1)";
+			$this->conn->query($sqlInventoryInsert);
 		} else {
 			$sql = "UPDATE `product_list` set {$data} where id = '{$id}' ";
 			$save = $this->conn->query($sql);
+			foreach ($_POST['variation_name'] as $row => $value) {
+				$variation_id = $_POST['variation_id'][$row];
+				$variation_name = $_POST['variation_name'][$row];
+				$variation_stock = $_POST['variation_stock'][$row];
+				$totalStocks += $variation_stock;
+				if ($variation_id) {
+					$sqlProductVariationUpdate = "UPDATE `product_variations` set `variation_name` = '{$variation_name}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
+					$this->conn->query($sqlProductVariationUpdate);
+				} else {
+					$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`) VALUES ('{$id}', '{$variation_name}', '{$variation_stock}') ";
+					$this->conn->query($sqlProductVariationInsert);
+				}
+			}
+			$sqlInventoryUpdate = "UPDATE `stock_list` set `quantity` = '{$totalStocks}' where product_id = '{$id}' ";
+			$this->conn->query($sqlInventoryUpdate);
 		}
 		if ($save) {
 			$resp['status'] = 'success';
@@ -402,15 +419,23 @@ class Master extends DBConnection
 		$data = "";
 		foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id'))) {
-				if (!empty($data)) $data .= ",";
-				$data .= " `{$k}`='{$v}' ";
+				if (!str_contains($k, 'variation')) {
+					if (!empty($data)) $data .= ",";
+					$data .= " `{$k}`='{$v}' ";
+				}
 			}
 		}
 		if (empty($id)) {
-			$sql = "INSERT INTO `stock_list` set {$data} ";
+			$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where id = '{$_POST['variation_id']}' ";
+			$this->conn->query($sqlInventoryUpdate);
+			$productVariationsTotalQuantity = $this->conn->query("SELECT SUM(`variation_stock`) as totalQuantity FROM `product_variations` where product_id = '{$_POST['product_id']}'");
+			$sql = "INSERT INTO `stock_list` (`product_id`, `quantity`) VALUES ('{$_POST['product_id']}', '{$productVariationsTotalQuantity->fetch_assoc()['totalQuantity']}') ";
 			$save = $this->conn->query($sql);
 		} else {
-			$sql = "UPDATE `stock_list` set {$data} where id = '{$id}' ";
+			$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where id = '{$_POST['variation_id']}' ";
+			$this->conn->query($sqlInventoryUpdate);
+			$productVariationsTotalQuantity = $this->conn->query("SELECT SUM(`variation_stock`) as totalQuantity FROM `product_variations` where product_id = '{$_POST['product_id']}'");
+			$sql = "UPDATE `stock_list` set `quantity` = '{$$productVariationsTotalQuantity->fetch_assoc()['totalQuantity']}' where id = '{$id}' ";
 			$save = $this->conn->query($sql);
 		}
 		if ($save) {

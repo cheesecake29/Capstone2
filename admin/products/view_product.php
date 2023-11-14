@@ -1,19 +1,20 @@
 <?php
-if(isset($_GET['id']) && $_GET['id'] > 0){
+if (isset($_GET['id']) && $_GET['id'] > 0) {
     $qry = $conn->query("SELECT p.*, b.name as brand,c.category from `product_list` p inner join brand_list b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.id = '{$_GET['id']}' ");
-    if($qry->num_rows > 0){
-        foreach($qry->fetch_assoc() as $k => $v){
-            $$k=stripslashes($v);
+    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' ");
+    if ($qry->num_rows > 0) {
+        foreach ($qry->fetch_assoc() as $k => $v) {
+            $$k = stripslashes($v);
         }
     }
 }
 ?>
 <style>
-    .product-img{
-        width:20em;
-        height:17em;
-        object-fit:scale-down;
-        object-position:center center;
+    .product-img {
+        width: 20em;
+        height: 17em;
+        object-fit: scale-down;
+        object-position: center center;
     }
 </style>
 <div class="content py-3">
@@ -56,7 +57,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                     </div>
                     <div class="col-md-6">
                         <small class="mx-2 text-muted">Price</small>
-                        <div class="pl-4"><?= isset($price) ? number_format($price,2) : '' ?></div>
+                        <div class="pl-4"><?= isset($price) ? number_format($price, 2) : '' ?></div>
                     </div>
                 </div>
                 <div class="row">
@@ -65,16 +66,32 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                         <div class="pl-4"><?= isset($description) ? html_entity_decode($description) : '' ?></div>
                     </div>
                 </div>
+                <div class="d-flex flex-column">
+                    <table class="table table-bordered table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Variation Name</th>
+                                <th>Available Stocks</th>
+                            </tr>
+                        </thead>
+                        <?php while ($row = $qryVariations->fetch_assoc()) :  ?>
+                            <tr>
+                                <td><?php echo $row['variation_name'] ?></td>
+                                <td><?php echo $row['variation_stock'] ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </table>
+                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <small class="mx-2 text-muted">Status</small>
                         <div class="pl-4">
-                            <?php if(isset($status)): ?>
-                            <?php if($status == 1): ?>
-                                <span class="badge badge-success px-3 rounded-pill">Active</span>
-                            <?php else: ?>
-                                <span class="badge badge-danger px-3 rounded-pill">Inactive</span>
-                            <?php endif; ?>
+                            <?php if (isset($status)) : ?>
+                                <?php if ($status == 1) : ?>
+                                    <span class="badge badge-success px-3 rounded-pill">Active</span>
+                                <?php else : ?>
+                                    <span class="badge badge-danger px-3 rounded-pill">Inactive</span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -85,31 +102,34 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 </div>
 
 <script>
-    $(document).ready(function(){
-		$('#delete_data').click(function(){
-			_conf("Are you sure to delete this product permanently?","delete_product",[])
-		})
+    $(document).ready(function() {
+        $('#delete_data').click(function() {
+            _conf("Are you sure to delete this product permanently?", "delete_product", [])
+        })
     })
-    function delete_product($id = '<?= isset($id) ? $id : "" ?>'){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_product",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("An error occured.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.href= './?page=products';
-				}else{
-					alert_toast("An error occured.",'error');
-					end_loader();
-				}
-			}
-		})
-	}
+
+    function delete_product($id = '<?= isset($id) ? $id : "" ?>') {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=delete_product",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.href = './?page=products';
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
 </script>

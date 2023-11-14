@@ -1,9 +1,10 @@
 <?php
-if(isset($_GET['id']) && $_GET['id'] > 0){
+if (isset($_GET['id']) && $_GET['id'] > 0) {
     $qry = $conn->query("SELECT p.*, b.name as brand,c.category from `product_list` p inner join brand_list b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.id = '{$_GET['id']}' ");
-    if($qry->num_rows > 0){
-        foreach($qry->fetch_assoc() as $k => $v){
-            $$k=stripslashes($v);
+    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' ");
+    if ($qry->num_rows > 0) {
+        foreach ($qry->fetch_assoc() as $k => $v) {
+            $$k = stripslashes($v);
         }
         $stocks = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$id'")->fetch_array()[0];
         $out = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}' and order_id in (SELECT id FROM order_list where `status` != 5) ")->fetch_array()[0];
@@ -14,11 +15,11 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 }
 ?>
 <style>
-    .product-img{
-        width:15em;
-        height:12em;
-        object-fit:scale-down;
-        object-position:center center;
+    .product-img {
+        width: 15em;
+        height: 12em;
+        object-fit: scale-down;
+        object-position: center center;
     }
 </style>
 <div class="content py-3">
@@ -26,7 +27,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
         <div class="card-header">
             <h4 class="card-title">Product Stock List</h4>
             <div class="card-tools">
-                <a href="javascript:void(0)" id="add_new" class="btn btn-flat btn-sm btn-primary"><span class="fas fa-plus"></span>  Add New Stock</a>
+                <a href="javascript:void(0)" id="add_new" class="btn btn-flat btn-sm btn-primary"><span class="fas fa-plus"></span> Add New Stock</a>
                 <a class="btn btn-default border btn-sm btn-flat" href="./?page=inventory"><i class="fa fa-angle-left"></i> Back</a>
             </div>
         </div>
@@ -62,7 +63,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                             </div>
                             <div class="col-md-6">
                                 <small class="mx-2 text-muted">Price</small>
-                                <div class="pl-4"><?= isset($price) ? number_format($price,2) : '' ?></div>
+                                <div class="pl-4"><?= isset($price) ? number_format($price, 2) : '' ?></div>
                             </div>
                         </div>
                         <div class="row">
@@ -88,16 +89,16 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
+                                <?php
                                 $stocks = $conn->query("SELECT * FROM `stock_list` where `product_id` = '{$id}'");
-                                while($row=$stocks->fetch_assoc()):
+                                while ($row = $stocks->fetch_assoc()) :
                                 ?>
                                     <tr>
                                         <td class="px-2 py-1 align-middle"><?= date('M d, Y H:i', strtotime($row['date_created'])) ?></td>
                                         <td class="px-2 py-1 text-right align-middle"><?= number_format($row['quantity']) ?></td>
                                         <td class="px-2 py-1 align-middle">
                                             <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                            Action
+                                                Action
                                                 <span class="sr-only">Toggle Dropdown</span>
                                             </button>
                                             <div class="dropdown-menu" role="menu">
@@ -110,44 +111,63 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                             </tbody>
                         </table>
                     </div>
-                </div>              
+                </div>
+                <div class="d-flex flex-column">
+                    <table class="table table-bordered table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Variation Name</th>
+                                <th>Available Stocks</th>
+                            </tr>
+                        </thead>
+                        <?php while ($row = $qryVariations->fetch_assoc()) :  ?>
+                            <tr>
+                                <td><?php echo $row['variation_name'] ?></td>
+                                <td><?php echo $row['variation_stock'] ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    $(document).ready(function(){
-        $('#add_new').click(function(){
-			uni_modal("Add New Stock","inventory/manage_stock.php?pid=<?= isset($id) ? $id : "" ?>")
-		})
-        $('.edit_data').click(function(){
-			uni_modal("Edit Stock","inventory/manage_stock.php?id="+$(this).attr('data-id'))
-		})
-		$('.delete_data').click(function(){
-			_conf("Are you sure to delete this stock entry product permanently?","delete_stock",[$(this).attr('data-id')])
-		})
+    $(document).ready(function() {
+        $('#add_new').click(function() {
+            uni_modal("Add New Stock", "inventory/manage_stock.php?pid=<?= isset($id) ? $id : "" ?>")
+        })
+        $('.edit_data').click(function() {
+            uni_modal("Edit Stock", "inventory/manage_stock.php?id=" + $(this).attr('data-id'))
+        })
+        $('.delete_data').click(function() {
+            _conf("Are you sure to delete this stock entry product permanently?", "delete_stock", [$(this).attr('data-id')])
+        })
     })
-    function delete_stock($id){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_stock",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("An error occured.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.reload();
-				}else{
-					alert_toast("An error occured.",'error');
-					end_loader();
-				}
-			}
-		})
-	}
+
+    function delete_stock($id) {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=delete_stock",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.reload();
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
 </script>

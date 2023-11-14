@@ -1,19 +1,10 @@
 <?php
+$qryVariations = false;
 if (isset($_GET['id']) && $_GET['id'] > 0) {
 	$qry = $conn->query("SELECT * from `product_list` where id = '{$_GET['id']}' ");
 	$qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' ");
 	if ($qry->num_rows > 0) {
 		foreach ($qry->fetch_assoc() as $k => $v) {
-			$$k = stripslashes($v);
-		}
-	}
-	if ($qryVariations->num_rows > 0) {
-		$index = 0;
-		foreach ($qryVariations->fetch_assoc() as $k => $v) {
-			if (str_contains($k, 'variation')) {
-				echo " `{$k}{$index}`='{$v}' ";
-				// $index++;
-			}
 			$$k = stripslashes($v);
 		}
 	}
@@ -105,15 +96,32 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							</div>
 						</div>
 						<div class="variation-list form-group">
-							<div class="d-flex justify-content-between">
-								<label for="price" class="control-label">Variation</label>
-								<button class="btn btn-link" type="button" onclick="addVariation()"><i class="fas fa-plus"></i> Add</button>
+							<div class="d-flex justify-content-between align-items-center">
+								<label for="price" class="control-label mb-0">Variation </label>
+								<button class="btn btn-link" type="button" onclick="addVariation();"><i class="fas fa-plus"></i> Add</button>
 							</div>
-							<div id="variationIndex0" class="variation-container d-flex mb-1">
-								<input placeholder="Variation name" class="variations form-control rounded-0" value="<?php echo $variation_name ?>" type="text" name="variation_name0">
-								<input placeholder="Stocks" class="variations form-control rounded-0 w-25" min="0" type="number" name="variation_stock0">
-								<button class="btn btn-link text-danger" type="button" onclick="removeVariation(0)"><i class="fas fa-times"></i></button>
-							</div>
+							<?php
+							$num = 0; // to make add button visible at first index
+							$index = 0; // to use as additional entity for div.id
+							if ($qryVariations) :
+								while ($row = $qryVariations->fetch_assoc()) :
+							?>
+									<?php $index++; ?>
+									<!-- <?php if (!$num) : ?>
+										<div class="d-flex justify-content-between align-items-center">
+											<label for="price" class="control-label mb-0">Variation </label>
+											<button class="btn btn-link" type="button" onclick="addVariation(<?php echo $index ?>);"><i class="fas fa-plus"></i> Add</button>
+										</div>
+									<?php endif; ?> -->
+									<div id="variationIndex-<?php echo $num ?>" class="variation-container d-flex mb-1">
+										<input placeholder="Variation name" class="invisible w-0" value="<?php echo $row['id'] ?>" required type="hidden" name="variation_id[]">
+										<input placeholder="Variation name" class="variations form-control rounded-0" value="<?php echo $row['variation_name'] ?>" required type="text" name="variation_name[]">
+										<input placeholder="Stocks" class="variations form-control rounded-0 w-25" value="<?php echo $row['variation_stock'] ?>" required min="0" type="number" name="variation_stock[]">
+										<button class="btn btn-link text-danger" type="button" onclick="removeVariation('variationIndex-<?php echo $num ?>')"><i class="fas fa-times"></i></button>
+									</div>
+									<?php $num++; ?>
+							<?php endwhile;
+							endif; ?>
 						</div>
 					</div>
 					<div class="col-md-6">
@@ -147,6 +155,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			_this.siblings('.custom-file-label').html("Choose file")
 		}
 	}
+
 	$(document).ready(function() {
 		$('.select2').select2({
 			width: '100%',
@@ -159,10 +168,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			var _this = $(this)
 			$('.err-msg').remove();
 			const formData = new FormData($(this)[0]);
-			// Display the key/value pairs
-			for (var pair of formData.entries()) {
-				console.log(pair[0] + ', ' + pair[1]);
-			}
 			start_loader();
 			$.ajax({
 				url: _base_url_ + "classes/Master.php?f=save_product",
@@ -214,7 +219,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		})
 	})
 
-	var variationId = 1;
 	var removeVariation = function(id) {
 		console.log("Remove", id);
 		const variationIdex = document.getElementById(id);
@@ -222,19 +226,30 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		fieldgroup.removeChild(variationIdex);
 	}
 	var addVariation = function() {
+		const lastVariationIndex = document.querySelectorAll(".variation-container:last-child");
+		const lastIndex = lastVariationIndex && lastVariationIndex.length > 0 ? lastVariationIndex[0].id.slice(15) : 0;
+		console.log(lastIndex)
 		var parent = document.body;
 		// Get variation main container
 		var fieldgroup = document.querySelector("div.variation-list");
 		// Create variation container
 		var variationContainer = document.createElement("div");
-		variationContainer.id = `variationIndex${variationId}`;
+		variationContainer.id = `variationIndex-${parseInt(lastIndex)+1}`;
 		variationContainer.className = "variation-container d-flex mb-1";
+		// add variation id placeholder input
+		var variationId = document.createElement("input");
+		variationId.className = "invinsible";
+		variationId.type = "hidden";
+		variationId.required = true;
+		variationId.name = `variation_id[]`;
+		variationContainer.appendChild(variationId);
 		// Add variation name input
 		var variationName = document.createElement("input");
 		variationName.className = "variations form-control rounded-0";
 		variationName.style = "display: block;";
 		variationName.type = "text";
-		variationName.name = `variation_name${variationId}`;
+		variationName.required = true;
+		variationName.name = `variation_name[]`;
 		variationName.placeholder = "Variation name";
 		variationContainer.appendChild(variationName);
 		// Add variation stock input
@@ -243,15 +258,15 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		variationStock.style = "display: block;";
 		variationStock.type = "number";
 		variationStock.min = 0;
-		variationStock.name = `variation_stock${variationId}`;
+		variationStock.required = true;
+		variationStock.name = `variation_stock[]`;
 		variationStock.placeholder = "Stocks";
-		fieldgroup.appendChild(variationContainer);
+		variationStock.value = "0";
 		variationContainer.appendChild(variationStock);
 		// Add variation remove button
 		var variationRemoveBtn = document.createElement("button");
 		variationRemoveBtn.className = "btn btn-link text-danger"
 		variationRemoveBtn.type = "button";
-		variationRemoveBtn.attr
 		variationRemoveBtn.onclick = function() {
 			removeVariation(variationContainer.id)
 		};
@@ -259,6 +274,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		variationRemoveBtnIcon.className = "fas fa-times";
 		variationRemoveBtn.appendChild(variationRemoveBtnIcon);
 		variationContainer.appendChild(variationRemoveBtn);
-		variationId += 1;
+		fieldgroup.appendChild(variationContainer);
 	}
 </script>

@@ -314,7 +314,7 @@
 
                                 echo '</a>';
 
-                                $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}'";
+                                $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}' ORDER BY id DESC";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {

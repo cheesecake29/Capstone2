@@ -354,7 +354,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                                     INNER JOIN product_list p ON c.product_id = p.id
                                     INNER JOIN brand_list b ON p.brand_id = b.id
                                     INNER JOIN categories cc ON p.category_id = cc.id
-                                    INNER JOIN product_variations v ON p.variation_id = v.id
+                                    INNER JOIN product_variations v ON c.variation_id = v.id
                                     WHERE c.client_id = '{$_settings->userdata('id')}' ORDER BY p.name ASC");
                     ?>
                     <table class="cart-table">
@@ -381,30 +381,37 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                                 <?php
                                 $total += ($row['quantity'] * $row['price']);
                                 $shipping = 0;
-                                if($row['weight'] == "500g and below"){
-                                    $shipping = 117;
+                                switch ($row['weight']) {
+                                    case "500g and below":
+                                        $shipping = 117;
+                                        break;
+                                    case "500g – 1kg":
+                                        $shipping = 200;
+                                        break;
+                                    case "1kg – 3kg":
+                                        $shipping = 300;
+                                        break;
+                                    case "3kg – 4kg":
+                                        $shipping = 400;
+                                        break;
+                                    case "4kg – 5kg":
+                                        $shipping = 500;
+                                        break;
+                                    case "5kg – 6kg":
+                                        $shipping = 600;
+                                        break;
+                                    default:
+                                        $shipping = 0;
+                                        break;
                                 }
-                                else if($row['weight'] == "500g – 1kg"){
-                                    $shipping = 200;
-                                }
-                                else if($row['weight'] == "1kg – 3kg"){
-                                    $shipping = 300;
-                                }
-                                else if($row['weight'] == "3kg – 4kg"){
-                                    $shipping = 400;
-                                }
-                                else if($row['weight'] == "4kg – 5kg"){
-                                    $shipping = 500;
-                                }
-                                else if($row['weight'] == "5kg – 6kg"){
-                                    $shipping = 600;
-                                }
+                                
                                 $total = $total + $shipping;
                                 ?>
                             <?php endwhile; ?>
                         </tbody>
                     </table>
-                    <h4 class="righth2">Shipping Fee: <?= number_format($shipping, 2) ?></h2>
+                    <input name="shipping_amount" value="<?= $shipping ?>" type="hidden"/>
+                    <h4 id="sf">Shipping Fee: <?= number_format($shipping, 2) ?></h2>
                     <h2 class="righth2">Total Price: <?= number_format($total, 2) ?></h2>
                 </div>
             </div>
@@ -481,23 +488,28 @@ $(function(){
         $('.jnt-holder').show('slow');
         $('.pick-up-holder').hide('slow'); 
         $('.meet-up-holder').hide('slow'); 
+        $('#sf').show('slow');
     }
     else if ($(this).val() == 2) {
         $('.jnt-holder').hide('slow');
         $('.pick-up-holder').hide('slow');
         $('.meet-up-holder').hide('slow'); 
+        $('#sf').hide('slow');
     } else if ($(this).val() == 3) {
         $('.jnt-holder').hide('slow');
         $('.pick-up-holder').show('slow'); 
         $('.meet-up-holder').hide('slow'); 
+        $('#sf').hide('slow');
     } else if ($(this).val() == 4) {
         $('.jnt-holder').hide('slow');
         $('.pick-up-holder').hide('slow'); 
         $('.meet-up-holder').show('slow'); 
+        $('#sf').hide('slow');
     }else {
         $('.jnt-holder').show('slow'); 
         $('.pick-up-holder').hide('slow');
         $('.meet-up-holder').hide('slow'); 
+        $('#sf').hide('slow');
     }
 });
 

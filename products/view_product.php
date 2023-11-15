@@ -23,6 +23,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
             while ($variation = $variations->fetch_array()) {
                 echo "<script>console.log('" . $variation['variation_name'] . "');</script>";
+                echo "<script>console.log('" . $variation['id'] . "');</script>";
             }
         }
     } else {
@@ -204,6 +205,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <small>Variations: </small> <br>
                             <?php
                                 $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
+                                $variationId = 0;
                                 while ($variation = $variations->fetch_array()) {
                                     echo "<label for='variation_{$variation['id']}'>
                                     <input type='radio' name='variations' id='variation_{$variation['id']}' value='{$variation['variation_name']}'
@@ -211,16 +213,21 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                     <small><span id='stock_{$variation['id']}'>" . $variation['variation_name'] . "
                                     (Stock: <span id='variation_stock_{$variation['id']}'>{$variation['variation_stock']}</span>)</span></small></label><br>";
 
-                                }
+                                
+                                $variationId = $variation['id']; 
+                                
+                            }
+                                
+                                echo '<span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>';
+                                echo '</div>'; 
+                                echo '<div class="ab">';
+                                echo '<div id="available">';
+                                echo "<button id='add_to_cart' class='cart add-cart card-tools' onclick='addToCart($variationId)' disabled>Add to Cart</button>";
+                                echo '</div>';
+                                
+
+
                             ?>
-                            <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
-                        </div>
-                        <div class="ab">
-                            <div id="available">
-                                <button id="add_to_cart" class="cart add-cart card-tools" onclick="addToCart(<?= $variation['id'] ?>)" disabled>Add to Cart</button>
-                            </div>
-
-
                             <div class="out-of-stock" id="unavailable">
                                 <button class="btn btn-danger">Out of Stock</button>
                             </div>
@@ -236,6 +243,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
        
 
     <script>
+        $(document).ready(function(){
+            fetch();
+            let availability = 0;
+            let cart_count = 0;
+        });
     function handleVariationSelect(variation) {
         if (variation.checked) {
             // Do something when the radio button is clicked and checked
@@ -244,12 +256,52 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
         }
     }
-    $(function () {
-        fetch();
-        let availability = 0;
-        let cart_count = 0;
-        //initialize();
-        addToCart();
+
+    function addToCart(variationId) {
+        if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
+            availability--;
+            let avail_stock = availability - cart_count;
+            $('#available_stock').html(avail_stock);
+            console.log(variationId);
+            
+            if (availability > 0) {
+                start_loader();
+                $.ajax({
+                    url: _base_url_ + "classes/Master.php?f=save_to_cart",
+                    method: 'POST',
+                    data: {
+                        product_id: '<?= isset($id) ? $id : "" ?>',
+                        variation_id: variationId,
+                        quantity: 1
+                    },
+                    dataType: 'json',
+                    error: err => {
+                        console.error(err);
+                        alert_toast("An error occurred", "error");
+                        end_loader();
+                    },
+                    success: function (resp) {
+                        if (resp.status == 'success') {
+                            update_cart_count(resp.cart_count);
+                            fetch();
+                            alert_toast("Product has been added to cart.", 'success');
+                        } else if (!!resp.msg) {
+                            alert_toast(resp.msg, 'error');
+                        } else {
+                            alert_toast("An error occurred", "error");
+                        }
+                        end_loader();
+                    }
+                });
+            } else {
+                alert_toast("You have reached the maximum limit for this item", "error");
+            }
+        } else {
+            alert_toast("Please Login First!", 'warning');
+        }
+}
+
+
 
     function initialize(){
         console.log("available:", availability );
@@ -293,51 +345,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
 
 
-    function addToCart(variationId) {
-    $('#add_to_cart').click(function () {
-        if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
-            // Your existing logic for availability and user login
-            availability--;
-            let avail_stock = availability - cart_count;
-            $('#available_stock').html(avail_stock);
-            
-            if (availability > 0) {
-                start_loader();
-                $.ajax({
-                    url: _base_url_ + "classes/Master.php?f=save_to_cart",
-                    method: 'POST',
-                    data: {
-                        product_id: '<?= isset($id) ? $id : "" ?>',
-                        variation_id: variationId, // Include the selected variation ID
-                        quantity: 1
-                    },
-                    dataType: 'json',
-                    error: err => {
-                        console.error(err);
-                        alert_toast("An error occurred", "error");
-                        end_loader();
-                    },
-                    success: function (resp) {
-                        if (resp.status == 'success') {
-                            update_cart_count(resp.cart_count);
-                            fetch();
-                            alert_toast("Product has been added to cart.", 'success');
-                        } else if (!!resp.msg) {
-                            alert_toast(resp.msg, 'error');
-                        } else {
-                            alert_toast("An error occurred", "error");
-                        }
-                        end_loader();
-                    }
-                });
-            } else {
-                alert_toast("You have reached the maximum limit for this item", "error");
-            }
-        } else {
-            alert_toast("Please Login First!", 'warning');
-        }
-    });
-}
+    
 
 
     function buyNow() {
@@ -374,7 +382,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             alert_toast("Please Login First!", 'warning');
         }
     }
-});
 
     
     </script>

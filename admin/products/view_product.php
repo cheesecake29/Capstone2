@@ -19,9 +19,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="content py-3">
     <div class="card card-outline rounded-0 card-primary shadow">
-        <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center border-bottom p-3">
             <h4 class="card-title">Product Details</h4>
             <div class="card-tools">
+                <?php if (isset($status)) : ?>
+                    <?php if ($status == 1) : ?>
+                        <span class="badge badge-success px-3 rounded-pill">Active</span>
+                    <?php else : ?>
+                        <span class="badge badge-danger px-3 rounded-pill">Inactive</span>
+                    <?php endif; ?>
+                <?php endif; ?>
                 <a class="btn btn-primary btn-sm btn-flat" href="./?page=products/manage_product&id=<?= isset($id) ? $id : "" ?>"><i class="fa fa-edit"></i> Edit</a>
                 <a class="btn btn-danger btn-sm btn-flat" href="javascript:void(0)>" id="delete_data"><i class="fa fa-trash"></i> Delete</a>
                 <a class="btn btn-default border btn-sm btn-flat" href="./?page=products"><i class="fa fa-angle-left"></i> Back</a>
@@ -72,29 +79,23 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <tr>
                                 <th>Variation Name</th>
                                 <th>Available Stocks</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <?php while ($row = $qryVariations->fetch_assoc()) :  ?>
                             <tr>
                                 <td><?php echo $row['variation_name'] ?></td>
                                 <td><?php echo $row['variation_stock'] ?></td>
+                                <td>
+                                    <?php if ($row['delete_flag'] == 0) : ?>
+                                        <span class="badge badge-success px-3 rounded-pill">Active</span>
+                                    <?php else : ?>
+                                        <span class="badge badge-danger px-3 rounded-pill">Inactive</span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endwhile; ?>
                     </table>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <small class="mx-2 text-muted">Status</small>
-                        <div class="pl-4">
-                            <?php if (isset($status)) : ?>
-                                <?php if ($status == 1) : ?>
-                                    <span class="badge badge-success px-3 rounded-pill">Active</span>
-                                <?php else : ?>
-                                    <span class="badge badge-danger px-3 rounded-pill">Inactive</span>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

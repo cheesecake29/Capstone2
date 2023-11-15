@@ -14,6 +14,23 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 	div.variation-list .variation-container input:first-child {
 		margin-right: 8px;
 	}
+
+	.border-left-3 {
+		border-left-width: 3px !important;
+	}
+
+	div.variation-list .variation-container button {
+		min-width: 35px;
+		width: 35px;
+	}
+
+	.div-disabled {
+		pointer-events: none;
+	}
+
+	.bg-disabled {
+		background: #EEEE;
+	}
 </style>
 <div class="card card-outline card-info rounded-0">
 	<div class="card-header">
@@ -105,19 +122,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							$index = 0; // to use as additional entity for div.id
 							if ($qryVariations) :
 								while ($row = $qryVariations->fetch_assoc()) :
+									$delete_flag = $row['delete_flag'];
 							?>
 									<?php $index++; ?>
-									<!-- <?php if (!$num) : ?>
-										<div class="d-flex justify-content-between align-items-center">
-											<label for="price" class="control-label mb-0">Variation </label>
-											<button class="btn btn-link" type="button" onclick="addVariation(<?php echo $index ?>);"><i class="fas fa-plus"></i> Add</button>
-										</div>
-									<?php endif; ?> -->
-									<div id="variationIndex-<?php echo $num ?>" class="variation-container d-flex mb-1">
-										<input placeholder="Variation name" class="invisible w-0" value="<?php echo $row['id'] ?>" required type="hidden" name="variation_id[]">
-										<input placeholder="Variation name" class="variations form-control rounded-0" value="<?php echo $row['variation_name'] ?>" required type="text" name="variation_name[]">
-										<input placeholder="Stocks" class="variations form-control rounded-0 w-25" value="<?php echo $row['variation_stock'] ?>" required min="0" type="number" name="variation_stock[]">
-										<button class="btn btn-link text-danger" type="button" onclick="removeVariation('variationIndex-<?php echo $num ?>')"><i class="fas fa-times"></i></button>
+									<div id="variationIndex-<?php echo $num ?>" class="variation-container d-flex mb-1 <?php if ($row['delete_flag'] == 1) : ?> border-left border-left-3 border-danger <?php endif; ?> ">
+										<input class="invisible w-0" value="<?php echo $row['id'] ?>" required type="hidden" name="variation_id[]">
+										<input class="invisible w-0" id="variation-<?php echo $num ?>" value="<?php echo $row['delete_flag'] ?>" required type="hidden" name="variation_delete_flag[]">
+										<input placeholder="Variation name" class="<?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 mr-1" value="<?php echo $row['variation_name'] ?>" required type="text" name="variation_name[]">
+										<input placeholder="Stocks" class="<?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 w-25" value="<?php echo $row['variation_stock'] ?>" required min="0" type="number" name="variation_stock[]">
+										<button class="btn btn-link text-danger ml-1 <?php if ($delete_flag == 0) : ?> visible position-relative <?php else: ?> invisible position-absolute <?php endif; ?>" type="button" id="variation-remove-<?php echo $num ?>" onclick="removeVariation('variationIndex-<?php echo $num; ?>')">
+											<i class="fas fa-times"></i>
+										</button>
+										<button class="btn btn-link text-info ml-1 <?php if ($delete_flag == 1) : ?> visible position-relative <?php else: ?> invisible position-absolute <?php endif; ?>" type="button" id="variation-res-<?php echo $num ?>" onclick="resVariation('variationIndex-<?php echo $num; ?>')">
+											<i class="fas fa-check"></i>
+										</button>
 									</div>
 									<?php $num++; ?>
 							<?php endwhile;
@@ -184,6 +202,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 					end_loader();
 				},
 				success: function(resp) {
+					console.log(resp);
 					if (typeof resp == 'object' && resp.status == 'success') {
 						location.href = "./?page=products/view_product&id=" + resp.id;
 					} else if (resp.status == 'failed' && !!resp.msg) {
@@ -219,11 +238,45 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		})
 	})
 
+	var resVariation = function(id) {
+		console.log("Res", id);
+		const variationIndex = document.getElementById(id);
+		const variationFlag = document.getElementById(`variation-${id.slice(15)}`);
+		const variationResBtn = document.getElementById(`variation-res-${id.slice(15)}`);
+		const variationRemBtn = document.getElementById(`variation-remove-${id.slice(15)}`);
+		variationResBtn.classList.replace('visible', 'invisible');
+		variationResBtn.classList.replace('position-relative', 'position-absolute');
+		variationRemBtn.classList.replace('invisible', 'visible');
+		variationRemBtn.classList.replace('position-absolute', 'position-relative');
+		variationFlag.value = 0;
+		const nodes = variationIndex.getElementsByTagName('input');
+		for (var i = 0; i < nodes.length; i++) {
+			nodes[i].style.pointerEvents = 'unset';
+			nodes[i].style.background = 'unset';
+		}
+		variationIndex.classList.remove('border-left');
+		variationIndex.classList.remove('border-left-3');
+		variationIndex.classList.remove('border-danger');
+	}
 	var removeVariation = function(id) {
 		console.log("Remove", id);
-		const variationIdex = document.getElementById(id);
-		var fieldgroup = document.querySelector("div.variation-list");
-		fieldgroup.removeChild(variationIdex);
+		const variationIndex = document.getElementById(id);
+		const variationFlag = document.getElementById(`variation-${id.slice(15)}`);
+		const variationResBtn = document.getElementById(`variation-res-${id.slice(15)}`);
+		const variationRemBtn = document.getElementById(`variation-remove-${id.slice(15)}`);
+		variationRemBtn.classList.replace('visible', 'invisible');
+		variationRemBtn.classList.replace('position-relative', 'position-absolute');
+		variationResBtn.classList.replace('invisible', 'visible');
+		variationResBtn.classList.replace('position-absolute', 'position-relative');
+		variationFlag.value = 1;
+		const nodes = variationIndex.getElementsByTagName('input');
+		for (var i = 0; i < nodes.length; i++) {
+			nodes[i].style.pointerEvents = 'none';
+			nodes[i].style.background = '#EEEE';
+		}
+		variationIndex.classList.add('border-left');
+		variationIndex.classList.add('border-left-3');
+		variationIndex.classList.add('border-danger');
 	}
 	var addVariation = function() {
 		const lastVariationIndex = document.querySelectorAll(".variation-container:last-child");
@@ -238,11 +291,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		variationContainer.className = "variation-container d-flex mb-1";
 		// add variation id placeholder input
 		var variationId = document.createElement("input");
-		variationId.className = "invinsible";
+		variationId.className = "invisible";
 		variationId.type = "hidden";
 		variationId.required = true;
 		variationId.name = `variation_id[]`;
 		variationContainer.appendChild(variationId);
+		// add variation delete flag placeholder input
+		var variationDeleteFlag = document.createElement("input");
+		variationDeleteFlag.className = "invisible";
+		variationDeleteFlag.type = "hidden";
+		variationDeleteFlag.required = true;
+		variationDeleteFlag.id = `variation-${parseInt(lastIndex)+1}`;
+		variationDeleteFlag.name = `variation_delete_flag[]`;
+		variationContainer.appendChild(variationDeleteFlag);
+		variationDeleteFlag.value = 0; // set value
 		// Add variation name input
 		var variationName = document.createElement("input");
 		variationName.className = "variations form-control rounded-0";

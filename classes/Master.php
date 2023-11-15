@@ -275,54 +275,48 @@ class Master extends DBConnection
 			exit;
 		}
 
-
-		$totalStocks = 0;
+		function processVariations($conn, $product_id)
+		{
+			if (isset($_POST['variation_name'])) {
+				$totalStocks = 0;
+				foreach ($_POST['variation_name'] as $row => $value) {
+					$variation_id = $_POST['variation_id'][$row];
+					$variation_name = $_POST['variation_name'][$row];
+					$variation_stock = $_POST['variation_stock'][$row];
+					$variation_delete_flag = $_POST['variation_delete_flag'][$row];
+					$totalStocks += $variation_stock;
+					if ($variation_id) {
+						$sqlProductVariationUpdate = "UPDATE `product_variations` set `delete_flag` = '{$variation_delete_flag}',  `variation_name` = '{$variation_name}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
+						$conn->query($sqlProductVariationUpdate);
+					} else {
+						$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`, `delete_flag`) VALUES ('{$product_id}', '{$variation_name}', '{$variation_stock}', '{$variation_delete_flag}') ";
+						$conn->query($sqlProductVariationInsert);
+					}
+				}
+				return $totalStocks;
+			}
+		}
 		if (empty($id)) {
 			$sql = "INSERT INTO `product_list` set {$data} ";
 			$save = $this->conn->query($sql);
 			$product_id = $this->conn->insert_id;
-			foreach ($_POST['variation_name'] as $row => $value) {
-				$variation_id = $_POST['variation_id'][$row];
-				$variation_name = $_POST['variation_name'][$row];
-				$variation_stock = $_POST['variation_stock'][$row];
-				$totalStocks += $variation_stock;
-				if ($variation_id) {
-					$sqlProductVariationUpdate = "UPDATE `product_variations` set `variation_name` = '{$variation_name}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
-					$this->conn->query($sqlProductVariationUpdate);
-				} else {
-					$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`) VALUES ('{$product_id}', '{$variation_name}', '{$variation_stock}') ";
-					$this->conn->query($sqlProductVariationInsert);
-				}
-			}
-			$sqlInventoryInsert = "INSERT INTO `stock_list`  (`product_id`, `quantity`, `type`) VALUES ('{$product_id}', '{$totalStocks}', 1)";
-			$this->conn->query($sqlInventoryInsert);
 		} else {
 			$sql = "UPDATE `product_list` set {$data} where id = '{$id}' ";
 			$save = $this->conn->query($sql);
-			foreach ($_POST['variation_name'] as $row => $value) {
-				$variation_id = $_POST['variation_id'][$row];
-				$variation_name = $_POST['variation_name'][$row];
-				$variation_stock = $_POST['variation_stock'][$row];
-				$totalStocks += $variation_stock;
-				if ($variation_id) {
-					$sqlProductVariationUpdate = "UPDATE `product_variations` set `variation_name` = '{$variation_name}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
-					$this->conn->query($sqlProductVariationUpdate);
-				} else {
-					$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`) VALUES ('{$id}', '{$variation_name}', '{$variation_stock}') ";
-					$this->conn->query($sqlProductVariationInsert);
-				}
-			}
-			$sqlInventoryUpdate = "UPDATE `stock_list` set `quantity` = '{$totalStocks}' where product_id = '{$id}' ";
-			$this->conn->query($sqlInventoryUpdate);
 		}
 		if ($save) {
 			$resp['status'] = 'success';
 			$pid = empty($id) ? $this->conn->insert_id : $id;
 			$resp['id'] = $pid;
-			if (empty($id))
+			if (empty($id)) {
 				$resp['msg'] = "New Product successfully saved.";
-			else
+				$totalStocks = processVariations($this->conn, $product_id);
+				$this->conn->query("INSERT INTO `stock_list`  (`product_id`, `quantity`, `type`) VALUES ('{$product_id}', '{$totalStocks}', 1)");
+			} else {
 				$resp['msg'] = "Product successfully updated.";
+				$totalStocks = processVariations($this->conn, $id);
+				$this->conn->query("UPDATE `stock_list` set `quantity` = '{$totalStocks}' where product_id = '{$id}' ");
+			}
 			if (!empty($_FILES['img']['tmp_name'])) {
 				$ext = $ext = pathinfo($_FILES['img']['name'], PATHINFO_EXTENSION);
 				$dir = base_app . "uploads/products/";
@@ -350,7 +344,9 @@ class Master extends DBConnection
 	function delete_product()
 	{
 		extract($_POST);
+		$datenow = date("Y-m-d H:i:s");
 		$del = $this->conn->query("UPDATE `product_list` set `delete_flag` = 1  where id = '{$id}'");
+		$this->conn->query("UPDATE `product_variations` set `delete_flag` = 1, `date_updated` = '{$datenow}'  where product_id = '{$id}'");
 		if ($del) {
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Product successfully deleted.");

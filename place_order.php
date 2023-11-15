@@ -151,7 +151,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
     margin:0 7%;
   }
   .img-sum{
-    width:  15%; 
+    width:  auto;
     height: 100px;
 
   }
@@ -225,7 +225,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
                      <div class ="ordertype">
                      <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio1" name="order_type" value="1" checked>
-                    <label for="customRadio1" class="custom-label">J&T </label><br>
+                    <label for="customRadio1" class="custom-label">JRS </label><br>
                     </div>
 
                 <div class ="ordertype">  
@@ -348,40 +348,69 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
           
             <div class="right">
                 <div class="product-sum">
-           <?php
-            $total = 0;
-                $cart = $conn->query("SELECT c.*,p.name, p.price, p.image_path,b.name as brand, cc.category FROM `cart_list` c inner join product_list p on c.product_id = p.id inner join brand_list b on p.brand_id = b.id inner join categories cc on p.category_id = cc.id where c.client_id = '{$_settings->userdata('id')}' order by p.name asc");
-                while($row = $cart->fetch_assoc()):
-                    $total += ($row['quantity'] * $row['price']);
-      
-                    ?> 
-                    
-                   
-                        
-                  
-                    <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="sum-info">
-                               
-                                    <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-sum">
-                                   
-                                    
-                                    <p class="name-sum"><?= $row['name'] ?></p>
-                                   
-                                    <p class="quantity-sum">Qty: <?= $row['quantity'] ?></p>
-                                    
-                                    <p class="price-sum"><?= $row['price'] ?></p>
-                         </a>
-                    <?php endwhile; ?>
-                
-              
-               
-               
-                
-            </div> 
-            <h2 class="righth2">Total Price:  <?= number_format($total,2) ?></h2>
-
-            </div> 
-                </form>
+                    <?php
+                    $total = 0;
+                    $cart = $conn->query("SELECT c.*, p.name, p.price, p.image_path, p.weight, b.name as brand, cc.category, v.* FROM `cart_list` c
+                                    INNER JOIN product_list p ON c.product_id = p.id
+                                    INNER JOIN brand_list b ON p.brand_id = b.id
+                                    INNER JOIN categories cc ON p.category_id = cc.id
+                                    INNER JOIN product_variations v ON p.variation_id = v.id
+                                    WHERE c.client_id = '{$_settings->userdata('id')}' ORDER BY p.name ASC");
+                    ?>
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th width="25%">Image</th>
+                                <th>Product Name</th>
+                                <th>Variation</th>
+                                <th>Weight</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($row = $cart->fetch_assoc()) : ?>
+                                <tr>
+                                    <td width="25%"><img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-sum"></td>
+                                    <td><?= $row['name'] ?></td>
+                                    <td><?= $row['variation_name'] ?></td>
+                                    <td><?= $row['weight'] ?></td>
+                                    <td><?= $row['quantity'] ?></td>
+                                    <td><?= $row['price'] ?></td>
+                                </tr>
+                                <?php
+                                $total += ($row['quantity'] * $row['price']);
+                                $shipping = 0;
+                                if($row['weight'] == "500g and below"){
+                                    $shipping = 117;
+                                }
+                                else if($row['weight'] == "500g – 1kg"){
+                                    $shipping = 200;
+                                }
+                                else if($row['weight'] == "1kg – 3kg"){
+                                    $shipping = 300;
+                                }
+                                else if($row['weight'] == "3kg – 4kg"){
+                                    $shipping = 400;
+                                }
+                                else if($row['weight'] == "4kg – 5kg"){
+                                    $shipping = 500;
+                                }
+                                else if($row['weight'] == "5kg – 6kg"){
+                                    $shipping = 600;
+                                }
+                                $total = $total + $shipping;
+                                ?>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                    <h4 class="righth2">Shipping Fee: <?= number_format($shipping, 2) ?></h2>
+                    <h2 class="righth2">Total Price: <?= number_format($total, 2) ?></h2>
+                </div>
             </div>
+
+
+            </form>
     
     </div>
 </div>

@@ -90,7 +90,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     }
 
     .ab{
-        display:flex;
         flex-direction: row;
 
        
@@ -112,8 +111,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .add-cart a {
     text-align: center;
     color: white;
-    display: block;
-    margin: 0 auto; /* This centers the link horizontally */
 }
 
 
@@ -145,6 +142,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
        justify-content: center;
        align-items: center;
     }
+
+    button[disabled] {
+  opacity: 0.6; /* Reduce opacity to indicate it's disabled */
+  cursor: not-allowed; /* Change cursor to indicate non-interactivity */
+  /* Optionally, you can add other styles like changing background color, text color, etc. */
+}
 
 </style>
 <div class="content ">
@@ -197,25 +200,26 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             
                         </div>
                         <div class="info">
-                            <small>Available Stocks:     <strong> <span id="available_stock"><strong><?= isset($available) ? number_format($available) : '' ?></span></strong></small><br>
+                            <small>Total Available Stocks:     <strong> <span id="available_stock"><strong><?= isset($available) ? number_format($available) : '' ?></span></strong></small><br>
                             <small>Variations: </small> <br>
                             <?php
                                 $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
                                 while ($variation = $variations->fetch_array()) {
                                     echo "<label for='variation_{$variation['id']}'>
-                                        <input type='radio' name='variations' id='variation_{$variation['id']}' value='{$variation['variation_name']}' />
-                                        <small><span id='{$variation['id']}'>" . $variation['variation_name'] . "</span></small>
-                                    </label><br>";
-
+                                    <input type='radio' name='variations' id='variation_{$variation['id']}' value='{$variation['variation_name']}'
+                                    onclick='handleVariationSelect(this)'/>
+                                    <small><span id='stock_{$variation['id']}'>" . $variation['variation_name'] . "
+                                    (Stock: <span id='variation_stock_{$variation['id']}'>{$variation['variation_stock']}</span>)</span></small></label><br>";
 
                                 }
                             ?>
                             <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
                         </div>
                         <div class="ab">
-                            <div class="add-cart card-tools" id="available">
-                                <a href="javascript:void(0)" id="add_to_cart" class="cart">Add to Cart</a>
+                            <div id="available">
+                                <button id="add_to_cart" class="cart add-cart card-tools" onclick="addToCart(<?= $variation['id'] ?>)" disabled>Add to Cart</button>
                             </div>
+
 
                             <div class="out-of-stock" id="unavailable">
                                 <button class="btn btn-danger">Out of Stock</button>
@@ -232,7 +236,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
        
 
     <script>
+    function handleVariationSelect(variation) {
+        if (variation.checked) {
+            // Do something when the radio button is clicked and checked
+            console.log(`Selected value: ${variation.value}`);
+            $('#add_to_cart').removeAttr("disabled");
 
+        }
+    }
     $(function () {
         fetch();
         let availability = 0;
@@ -279,46 +290,55 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
     }
 
-    function addToCart() {
-        $('#add_to_cart').click(function(){
-            if("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1){
-                availability--;
-                let avail_stock = availability - cart_count;
-                $('#available_stock').html(avail_stock);
-                if(availability > 0){
-                    start_loader()
-                    $.ajax({
-                        url:_base_url_+"classes/Master.php?f=save_to_cart",
-                        method:'POST',
-                        data:{product_id: '<?= isset($id) ? $id : "" ?>',quantity:1},
-                        dataType:'json',
-                        error:err=>{
-                            console.error(err)
-                            alert_toast("An error occured","error")
-                            end_loader();
-                        },
-                        success:function(resp){
-                            if(resp.status =='success'){
-                                update_cart_count(resp.cart_count);
-                                fetch();
-                                alert_toast(" Product has been added to cart.",'success')
-                            }else if(!!resp.msg){
-                                alert_toast(resp.msg,'error')
-                            }else{
-                                alert_toast("An error occured","error")
-                            }
-                            end_loader();
+
+
+
+    function addToCart(variationId) {
+    $('#add_to_cart').click(function () {
+        if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
+            // Your existing logic for availability and user login
+            availability--;
+            let avail_stock = availability - cart_count;
+            $('#available_stock').html(avail_stock);
+            
+            if (availability > 0) {
+                start_loader();
+                $.ajax({
+                    url: _base_url_ + "classes/Master.php?f=save_to_cart",
+                    method: 'POST',
+                    data: {
+                        product_id: '<?= isset($id) ? $id : "" ?>',
+                        variation_id: variationId, // Include the selected variation ID
+                        quantity: 1
+                    },
+                    dataType: 'json',
+                    error: err => {
+                        console.error(err);
+                        alert_toast("An error occurred", "error");
+                        end_loader();
+                    },
+                    success: function (resp) {
+                        if (resp.status == 'success') {
+                            update_cart_count(resp.cart_count);
+                            fetch();
+                            alert_toast("Product has been added to cart.", 'success');
+                        } else if (!!resp.msg) {
+                            alert_toast(resp.msg, 'error');
+                        } else {
+                            alert_toast("An error occurred", "error");
                         }
-                    })
-                }
-                else{
-                    alert_toast("You have reached the maximum limit for this item", "error");
-                }
-            }else{
-                alert_toast(" Please Login First!",'warning')
+                        end_loader();
+                    }
+                });
+            } else {
+                alert_toast("You have reached the maximum limit for this item", "error");
             }
-        })
-    }
+        } else {
+            alert_toast("Please Login First!", 'warning');
+        }
+    });
+}
+
 
     function buyNow() {
         if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {

@@ -14,9 +14,16 @@
             <div class="w-100" id="cart-list">
                 <?php 
                 $total = 0;
-                $cart = $conn->query("SELECT c.*,p.name, p.price, p.image_path,b.name as brand, cc.category FROM `cart_list` c inner join product_list p on c.product_id = p.id inner join brand_list b on p.brand_id = b.id inner join categories cc on p.category_id = cc.id where c.client_id = '{$_settings->userdata('id')}' order by p.name asc");
+                $cart = $conn->query("SELECT c.*,p.name, p.price, p.image_path,b.name as brand, cc.category, v.* FROM `cart_list` c
+                inner join product_list p on c.product_id = p.id
+                inner join brand_list b on p.brand_id = b.id
+                inner join categories cc on p.category_id = cc.id
+                inner join product_variations v on p.variation_id = v.id
+                where c.client_id = '{$_settings->userdata('id')}' order by p.name asc");
+
                 while($row = $cart->fetch_assoc()):
                     $total += ($row['quantity'] * $row['price']);
+                    echo "<script>console.log(" . json_encode($row) . ");</script>";
                 ?>
                 <div class="d-flex align-items-center w-100 border cart-item" data-id="<?= $row['id'] ?>">
                     <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
@@ -30,6 +37,7 @@
                                 </a>
                                 <small><?= $row['brand'] ?></small><br>
                                 <small><?= $row['category'] ?></small><br>
+                                <small><?= $row['variation_name'] ?></small><br>
                                 <div class="d-flex align-items-center w-100 mb-1">
                                     <div class="input-group " style="width:8em">
                                         <div class="input-group-prepend">

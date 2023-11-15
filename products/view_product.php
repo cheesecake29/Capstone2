@@ -1,22 +1,29 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p inner join brand_list b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p
+        inner join brand_list b on p.brand_id = b.id
+        inner join categories c on p.category_id = c.id
+        -- left join product_variations v on p.id = v.product_id
+        where p.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         while ($row = $qry->fetch_assoc()) {
             foreach ($row as $k => $v) {
                 $$k = stripslashes($v);
             }
-
-          
-
-          
-
+            
+            
             $stocks = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$id'")->fetch_array()[0];
             $out = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
             $cart_item_count = $conn->query("SELECT SUM(quantity) FROM cart_list where product_id = '$id'")->fetch_array()[0];
             $stocks = $stocks > 0 ? $stocks : 0;
             $out = $out > 0 ? $out : 0;
-            $available = $stocks - $out;
+            $available1 = $stocks - $out;
+            $available = $available1 - $cart_item_count;
+
+            $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
+            while ($variation = $variations->fetch_array()) {
+                echo "<script>console.log('" . $variation['variation_name'] . "');</script>";
+            }
         }
     } else {
         echo "<script> alert('Unknown Product ID!'); location.replace('./?page=products');</script>";
@@ -181,42 +188,31 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
                         <small class="price">₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong></small>
 
-
-                       
-
-                        
-
                         <div class="info">
                             <small>Category:     <strong><?= isset($category) ? $category : '' ?></strong></small>
                            
                         </div>
-
-                      
-
                         <div class="info">
                         <small> Brand:     <strong><?= isset($brand) ? $brand : '' ?></strong></small>
                             
                         </div>
-
-                      
-                    
                         <div class="info">
-                            <small>Available Stocks:     <strong> <?= isset($available) ? number_format($available) : '' ?></strong></small>
-                           
+                            <small>Available Stocks:     <strong> <span id="available_stock"><strong><?= isset($available) ? number_format($available) : '' ?></span></strong></small><br>
+                            <small>Variations: </small> <br>
+                            <?php
+                                $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
+                                while ($variation = $variations->fetch_array()) {
+                                    echo "<label for='variation_{$variation['id']}'>
+                                        <input type='radio' name='variations' id='variation_{$variation['id']}' value='{$variation['variation_name']}' />
+                                        <small><span id='{$variation['id']}'>" . $variation['variation_name'] . "</span></small>
+                                    </label><br>";
+
+
+                                }
+                            ?>
+                            <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
                         </div>
                         <div class="ab">
-                        <!-- <?php if ($available > 0): ?>
-                            <div class="add-cart card-tools">
-                                <a href="javascript:void(0)" id="add_to_cart" class="cart">Add to Cart</a>
-                            </div>
-
-                          
-                        <?php else: ?>
-                            <div class="out-of-stock">
-                                <button class="btn btn-danger">Out of Stock</button>
-                            </div>
-                        <?php endif; ?> -->
-
                             <div class="add-cart card-tools" id="available">
                                 <a href="javascript:void(0)" id="add_to_cart" class="cart">Add to Cart</a>
                             </div>
@@ -224,18 +220,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <div class="out-of-stock" id="unavailable">
                                 <button class="btn btn-danger">Out of Stock</button>
                             </div>
-                    </div>
-
-                       
-                 
-                 
+                        </div>
                     </div> 
                 </div>
             </div>
         </div>
     </div>
-
-   
 </div>
 
   
@@ -256,13 +246,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         var isAvailable = (availability > 0 && cart_count < availability);
         var availableDiv = document.getElementById('available');
         var unavailableDiv = document.getElementById('unavailable');
+        var limitReached = document.getElementById('limit');
 
         if (isAvailable) {
             availableDiv.style.display = 'block';
             unavailableDiv.style.display = 'none';
+            limitReached.style.display = 'none';
         } else {
             availableDiv.style.display = 'none';
             unavailableDiv.style.display = 'block';
+            limitReached.style.display = 'block';
         }
     }
 
@@ -289,8 +282,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     function addToCart() {
         $('#add_to_cart').click(function(){
             if("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1){
-                console.log(availability);
-
+                availability--;
+                let avail_stock = availability - cart_count;
+                $('#available_stock').html(avail_stock);
                 if(availability > 0){
                     start_loader()
                     $.ajax({

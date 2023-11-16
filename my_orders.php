@@ -1,5 +1,5 @@
 <style>
-    .text-center{
+    .text-center {
         color: #004399;
     }
 </style>
@@ -30,37 +30,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                       
 
-                            <?php 
+
+                            <?php
                             $i = 1;
                             $orders = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' order by unix_timestamp(date_created) desc ");
-                            while($row = $orders->fetch_assoc()):
+                            while ($row = $orders->fetch_assoc()) :
                             ?>
                                 <tr>
                                     <td class="text-center"><?= $i++ ?></td>
                                     <td><?= date("Y-m-d H:i", strtotime($row['date_created'])) ?></td>
                                     <td><?= $row['ref_code'] ?></td>
-                                    <td class="text-right"><?= number_format($row['total_amount'],2) ?></td>
+                                    <td class="text-right"><?= number_format($row['total_amount'], 2) ?></td>
                                     <td class="text-center">
-                                        <?php if($row['status'] == 0): ?>
+                                        <?php if ($row['status'] == 0) : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">Pending</span>
 
-                                        <?php elseif($row['status'] == 1): ?>
+                                        <?php elseif ($row['status'] == 1) : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">Confirmed</span>
 
-                                        <?php elseif($row['status'] == 2): ?>
+                                        <?php elseif ($row['status'] == 2) : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">Packed</span>
-                                        <?php elseif($row['status'] == 3): ?>
+                                        <?php elseif ($row['status'] == 3) : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">For Delivery</span>
 
-                                        <?php elseif($row['status'] == 4): ?>
+                                        <?php elseif ($row['status'] == 4) : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">On the Way</span>
 
-                                        <?php elseif($row['status'] == 5): ?>
+                                        <?php elseif ($row['status'] == 5) : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">Delivered</span>
 
-                                        <?php else: ?>
+                                        <?php else : ?>
                                             <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">Cancelled</span>
 
                                         <?php endif; ?>
@@ -78,13 +78,13 @@
     </div>
 </div>
 <script>
-    $(function(){
-        $('.view_data').click(function(){
-            uni_modal("Order Details","view_order.php?id="+$(this).attr('data-id'),"large")
+    $(function() {
+        $('.view_data').click(function() {
+            uni_modal("Order Details", "view_order.php?id=" + $(this).attr('data-id'), "large")
         })
 
         $('.table th, .table td').addClass("align-middle px-2 py-1")
-		$('.table').dataTable();
-		$('.table').dataTable();
+        $('.table').dataTable();
+        $('.table').dataTable();
     })
 </script>

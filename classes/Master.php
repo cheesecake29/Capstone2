@@ -605,14 +605,15 @@ class Master extends DBConnection
 		}
 		return json_encode($resp);
 	}
+
 	function save_to_cart()
 	{
 		$_POST['client_id'] = $this->settings->userdata('id');
 		extract($_POST);
 
-		$check = $this->conn->query("SELECT * FROM `cart_list` where client_id = '{$client_id}' and product_id = '{$product_id}'")->num_rows;
+		$check = $this->conn->query("SELECT * FROM `cart_list` where client_id = '{$client_id}' and product_id = '{$product_id}' and variation_id = '{$variation_id}'")->num_rows;
 		if ($check > 0) {
-			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}' and client_id = '{$client_id}'";
+			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}' and client_id = '{$client_id}' and variation_id = '{$variation_id}''";
 		} else {
 			$sql = "INSERT INTO `cart_list` set quantity = quantity + {$quantity}, product_id = '{$product_id}', client_id = '{$client_id}', variation_id = '{$variation_id}'";
 		}
@@ -635,29 +636,38 @@ class Master extends DBConnection
 		extract($_POST);
 		$get = $this->conn->query("SELECT * FROM `cart_list` where id = '{$cart_id}'")->fetch_array();
 		$pid = $get['product_id'];
-		$stocks = $this->conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$pid'")->fetch_array()[0];
-		$out = $this->conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$pid}'
-			and order_id in (SELECT id FROM order_list where `status` != 5) ")->fetch_array()[0];
-		$stocks = $stocks > 0 ? $stocks : 0;
-		$out = $out > 0 ? $out : 0;
-		$available = $stocks - $out;
-		if ($available < 1) {
+		$selectedQuantity = eval("return " . $get['quantity'] . " " . $quantity . ";");
+		$getVariationQuantity = $this->conn->query("SELECT variation_stock FROM `product_variations` where product_id = '{$pid}' and id = '{$variation_id}'")->fetch_array()[0];
+		// check variation first
+		if ($selectedQuantity > (int)$getVariationQuantity) {
 			$resp['status'] = 'failed';
-			$resp['msg'] = "{$stocks} - {$out} Product doesn't have stock available.";
-			$save = $this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
-		} elseif (eval("return " . $get['quantity'] . " " . $quantity . ";") < 1 && $available > 0) {
-			$resp['status'] = 'failed';
-			$save = $this->conn->query("UPDATE cart_list set quantity = '1' where id = '{$cart_id}'");
-			$resp['msg'] = " You are at the lowest quantity.";
-		} elseif (eval("return " . $get['quantity'] . " " . $quantity . ";") > $available) {
-			$resp['status'] = 'failed';
-			$save = $this->conn->query("UPDATE cart_list set quantity = '{$available}' where id = '{$cart_id}'");
-			$resp['msg'] = " Product has only [{$available}] available stock";
+			$resp['msg'] = " Product variation has only $getVariationQuantity available stock";
+			return json_encode($resp);
 		} else {
-			$resp['status'] = 'success';
-			$save = $this->conn->query("UPDATE cart_list set quantity = quantity {$quantity} where id = '{$cart_id}'");
+			$stocks = $this->conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$pid'")->fetch_array()[0];
+			$out = $this->conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$pid}'and id = '{$variation_id}'
+				and order_id in (SELECT id FROM order_list where `status` != 5) ")->fetch_array()[0];
+			$stocks = $stocks > 0 ? $stocks : 0;
+			$out = $out > 0 ? $out : 0;
+			$available = $stocks - $out;
+			if ($available < 1) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = "{$stocks} - {$out} Product doesn't have stock available.";
+				$save = $this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
+			} elseif ($selectedQuantity < 1 && $available > 0) {
+				$resp['status'] = 'failed';
+				$save = $this->conn->query("UPDATE cart_list set quantity = '1' where id = '{$cart_id}'");
+				$resp['msg'] = " You are at the lowest quantity.";
+			} elseif ($selectedQuantity > $available) {
+				$resp['status'] = 'failed';
+				$save = $this->conn->query("UPDATE cart_list set quantity = '{$available}' where id = '{$cart_id}'");
+				$resp['msg'] = " Product has only [{$available}] available stock";
+			} else {
+				$resp['status'] = 'success';
+				$save = $this->conn->query("UPDATE cart_list set quantity = quantity {$quantity} where id = '{$cart_id}'");
+			}
+			return json_encode($resp);
 		}
-		return json_encode($resp);
 	}
 	function remove_from_cart()
 	{
@@ -688,35 +698,55 @@ class Master extends DBConnection
 			} else {
 				break;
 			}
-		} 
-		$ref_code = $pref.$code;
-		$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`, `province`, `city`, `zipcode`, `order_type`, `pickup`)
-			VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$province}','{$city}','{$zipcode}','{$order_type}','{$pickup}')";
+		}
+		$ref_code = $pref . $code;
+		$other_address = '';
+		$withShippingFee = false;
+		switch ((int)$order_type) {
+			case 1: // JRS
+				$withShippingFee = true;
+				$other_address = '';
+				break;
+			case 1: // Lalamove
+				$withShippingFee = false;
+				$other_address = '';
+				break;
+			case 3: // Pick Up
+				$withShippingFee = false;
+				$other_address = $pickup;
+				break;
+			case 4: // Meet Up
+				$withShippingFee = false;
+				$other_address = $othermu;
+				break;
+		}
+		$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`, `province`, `city`, `zipcode`, `order_type`, `other_address`)
+			VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$province}','{$city}','{$zipcode}','{$order_type}', '{$other_address}')";
 		$save = $this->conn->query($sql1);
 		if ($save) {
 			$oid = $this->conn->insert_id;
 			$data = "";
 			$total_amount = 0;
-			$sf = $this->conn->query("INSERT INTO `shipping_fee`(`order_id`, `amount`) VALUES ('{$oid}', '{$shipping_amount}')");
-			$cart = $this->conn->query("SELECT c.*,p.price FROM cart_list c inner join product_list p on c.product_id = p.id where c.client_id = '{$client_id}'");
+			if ($withShippingFee) {
+				$this->conn->query("INSERT INTO `shipping_fee`(`order_id`, `amount`) VALUES ('{$oid}', '{$shipping_amount}')");
+			}
+			$cart = $this->conn->query("SELECT c.*, p.price FROM cart_list c inner join product_list p on c.product_id = p.id where c.client_id = '{$client_id}'");
 			while ($row = $cart->fetch_assoc()) {
 				if (!empty($data)) $data .= ", ";
-				$data .= "('{$oid}','{$row['product_id']}','{$row['quantity']}')";
+				$data .= "('{$oid}','{$row['product_id']}','{$row['quantity']}', '{$row['variation_id']}')";
 				$total_amount += ($row['price'] * $row['quantity']);
 			}
 			if (!empty($data)) {
-				$sql2 = "INSERT INTO `order_items` (`order_id`,`product_id`,`quantity`) VALUES {$data}";
+				$sql2 = "INSERT INTO `order_items` (`order_id`,`product_id`,`quantity`, `variation_id`) VALUES {$data}";
 				$save2 = $this->conn->query($sql2);
 				if ($save2) {
 					$resp['status'] = 'success';
 					$this->conn->query("DELETE FROM `cart_list` where client_id = '{$client_id}'");
 					$this->conn->query("UPDATE `order_list` set total_amount = '{$total_amount}' where id = '{$oid}'");
 					//Notification
-
 					$fullname = $this->settings->userdata('firstname') . ' ' . $this->settings->userdata('lastname');
 					$desc = "{$fullname} ' ' has placed an order.";
-					$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2, `order_id`='{$oid}'");
-
+					$this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2, `order_id`='{$oid}'");
 					$resp['msg'] = " Order has been place successfully.";
 				} else {
 					$resp['status'] = 'failed';

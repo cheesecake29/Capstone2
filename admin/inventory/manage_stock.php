@@ -29,7 +29,9 @@ $defaultVariation = $qryDefaultVariations->fetch_assoc();
 					$product = $conn->query("SELECT p.*,b.name as brand from `product_list` p inner join brand_list b on p.brand_id = b.id where p.delete_flag = 0 " . (isset($product_id) ? " or p.id = '{$product_id}'" : "") . " order by (p.`name`) asc ");
 					while ($row = $product->fetch_assoc()) :
 					?>
-						<option value="<?= $row['id'] ?>" <?= isset($product_id) && $product_id == 1 ? "selected" : "" ?>><?= $row['brand'] . ' - ' . $row['name'] ?> <?= $row['status'] == 0 ? "<small>(Inactive)</small>" : "" ?> <?= $row['delete_flag'] == 1 ? "<small>(Deleted)</small>" : "" ?></option>
+						<option value="<?= $row['id'] ?>" <?= isset($product_id) && $product_id == 1 ? "selected" : "" ?>>
+							<?= $row['brand'] . ' - ' . $row['name'] ?> <?= $row['status'] == 0 ? "<small>(Inactive)</small>" : "" ?> <?= $row['delete_flag'] == 1 ? "<small>(Deleted)</small>" : "" ?>
+						</option>
 					<?php endwhile; ?>
 				</select>
 			</div>

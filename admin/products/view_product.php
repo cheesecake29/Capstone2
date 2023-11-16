@@ -36,7 +36,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         </div>
         <div class="card-body">
             <div class="d-flex">
-                <div class="product-image-container">
+                <div class="product-image-container text-center w-100">
                     <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
                 </div>
                 <div class="flex-grow-1">
@@ -67,9 +67,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         </div>
                     </div>
                     <div class="product-info">
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-start">
                             <p class="text-right w-25 text-muted">Description</p>
-                            <div class="pl-4"><?= isset($description) ? html_entity_decode($description) : '' ?></div>
+                            <div class="pl-4 pl-4 w-50 text-justify"><?= isset($description) ? html_entity_decode($description) : '' ?></div>
                         </div>
                     </div>
                 </div>

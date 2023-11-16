@@ -86,6 +86,59 @@ if($order->num_rows > 0){
                         <?php endif; ?>
                     </div>
                 </div>
+                <div class="col-md-6">
+                        <?php
+                            //get province name
+                            $api_url = 'https://ph-locations-api.buonzz.com/v1/provinces';
+                            $response = file_get_contents($api_url);
+
+                            $provinces = json_decode($response, true);
+
+                            $provinceCode = $province;
+
+                            $provinceName = null;
+
+                            foreach ($provinces['data'] as $province) {
+                                if ($province['id'] === $provinceCode) {
+                                    $provinceName = $province['name'];
+                                    break; 
+                                }
+                            }
+
+                            //get city name
+                            $api_url2 = 'https://ph-locations-api.buonzz.com/v1/cities';
+                            $response2 = file_get_contents($api_url2);
+
+                            $cities = json_decode($response2, true);
+
+                            $cityCode = $city;
+
+                            $cityName = null;
+
+                            foreach ($cities['data'] as $city) {
+                                if ($city['id'] === $cityCode) {
+                                    $cityName = $city['name'];
+                                    break; 
+                                }
+                            }
+
+                            echo '<b><p>Customer Address: </p></b>';
+                            echo '<span id="prov">' . $cityName . ', ' . $provinceName . '</span>';
+                            echo '<b><p>Customer Number: </p></b>';
+                            echo '<span id="contact">' . $contact . '</span>';
+                            if($addressline1){
+                                echo '<b><p>Address Line 1: </p></b>';
+                                echo '<span id="adr1">' . $addressline1 . '</span>';
+                            }
+                            if($addressline2){
+                                echo '<b><p>Address Line 2: </p></b>';
+                                echo '<span id="adr2">' . $addressline2 . '</span>';
+                            }
+
+
+                        ?>
+
+                </div>
             </div>
             <div class="clear-fix my-2"></div>
             <div class="row">
@@ -94,16 +147,21 @@ if($order->num_rows > 0){
                         <?php 
                         $total = 0;
                         if(isset($id)):
-                        $order_item = $conn->query("SELECT o.*,p.name, p.price, p.image_path,b.name as brand, cc.category, v.variation_name, v.variation_stock,
-                        sf.amount, ol.order_type
-                        FROM `order_items` o
-                        inner join product_list p on o.product_id = p.id
-                        inner join brand_list b on p.brand_id = b.id
-                        inner join categories cc on p.category_id = cc.id
-                        inner join product_variations v on v.product_id = p.id
-                        inner join shipping_fee sf on sf.order_id = o.order_id
-                        inner join order_list ol on ol.id = o.order_id
-                        where o.order_id = '{$id}' order by p.name asc");
+                        $order_item = $conn->query("SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category,
+                            GROUP_CONCAT(v.variation_name) AS all_variations,
+                            GROUP_CONCAT(v.variation_stock) AS all_variation_stock,
+                            sf.amount, ol.order_type
+                            FROM `order_items` o
+                            INNER JOIN product_list p ON o.product_id = p.id
+                            INNER JOIN brand_list b ON p.brand_id = b.id
+                            INNER JOIN categories cc ON p.category_id = cc.id
+                            LEFT JOIN product_variations v ON v.product_id = p.id
+                            INNER JOIN shipping_fee sf ON sf.order_id = o.order_id
+                            INNER JOIN order_list ol ON ol.id = o.order_id
+                            WHERE o.order_id = '{$id}'
+                            GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, sf.amount, ol.order_type
+                            ORDER BY p.name ASC;
+                            ");
                         while($row = $order_item->fetch_assoc()):
                             $total += ($row['quantity'] * $row['price']);
                         ?>
@@ -119,7 +177,7 @@ if($order->num_rows > 0){
                                         </a>
                                         <small><?= $row['brand'] ?></small><br>
                                         <small><?= $row['category'] ?></small><br>
-                                        <small><?= $row['variation_name'] ?></small><br>
+                                        <small><?= $row['all_variations'] ?></small><br>
                                         <div class="d-flex align-items-center w-100 mb-1">
                                             <span><?= number_format($row['quantity']) ?></span>
                                             <span class="ml-2">X <?= number_format($row['price'],2) ?></span><br>

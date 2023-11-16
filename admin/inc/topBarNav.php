@@ -94,7 +94,7 @@
           </li>
         </ul>
         <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto align-items-center">
           <li class="notif dropdown">
           <?php
                         echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';

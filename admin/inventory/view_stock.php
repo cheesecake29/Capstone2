@@ -1,7 +1,7 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
     $qry = $conn->query("SELECT p.*, b.name as brand,c.category from `product_list` p inner join brand_list b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.id = '{$_GET['id']}' ");
-    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' ");
+    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' and default_flag = 0 ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -112,22 +112,24 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         </table>
                     </div>
                 </div>
-                <div class="d-flex flex-column">
-                    <table class="table table-bordered table-stripped">
-                        <thead>
-                            <tr>
-                                <th>Variation Name</th>
-                                <th>Available Stocks</th>
-                            </tr>
-                        </thead>
-                        <?php while ($row = $qryVariations->fetch_assoc()) :  ?>
-                            <tr>
-                                <td><?php echo $row['variation_name'] ?></td>
-                                <td><?php echo $row['variation_stock'] ?></td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </table>
-                </div>
+                <?php if ($qryVariations->num_rows > 0) : ?>
+                    <div class="d-flex flex-column">
+                        <table class="table table-bordered table-stripped">
+                            <thead>
+                                <tr>
+                                    <th>Variation Name</th>
+                                    <th>Available Stocks</th>
+                                </tr>
+                            </thead>
+                            <?php while ($row = $qryVariations->fetch_assoc()) :  ?>
+                                <tr>
+                                    <td><?php echo $row['variation_name'] ?></td>
+                                    <td><?php echo $row['variation_stock'] ?></td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

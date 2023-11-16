@@ -1,7 +1,7 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
     $qry = $conn->query("SELECT p.*, b.name as brand,c.category from `product_list` p inner join brand_list b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.id = '{$_GET['id']}' ");
-    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' ");
+    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' and default_flag = 0");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -19,7 +19,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="content py-3">
     <div class="card card-outline rounded-0 card-primary shadow">
-        <div class="d-flex justify-content-between align-items-center border-bottom p-3">
+        <div class="d-flex justify-content-between align-items-center align-items-center border-bottom p-3">
             <h4 class="card-title">Product Details</h4>
             <div class="card-tools">
                 <?php if (isset($status)) : ?>
@@ -35,45 +35,48 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             </div>
         </div>
         <div class="card-body">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
+            <div class="d-flex">
+                <div class="product-image-container">
+                    <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
+                </div>
+                <div class="flex-grow-1">
+                    <div class="product-info">
+                        <div class="d-flex align-items-center">
+                            <p class="text-right m-0 w-25 text-muted">Brand Name</p>
+                            <div class="pl-4"><?= isset($brand) ? $brand : '' ?></div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <p class="text-right m-0 w-25 text-muted">Category</p>
+                            <div class="pl-4"><?= isset($category) ? $category : '' ?></div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="d-flex align-items-center">
+                            <p class="text-right m-0 w-25 text-muted">Compatible Models</p>
+                            <div class="pl-4"><?= isset($models) ? $models : '' ?></div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="d-flex align-items-center">
+                            <p class="text-right m-0 w-25 text-muted">Name</p>
+                            <div class="pl-4"><?= isset($name) ? $name : '' ?></div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <p class="text-right m-0 w-25 text-muted">Price</p>
+                            <div class="pl-4"><?= isset($price) ? number_format($price, 2) : '' ?></div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <div class="d-flex align-items-center">
+                            <p class="text-right w-25 text-muted">Description</p>
+                            <div class="pl-4"><?= isset($description) ? html_entity_decode($description) : '' ?></div>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <small class="mx-2 text-muted">Brand Name</small>
-                        <div class="pl-4"><?= isset($brand) ? $brand : '' ?></div>
-                    </div>
-                    <div class="col-md-6">
-                        <small class="mx-2 text-muted">Category</small>
-                        <div class="pl-4"><?= isset($category) ? $category : '' ?></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <small class="mx-2 text-muted">Compatible Models</small>
-                        <div class="pl-4"><?= isset($models) ? $models : '' ?></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <small class="mx-2 text-muted">Name</small>
-                        <div class="pl-4"><?= isset($name) ? $name : '' ?></div>
-                    </div>
-                    <div class="col-md-6">
-                        <small class="mx-2 text-muted">Price</small>
-                        <div class="pl-4"><?= isset($price) ? number_format($price, 2) : '' ?></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <small class="mx-2 text-muted">Description</small>
-                        <div class="pl-4"><?= isset($description) ? html_entity_decode($description) : '' ?></div>
-                    </div>
-                </div>
-                <div class="d-flex flex-column">
+            </div>
+
+            <?php if ($qryVariations->num_rows > 0) : ?>
+                <div class="d-flex flex-column my-4">
                     <table class="table table-bordered table-stripped">
                         <thead>
                             <tr>
@@ -97,7 +100,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <?php endwhile; ?>
                     </table>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

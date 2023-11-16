@@ -10,8 +10,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		}
 	}
 }
+$qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' and default_flag = 0 ");
+$qryDefaultVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' and default_flag = 1 limit 1");
+$defaultVariation = $qryDefaultVariations->fetch_assoc();
 ?>
 <div class="container-fluid">
+	<!-- TEST <?php echo json_encode($defaultVariation); ?> -->
 	<form action="" id="stock-form">
 		<input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
 		<?php if (isset($product_id)) : ?>
@@ -32,10 +36,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		<?php endif; ?>
 		<div class="form-group">
 			<label for="quantity" class="control-label">Variation</label>
-			<select name="variation_id" id="variation_id" class="custom-select select 2" onchange="getSelectedValue()">
+			<select name="variation_id" id="variation_id" class="custom-select select 2" onchange="getSelectedValue()" required>
 				<option selected disabled>Select Variation</option>
 				<?php
-				$qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' ");
 				while ($variationItem = $qryVariations->fetch_assoc()) :
 				?>
 					<option id="<?php echo $variationItem['variation_stock'] ?>" value="<?= $variationItem['id'] ?>"><?php echo $variationItem['variation_name'] ?></option>

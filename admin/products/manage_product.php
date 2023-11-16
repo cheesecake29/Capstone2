@@ -2,7 +2,7 @@
 $qryVariations = false;
 if (isset($_GET['id']) && $_GET['id'] > 0) {
 	$qry = $conn->query("SELECT * from `product_list` where id = '{$_GET['id']}' ");
-	$qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' ");
+	$qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$_GET['id']}' and default_flag = 0 ");
 	if ($qry->num_rows > 0) {
 		foreach ($qry->fetch_assoc() as $k => $v) {
 			$$k = stripslashes($v);

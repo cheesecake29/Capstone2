@@ -14,7 +14,7 @@
       </script>
     <?php endif;?>
       <!-- Content Wrapper. Contains page content -->
-      <div class="content-wrapper pt-3" style="min-height: 567.854px;">
+      <div class="content-wrapper pt-5" style="min-height: 567.854px;">
       
         <!-- Main content -->
         <section class="content">

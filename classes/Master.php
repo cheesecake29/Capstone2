@@ -294,6 +294,10 @@ class Master extends DBConnection
 					}
 				}
 				return $totalStocks;
+			} else {
+				$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`, `delete_flag`, `default_flag`) VALUES ('{$product_id}', 'default', 0, 0, 1) ";
+				$conn->query($sqlProductVariationInsert);
+				return 0;
 			}
 		}
 		if (empty($id)) {
@@ -422,14 +426,24 @@ class Master extends DBConnection
 			}
 		}
 		if (empty($id)) {
-			$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where id = '{$_POST['variation_id']}' ";
-			$this->conn->query($sqlInventoryUpdate);
+			if (isset($_POST['variation_id'])) {
+				$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where id = '{$_POST['variation_id']}' ";
+				$this->conn->query($sqlInventoryUpdate);
+			} else {
+				$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where default_flag = 1 ";
+				$this->conn->query($sqlInventoryUpdate);
+			}
 			$productVariationsTotalQuantity = $this->conn->query("SELECT SUM(`variation_stock`) as totalQuantity FROM `product_variations` where product_id = '{$_POST['product_id']}'");
 			$sql = "INSERT INTO `stock_list` (`product_id`, `quantity`) VALUES ('{$_POST['product_id']}', '{$productVariationsTotalQuantity->fetch_assoc()['totalQuantity']}') ";
 			$save = $this->conn->query($sql);
 		} else {
-			$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where id = '{$_POST['variation_id']}' ";
-			$this->conn->query($sqlInventoryUpdate);
+			if (isset($_POST['variation_id'])) {
+				$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where id = '{$_POST['variation_id']}' ";
+				$this->conn->query($sqlInventoryUpdate);
+			} else {
+				$sqlInventoryUpdate = "UPDATE `product_variations` set `variation_stock` = '{$_POST['quantity']}' where default_flag = 1 ";
+				$this->conn->query($sqlInventoryUpdate);
+			}
 			$productVariationsTotalQuantity = $this->conn->query("SELECT SUM(`variation_stock`) as totalQuantity FROM `product_variations` where product_id = '{$_POST['product_id']}'");
 			$sql = "UPDATE `stock_list` set `quantity` = '{$$productVariationsTotalQuantity->fetch_assoc()['totalQuantity']}' where id = '{$id}' ";
 			$save = $this->conn->query($sql);

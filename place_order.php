@@ -410,7 +410,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     option.value = city['id'];
                                     option.text = city['name'];
                                     citiesDropdown.appendChild(option);
-                                    fetchSelectedCity();
+                                    //fetchSelectedCity();
                                 });
                             } else {
                                 var option = document.createElement('option');

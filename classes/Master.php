@@ -614,7 +614,7 @@ class Master extends DBConnection
 		if ($check > 0) {
 			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}' and client_id = '{$client_id}'";
 		} else {
-			$sql = "INSERT INTO `cart_list` set quantity = quantity + {$quantity}, product_id = '{$product_id}', client_id = '{$client_id}'";
+			$sql = "INSERT INTO `cart_list` set quantity = quantity + {$quantity}, product_id = '{$product_id}', client_id = '{$client_id}', variation_id = '{$variation_id}'";
 		}
 		$save = $this->conn->query($sql);
 		if ($save) {
@@ -636,13 +636,14 @@ class Master extends DBConnection
 		$get = $this->conn->query("SELECT * FROM `cart_list` where id = '{$cart_id}'")->fetch_array();
 		$pid = $get['product_id'];
 		$stocks = $this->conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$pid'")->fetch_array()[0];
-		$out = $this->conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$pid}' and order_id in (SELECT id FROM order_list where `status` != 5) ")->fetch_array()[0];
+		$out = $this->conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$pid}'
+			and order_id in (SELECT id FROM order_list where `status` != 5) ")->fetch_array()[0];
 		$stocks = $stocks > 0 ? $stocks : 0;
 		$out = $out > 0 ? $out : 0;
 		$available = $stocks - $out;
 		if ($available < 1) {
 			$resp['status'] = 'failed';
-			$resp['msg'] = " Product doesn't have stock available.";
+			$resp['msg'] = "{$stocks} - {$out} Product doesn't have stock available.";
 			$save = $this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
 		} elseif (eval("return " . $get['quantity'] . " " . $quantity . ";") < 1 && $available > 0) {
 			$resp['status'] = 'failed';
@@ -687,14 +688,16 @@ class Master extends DBConnection
 			} else {
 				break;
 			}
-		}
-		$ref_code = $pref . $code;
-		$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`) VALUES ('{$ref_code}','{$client_id}','{$addressline1}')";
+		} 
+		$ref_code = $pref.$code;
+		$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`, `province`, `city`, `zipcode`, `order_type`, `pickup`)
+			VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$province}','{$city}','{$zipcode}','{$order_type}','{$pickup}')";
 		$save = $this->conn->query($sql1);
 		if ($save) {
 			$oid = $this->conn->insert_id;
 			$data = "";
 			$total_amount = 0;
+			$sf = $this->conn->query("INSERT INTO `shipping_fee`(`order_id`, `amount`) VALUES ('{$oid}', '{$shipping_amount}')");
 			$cart = $this->conn->query("SELECT c.*,p.price FROM cart_list c inner join product_list p on c.product_id = p.id where c.client_id = '{$client_id}'");
 			while ($row = $cart->fetch_assoc()) {
 				if (!empty($data)) $data .= ", ";

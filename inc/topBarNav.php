@@ -314,7 +314,7 @@
 
                                 echo '</a>';
 
-                                $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}'";
+                                $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}' ORDER BY id DESC";
                                 $result = $conn->query($sql);
 
                                 if ($result->num_rows > 0) {
@@ -372,7 +372,7 @@
                                 <i class="fas fa-shopping-cart"></i> 
                                 <?php
                                     if ($cart_count !== 0) {
-                                        echo '<span
+                                        echo '<span id="cart_count"
                                         class="badge bg-danger"
                                         style="width: 30px;
                                         height: 30px;

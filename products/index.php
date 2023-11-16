@@ -189,7 +189,8 @@ $where = "";
 
                     while ($row = $products->fetch_assoc()) :
                         $row['stocks'] = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$row['id']}'")->fetch_array()[0];
-
+                        $row['out'] = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$row['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
+           
                         // Check if 'out' key exists in the $row array before using it
                         if (array_key_exists('out', $row)) {
                             $row['available'] = $row['stocks'] - $row['out'];

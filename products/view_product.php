@@ -1,21 +1,30 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p inner join brand_list b on p.brand_id = b.id inner join categories c on p.category_id = c.id where p.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p
+        inner join brand_list b on p.brand_id = b.id
+        inner join categories c on p.category_id = c.id
+        -- left join product_variations v on p.id = v.product_id
+        where p.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         while ($row = $qry->fetch_assoc()) {
             foreach ($row as $k => $v) {
                 $$k = stripslashes($v);
             }
-
-          
-
-          
-
+            
+            
             $stocks = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '$id'")->fetch_array()[0];
             $out = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
+            $cart_item_count = $conn->query("SELECT SUM(quantity) FROM cart_list where product_id = '$id'")->fetch_array()[0];
             $stocks = $stocks > 0 ? $stocks : 0;
             $out = $out > 0 ? $out : 0;
-            $available = $stocks - $out;
+            $available1 = $stocks - $out;
+            $available = $available1 - $cart_item_count;
+
+            $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
+            while ($variation = $variations->fetch_array()) {
+                echo "<script>console.log('" . $variation['variation_name'] . "');</script>";
+                echo "<script>console.log('" . $variation['id'] . "');</script>";
+            }
         }
     } else {
         echo "<script> alert('Unknown Product ID!'); location.replace('./?page=products');</script>";
@@ -82,7 +91,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     }
 
     .ab{
-        display:flex;
         flex-direction: row;
 
        
@@ -104,8 +112,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .add-cart a {
     text-align: center;
     color: white;
-    display: block;
-    margin: 0 auto; /* This centers the link horizontally */
 }
 
 
@@ -137,6 +143,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
        justify-content: center;
        align-items: center;
     }
+
+    button[disabled] {
+  opacity: 0.6; /* Reduce opacity to indicate it's disabled */
+  cursor: not-allowed; /* Change cursor to indicate non-interactivity */
+  /* Optionally, you can add other styles like changing background color, text color, etc. */
+}
 
 </style>
 <div class="content ">
@@ -180,102 +192,161 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
                         <small class="price">₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong></small>
 
-
-                       
-
-                        
-
                         <div class="info">
                             <small>Category:     <strong><?= isset($category) ? $category : '' ?></strong></small>
                            
                         </div>
-
-                      
-
                         <div class="info">
                         <small> Brand:     <strong><?= isset($brand) ? $brand : '' ?></strong></small>
                             
                         </div>
-
-                      
-                    
                         <div class="info">
-                            <small>Available Stocks:     <strong> <?= isset($available) ? number_format($available) : '' ?></strong></small>
-                           
-                        </div>
-                        <div class="ab">
-                        <?php if ($available > 0): ?>
-                            <div class="add-cart card-tools">
-                                <a href="javascript:void(0)" id="add_to_cart" class="cart">Add to Cart</a>
-                            </div>
+                            <small>Total Available Stocks:     <strong> <span id="available_stock"><strong><?= isset($available) ? number_format($available) : '' ?></span></strong></small><br>
+                            <small>Variations: </small> <br>
+                            <?php
+                                $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id'");
+                                $variationId = 0;
+                                while ($variation = $variations->fetch_array()) {
+                                    echo "<label for='variation_{$variation['id']}'>
+                                    <input type='radio' name='variations' id='variation_{$variation['id']}' value='{$variation['variation_name']}'
+                                    onclick='handleVariationSelect(this)'/>
+                                    <small><span id='stock_{$variation['id']}'>" . $variation['variation_name'] . "
+                                    (Stock: <span id='variation_stock_{$variation['id']}'>{$variation['variation_stock']}</span>)</span></small></label><br>";
 
-                          
-                        <?php else: ?>
-                            <div class="out-of-stock">
+                                
+                                $variationId = $variation['id']; 
+                                
+                            }
+                                
+                                echo '<span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>';
+                                echo '</div>'; 
+                                echo '<div class="ab">';
+                                echo '<div id="available">';
+                                echo "<button id='add_to_cart' class='cart add-cart card-tools' onclick='addToCart($variationId)' disabled>Add to Cart</button>";
+                                echo '</div>';
+                                
+
+
+                            ?>
+                            <div class="out-of-stock" id="unavailable">
                                 <button class="btn btn-danger">Out of Stock</button>
                             </div>
-                        <?php endif; ?>
-                    </div>
-
-                       
-                 
-                 
+                        </div>
                     </div> 
                 </div>
             </div>
         </div>
     </div>
-
-   
 </div>
 
   
        
 
     <script>
+        $(document).ready(function(){
+            fetch();
+            let availability = 0;
+            let cart_count = 0;
+        });
+    function handleVariationSelect(variation) {
+        if (variation.checked) {
+            // Do something when the radio button is clicked and checked
+            console.log(`Selected value: ${variation.value}`);
+            $('#add_to_cart').removeAttr("disabled");
 
-    $(function () {
-    $('#add_to_cart').click(function () {
-        addToCart();
-    });
-
-    $('#buy_now').click(function () {
-        buyNow();
-    });
-
-    function addToCart() {
-        $('#add_to_cart').click(function(){
-            if("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1){
-                if('<?= $available > 0 ?>' == 1){
-                    start_loader()
-                    $.ajax({
-                        url:_base_url_+"classes/Master.php?f=save_to_cart",
-                        method:'POST',
-                        data:{product_id: '<?= isset($id) ? $id : "" ?>',quantity:1},
-                        dataType:'json',
-                        error:err=>{
-                            console.error(err)
-                            alert_toast("An error occured","error")
-                            end_loader();
-                        },
-                        success:function(resp){
-                            if(resp.status =='success'){
-                                update_cart_count(resp.cart_count);
-                                alert_toast(" Product has been added to cart.",'success')
-                            }else if(!!resp.msg){
-                                alert_toast(resp.msg,'error')
-                            }else{
-                                alert_toast("An error occured","error")
-                            }
-                            end_loader();
-                        }
-                    })
-                }
-            }else{
-                alert_toast(" Please Login First!",'warning')
-            }
-        })
+        }
     }
+
+    function addToCart(variationId) {
+        if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
+            availability--;
+            let avail_stock = availability - cart_count;
+            $('#available_stock').html(avail_stock);
+            console.log(variationId);
+            
+            if (availability > 0) {
+                start_loader();
+                $.ajax({
+                    url: _base_url_ + "classes/Master.php?f=save_to_cart",
+                    method: 'POST',
+                    data: {
+                        product_id: '<?= isset($id) ? $id : "" ?>',
+                        variation_id: variationId,
+                        quantity: 1
+                    },
+                    dataType: 'json',
+                    error: err => {
+                        console.error(err);
+                        alert_toast("An error occurred", "error");
+                        end_loader();
+                    },
+                    success: function (resp) {
+                        if (resp.status == 'success') {
+                            update_cart_count(resp.cart_count);
+                            fetch();
+                            alert_toast("Product has been added to cart.", 'success');
+                        } else if (!!resp.msg) {
+                            alert_toast(resp.msg, 'error');
+                        } else {
+                            alert_toast("An error occurred", "error");
+                        }
+                        end_loader();
+                    }
+                });
+            } else {
+                alert_toast("You have reached the maximum limit for this item", "error");
+            }
+        } else {
+            alert_toast("Please Login First!", 'warning');
+        }
+}
+
+
+
+    function initialize(){
+        console.log("available:", availability );
+        console.log("cart_count:", cart_count );
+        var isAvailable = (availability > 0 && cart_count < availability);
+        var availableDiv = document.getElementById('available');
+        var unavailableDiv = document.getElementById('unavailable');
+        var limitReached = document.getElementById('limit');
+
+        if (isAvailable) {
+            availableDiv.style.display = 'block';
+            unavailableDiv.style.display = 'none';
+            limitReached.style.display = 'none';
+        } else {
+            availableDiv.style.display = 'none';
+            unavailableDiv.style.display = 'block';
+            limitReached.style.display = 'block';
+        }
+    }
+
+    function fetch(){
+        $.ajax({
+            url: _base_url_+"products/fetch_products.php",
+            method: 'GET',
+            data:{id: '<?= isset($id) ? $id : "" ?>'},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                availability = data.available;
+                cart_count = data.cart_count;
+                initialize();
+            },
+            error: err => {
+                console.log(err);
+                alert_toast("An error occurred", "error");
+            },
+        });
+
+    }
+
+
+
+
+    
+
 
     function buyNow() {
         if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
@@ -311,7 +382,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             alert_toast("Please Login First!", 'warning');
         }
     }
-});
 
     
     </script>

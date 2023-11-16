@@ -94,7 +94,16 @@ if($order->num_rows > 0){
                         <?php 
                         $total = 0;
                         if(isset($id)):
-                        $order_item = $conn->query("SELECT o.*,p.name, p.price, p.image_path,b.name as brand, cc.category FROM `order_items` o inner join product_list p on o.product_id = p.id inner join brand_list b on p.brand_id = b.id inner join categories cc on p.category_id = cc.id where o.order_id = '{$id}' order by p.name asc");
+                        $order_item = $conn->query("SELECT o.*,p.name, p.price, p.image_path,b.name as brand, cc.category, v.variation_name, v.variation_stock,
+                        sf.amount, ol.order_type
+                        FROM `order_items` o
+                        inner join product_list p on o.product_id = p.id
+                        inner join brand_list b on p.brand_id = b.id
+                        inner join categories cc on p.category_id = cc.id
+                        inner join product_variations v on v.product_id = p.id
+                        inner join shipping_fee sf on sf.order_id = o.order_id
+                        inner join order_list ol on ol.id = o.order_id
+                        where o.order_id = '{$id}' order by p.name asc");
                         while($row = $order_item->fetch_assoc()):
                             $total += ($row['quantity'] * $row['price']);
                         ?>
@@ -110,17 +119,30 @@ if($order->num_rows > 0){
                                         </a>
                                         <small><?= $row['brand'] ?></small><br>
                                         <small><?= $row['category'] ?></small><br>
+                                        <small><?= $row['variation_name'] ?></small><br>
                                         <div class="d-flex align-items-center w-100 mb-1">
                                             <span><?= number_format($row['quantity']) ?></span>
-                                            <span class="ml-2">X <?= number_format($row['price'],2) ?></span>
+                                            <span class="ml-2">X <?= number_format($row['price'],2) ?></span><br>
                                         </div>
+                                        
+                                        <span class="ml-2">Shipping Fee <?= number_format($row['amount'],2) ?></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-auto text-right">
-                                <h3><b><?= number_format($row['quantity'] * $row['price'],2) ?></b></h3>
+                                
+                                <h3><b><?= number_format($row['quantity'] * $row['price'] ,2) ?></b></h3>
                             </div>
                         </div>
+                        
+                        <?php
+                                if($row['order_type'] == 1){
+                                    $total_amount = $total + $row['amount'];
+
+                                }else{
+                                    $total_amount = $total;
+                                }
+                                ?>
                         <?php 
                             endwhile; 
                             endif;
@@ -137,7 +159,7 @@ if($order->num_rows > 0){
                                     <h3 class="text-center">TOTAL</h3>
                             </div>
                             <div class="col-auto text-right">
-                                <h3><b><?= number_format($total,2) ?></b></h3>
+                                <h3><b><?= number_format($total_amount,2) ?></b></h3>
                             </div>
                         </div>
                     </div>

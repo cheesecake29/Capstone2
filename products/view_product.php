@@ -1,10 +1,13 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
+    $result = $conn->query("SELECT * from product_image_gallery where product_id = '".$_GET['id']."' AND is_deleted = 0");
+   
     $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p
         inner join brand_list b on p.brand_id = b.id
         inner join categories c on p.category_id = c.id
         -- left join product_variations v on p.id = v.product_id
         where p.id = '{$_GET['id']}'");
+
     if ($qry->num_rows > 0) {
         while ($row = $qry->fetch_assoc()) {
             foreach ($row as $k => $v) {
@@ -134,16 +137,70 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         /* Change cursor to indicate non-interactivity */
         /* Optionally, you can add other styles like changing background color, text color, etc. */
     }
+    .gallery-item img {
+        height: 119px;
+        object-fit: cover;
+        width: 100%;
+    }
+    .gallery {
+        display: grid;
+        grid-auto-columns: auto;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .gallery-item {
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    #lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    #lightbox img {
+        display: block;
+        margin: 50px auto;
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    #lightbox .close {
+        color: #fff;
+        font-size: 30px;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+    }
 </style>
 <div class="content ">
     <div class="containerr">
-        <div class="d-flex">
-            <div class="left-container px-5">
+        <div class="row">
+            <div class="left-container px-5 col-md-4">
                 <div class="image text-center">
                     <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
                 </div>
+                <div class="gallery">
+                    <?php
+                         while ($row = $result->fetch_assoc()) {
+                            echo '<div class="gallery-item" data-image="' . $row['image_url'] . '">
+                                      <img src="' . $row['image_url'] . '" alt="Gallery Image">
+                                  </div>';
+                        }
+                    ?>
+                </div>
+                <div id="lightbox">
+                    <span class="close">&times;</span>
+                    <img id="lightbox-image" src="" alt="Lightbox Image">
+                </div>
             </div>
-            <div class="right-container px-5 flex-grow-1">
+            <div class="right-container px-5 flex-grow-1 col-md-8">
                 <div class="info">
                     <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> </h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
@@ -358,4 +415,17 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             alert_toast("Please Login First!", 'warning');
         }
     }
+    $(document).ready(function () {
+    // Open lightbox on image click
+    $('.gallery-item').on('click', function () {
+        var imagePath = $(this).data('image');
+        $('#lightbox-image').attr('src', imagePath);
+        $('#lightbox').fadeIn();
+    });
+
+    // Close lightbox on close button click or outside click
+    $('#lightbox, .close').on('click', function () {
+        $('#lightbox').fadeOut();
+    });
+});
 </script>

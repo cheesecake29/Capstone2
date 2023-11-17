@@ -35,8 +35,13 @@ if($order->num_rows > 0){
         object-fit:scale-down;
         object-position: center center;
     }
+    @media print {
+      .print-btn {
+        display: none !important;
+      }
+    }
 </style>
-<div class="container-fluid">
+<div class="container-fluid" id="orderDetailsContainer">
 
     <div class="row">
         <div class="col-md-6">
@@ -90,13 +95,13 @@ if($order->num_rows > 0){
                 while($row = $order_item->fetch_assoc()):
                     $total += ($row['quantity'] * $row['price']);
                 ?>
-                <div class="d-flex align-items-center w-100 border cart-item" data-id="<?= $row['id'] ?>">
+                <div class="d-flex align-items-center w-100 border cart-item p-2" data-id="<?= $row['id'] ?>">
                     <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-                        <div class="d-flex align-items-center w-100 ">
+                        <div class="d-flex align-items-center w-100">
                             <div class="col-auto">
                                 <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-thumbnail prod-cart-img">
                             </div>
-                            <div class="col-auto flex-grow-1 flex-shrink-1">
+                            <div class="col-auto flex-grow-1 flex-shrink-1  p-2">
                                 <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="h4 text-muted" target="_blank">
                                     <p class="text-truncate-1 m-0"><?= $row['name'] ?></p>
                                 </a>
@@ -126,10 +131,10 @@ if($order->num_rows > 0){
                 <?php endif; ?>
                 <div class="d-flex align-items-center w-100 border">
                     <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-                            <h3 class="text-center">TOTAL</h3>
+                            <span>TOTAL</span>
                     </div>
                     <div class="col-auto text-right">
-                        <h3><b><?= number_format($total,2) ?></b></h3>
+                        <span><b><?= number_format($total,2) ?></b></span>
                     </div>
                 </div>
             </div>
@@ -137,15 +142,35 @@ if($order->num_rows > 0){
     </div>
     <div class="clear-fix my-2"></div>
     <div class="row">
-        <div class="col-12 text-right">
+        <div class="col-12 text-right " id="disregardThisDiv">
             <?php if(isset($status)  && $status == 0): ?>
             <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
             <?php endif; ?>
-            <button class="btn btn-dark btn-flat btn-sm" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            <button class="btn btn-dark btn-flat btn-sm print-btn" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            <button onclick="printOrderDetails()" class="print-btn">Print Order Details</button>
         </div>
     </div>
 </div>
 <script>
+    function printOrderDetails() {
+        // Specify the div to print using its ID
+        var printContents = document.getElementById("orderDetailsContainer").innerHTML;
+
+        // Create a new window for printing
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        document.getElementById("disregardThisDiv").style.display = 'none';
+        // Use the JavaScript print function to print the content of the div
+        window.print();
+
+        // Restore the original content after printing
+        document.body.innerHTML = originalContents;
+        
+        $('#btn-cancel').click(function(){
+        _conf("Are you sure to cancel this order?","cancel_order",[])
+    })
+
+    }
     $('#btn-cancel').click(function(){
         _conf("Are you sure to cancel this order?","cancel_order",[])
     })

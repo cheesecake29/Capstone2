@@ -81,14 +81,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <thead>
                             <tr>
                                 <th>Variation Name</th>
+                                <th>Variation Price</th>
                                 <th>Available Stocks</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <?php while ($row = $qryVariations->fetch_assoc()) :  ?>
                             <tr>
-                                <td><?php echo $row['variation_name'] ?></td>
-                                <td><?php echo $row['variation_stock'] ?></td>
+                                <td><?= $row['variation_name'] ?></td>
+                                <td><?= number_format($row['variation_price'], 2) ?> PHP</td>
+                                <td><?= $row['variation_stock'] ?></td>
                                 <td>
                                     <?php if ($row['delete_flag'] == 0) : ?>
                                         <span class="badge badge-success px-3 rounded-pill">Active</span>

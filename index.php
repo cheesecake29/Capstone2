@@ -34,7 +34,7 @@
   <?php require_once('inc/footer.php') ?>
 
   <div class="modal fade" id="uni_modal" role='dialog'>
-    <div class="modal-dialog   rounded-0 modal-md modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document" style="min-width:  50%;">
       <div class="modal-content  rounded-0">
         <div class="modal-header">
           <h5 class="modal-title"></h5>

@@ -1,34 +1,34 @@
-<?php 
-if(isset($_GET['id'])){
+<?php
+if (isset($_GET['id'])) {
     $qry = $conn->query("SELECT * FROM `order_list` where id = '{$_GET['id']}'");
-    if($qry->num_rows > 0){
-        foreach($qry->fetch_array() as $k => $v){
-            if(!is_numeric($k))
-            $$k = $v;
+    if ($qry->num_rows > 0) {
+        foreach ($qry->fetch_array() as $k => $v) {
+            if (!is_numeric($k))
+                $$k = $v;
         }
     }
 }
 ?>
-<?php 
-if(!isset($_GET['id'])){
-    $_settings->set_flashdata('error','No order ID Provided.');
+<?php
+if (!isset($_GET['id'])) {
+    $_settings->set_flashdata('error', 'No order ID Provided.');
     redirect('admin/?page=orders');
 }
 $order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as fullname FROM `order_list` o inner join client_list c on c.id = o.client_id where o.id = '{$_GET['id']}' ");
-if($order->num_rows > 0){
-    foreach($order->fetch_assoc() as $k => $v){
+if ($order->num_rows > 0) {
+    foreach ($order->fetch_assoc() as $k => $v) {
         $$k = $v;
     }
-}else{
-    $_settings->set_flashdata('error','Order ID provided is Unknown');
+} else {
+    $_settings->set_flashdata('error', 'Order ID provided is Unknown');
     redirect('admin/?page=orders');
 }
 ?>
 <style>
-    .prod-cart-img{
-        width:7em;
-        height:7em;
-        object-fit:scale-down;
+    .prod-cart-img {
+        width: 7em;
+        height: 7em;
+        object-fit: scale-down;
         object-position: center center;
     }
 </style>
@@ -41,14 +41,14 @@ if($order->num_rows > 0){
             <a class="btn btn-default btn-flat border btn-sm" href="./?page=orders"><i class="fa fa-angle-left"></i> Back to List</a>
         </div>
     </div>
-   
+
 
     <div class="card-body">
         <div class="container-fluid">
             <div class="row">
 
-            <p><b>Client Name: <?php echo $fullname?></b></p><br>
-        
+                <p><b>Client Name: <?php echo $fullname ?></b></p><br>
+
                 <div class="col-md-6">
                     <label for="" class="text-muted">Reference Code</label>
                     <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
@@ -62,26 +62,26 @@ if($order->num_rows > 0){
                 <div class="col-md-6">
                     <label for="" class="text-muted">Status</label>
                     <div class="ml-3">
-                        <?php if(isset($status)): ?>
-                            <?php if($status == 0): ?>
+                        <?php if (isset($status)) : ?>
+                            <?php if ($status == 0) : ?>
                                 <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
 
-                            <?php elseif($status == 1): ?> 
+                            <?php elseif ($status == 1) : ?>
                                 <span class="badge badge-primary px-3 rounded-pill">Confirm</span>
 
-                            <?php elseif($status == 2): ?> 
+                            <?php elseif ($status == 2) : ?>
                                 <span class="badge badge-primary px-3 rounded-pill">Packed</span>
 
-                            <?php elseif($status == 3): ?>
+                            <?php elseif ($status == 3) : ?>
                                 <span class="badge badge-success px-3 rounded-pill">For Delivery</span>
-                            <?php elseif($status == 4): ?>
+                            <?php elseif ($status == 4) : ?>
                                 <span class="badge badge-warning px-3 rounded-pill">On the Way</span>
-                            <?php elseif($status == 5): ?>
+                            <?php elseif ($status == 5) : ?>
                                 <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
-                            <?php else: ?>
+                            <?php else : ?>
                                 <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
                             <?php endif; ?>
-                        <?php else: ?>
+                        <?php else : ?>
                             N/A
                         <?php endif; ?>
                     </div>
@@ -90,11 +90,11 @@ if($order->num_rows > 0){
             <div class="clear-fix my-2"></div>
             <div class="row">
                 <div class="col-12">
-                <div class="w-100" id="order-list">
-                        <?php 
+                    <div class="w-100" id="order-list">
+                        <?php
                         $total = 0;
-                        if(isset($id)):
-                        $order_item = $conn->query("SELECT o.*,p.name, p.price, p.image_path,b.name as brand, cc.category, v.variation_name, v.variation_stock,
+                        if (isset($id)) :
+                            $order_item = $conn->query("SELECT o.*,p.name, p.price, p.image_path,b.name as brand, cc.category, v.variation_name, v.variation_stock,
                         sf.amount, ol.order_type
                         FROM `order_items` o
                         inner join product_list p on o.product_id = p.id
@@ -104,62 +104,61 @@ if($order->num_rows > 0){
                         inner join shipping_fee sf on sf.order_id = o.order_id
                         inner join order_list ol on ol.id = o.order_id
                         where o.order_id = '{$id}' order by p.name asc");
-                        while($row = $order_item->fetch_assoc()):
-                            $total += ($row['quantity'] * $row['price']);
+                            while ($row = $order_item->fetch_assoc()) :
+                                $total += ($row['quantity'] * $row['price']);
                         ?>
-                        <div class="d-flex align-items-center w-100 border cart-item" data-id="<?= $row['id'] ?>">
-                            <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-                                <div class="d-flex align-items-center w-100 ">
-                                    <div class="col-auto">
-                                        <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-thumbnail prod-cart-img">
-                                    </div>
-                                    <div class="col-auto flex-grow-1 flex-shrink-1">
-                                        <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="h4 text-muted" target="_blank">
-                                            <p class="text-truncate-1 m-0"><?= $row['name'] ?></p>
-                                        </a>
-                                        <small><?= $row['brand'] ?></small><br>
-                                        <small><?= $row['category'] ?></small><br>
-                                        <small><?= $row['variation_name'] ?></small><br>
-                                        <div class="d-flex align-items-center w-100 mb-1">
-                                            <span><?= number_format($row['quantity']) ?></span>
-                                            <span class="ml-2">X <?= number_format($row['price'],2) ?></span><br>
+                                <div class="d-flex align-items-center w-100 border cart-item" data-id="<?= $row['id'] ?>">
+                                    <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
+                                        <div class="d-flex align-items-center w-100 ">
+                                            <div class="col-auto">
+                                                <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-thumbnail prod-cart-img">
+                                            </div>
+                                            <div class="col-auto flex-grow-1 flex-shrink-1">
+                                                <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="h4 text-muted" target="_blank">
+                                                    <p class="text-truncate-1 m-0"><?= $row['name'] ?></p>
+                                                </a>
+                                                <small><?= $row['brand'] ?></small><br>
+                                                <small><?= $row['category'] ?></small><br>
+                                                <small><?= $row['variation_name'] ?></small><br>
+                                                <div class="d-flex align-items-center w-100 mb-1">
+                                                    <span><?= number_format($row['quantity']) ?></span>
+                                                    <span class="ml-2">X <?= number_format($row['price'], 2) ?></span><br>
+                                                </div>
+
+                                                <span class="ml-2">Shipping Fee <?= number_format($row['amount'], 2) ?></span>
+                                            </div>
                                         </div>
-                                        
-                                        <span class="ml-2">Shipping Fee <?= number_format($row['amount'],2) ?></span>
+                                    </div>
+                                    <div class="col-auto text-right">
+
+                                        <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-auto text-right">
-                                
-                                <h3><b><?= number_format($row['quantity'] * $row['price'] ,2) ?></b></h3>
-                            </div>
-                        </div>
-                        
-                        <?php
-                                if($row['order_type'] == 1){
-                                    $total_amount = $total + $row['amount'];
 
-                                }else{
+                                <?php
+                                if ($row['order_type'] == 1) {
+                                    $total_amount = $total + $row['amount'];
+                                } else {
                                     $total_amount = $total;
                                 }
                                 ?>
-                        <?php 
-                            endwhile; 
-                            endif;
+                        <?php
+                            endwhile;
+                        endif;
                         ?>
-                        <?php if(isset($order_item) && $order_item->num_rows <= 0): ?>
-                        <div class="d-flex align-items-center w-100 border justify-content-center">
-                            <div class="col-12 flex-grow-1 flex-shrink-1 px-1 py-1">
-                                <small class="text-muted">No Data</small>
+                        <?php if (isset($order_item) && $order_item->num_rows <= 0) : ?>
+                            <div class="d-flex align-items-center w-100 border justify-content-center">
+                                <div class="col-12 flex-grow-1 flex-shrink-1 px-1 py-1">
+                                    <small class="text-muted">No Data</small>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                         <div class="d-flex align-items-center w-100 border">
                             <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-                                    <h3 class="text-center">TOTAL</h3>
+                                <h3 class="text-center">TOTAL</h3>
                             </div>
                             <div class="col-auto text-right">
-                                <h3><b><?= number_format($total_amount,2) ?></b></h3>
+                                <h3><b><?= number_format($total_amount, 2) ?></b></h3>
                             </div>
                         </div>
                     </div>
@@ -171,36 +170,39 @@ if($order->num_rows > 0){
 </div>
 
 <script>
-    $(function(){
-        $('#update_status').click(function(){
-            uni_modal("Update Order Status","orders/update_status.php?id=<?= isset($id) ? $id :'' ?>?client_id=<?= isset($client_id) ? $client_id :'' ?>")
+    $(function() {
+        $('#update_status').click(function() {
+            uni_modal("Update Order Status", "orders/update_status.php?id=<?= isset($id) ? $id : '' ?>?client_id=<?= isset($client_id) ? $client_id : '' ?>")
         })
-        $('#btn-cancel').click(function(){
-            _conf("Are you sure to cancel this order?","cancel_order",[])
+        $('#btn-cancel').click(function() {
+            _conf("Are you sure to cancel this order?", "cancel_order", [])
         })
-        $('#delete_order').click(function(){
-            _conf("Are you sure to delete this order permanently?","delete_order",[])
+        $('#delete_order').click(function() {
+            _conf("Are you sure to delete this order permanently?", "delete_order", [])
         })
     })
-    function delete_order(){
+
+    function delete_order() {
         start_loader();
         $.ajax({
-            url:_base_url_+'classes/master.php?f=delete_order',
-            data:{id : "<?= isset($id) ? $id : '' ?>"},
-            method:'POST',
-            dataType:'json',
-            error:err=>{
+            url: _base_url_ + 'classes/master.php?f=delete_order',
+            data: {
+                id: "<?= isset($id) ? $id : '' ?>"
+            },
+            method: 'POST',
+            dataType: 'json',
+            error: err => {
                 console.error(err)
-                alert_toast('An error occurred.','error')
+                alert_toast('An error occurred.', 'error')
                 end_loader()
             },
-            success:function(resp){
-                if(resp.status == 'success'){
+            success: function(resp) {
+                if (resp.status == 'success') {
                     location.replace('./?page=orders')
-                }else if(!!resp.msg){
-                    alert_toast(resp.msg,'error')
-                }else{
-                    alert_toast('An error occurred.','error')
+                } else if (!!resp.msg) {
+                    alert_toast(resp.msg, 'error')
+                } else {
+                    alert_toast('An error occurred.', 'error')
                 }
                 end_loader();
             }

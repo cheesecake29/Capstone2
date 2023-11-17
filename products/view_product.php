@@ -134,6 +134,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         /* Change cursor to indicate non-interactivity */
         /* Optionally, you can add other styles like changing background color, text color, etc. */
     }
+
+    .text-price {
+        color: firebrick;
+    }
 </style>
 <div class="content ">
     <div class="containerr">
@@ -148,7 +152,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> </h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
                 </div>
-                <h3 class="text-success">₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong></h3>
+                <h3 class="text-success" id="default">
+                    ₱<?php
+                        $minVariation = $conn->query("SELECT MIN(variation_price) as lowestVariation FROM product_variations where product_id = $id")->fetch_assoc();
+                        echo number_format($minVariation['lowestVariation'], 2);
+                        ?> -
+                    ₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong>
+                </h3>
+                <h3 class="text-success" id="selectedVariation"></h3>
                 <div class="mt-3 border-bottom">
                     <h5>Details: </h3>
                 </div>
@@ -193,11 +204,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             }
                         ?>
                             <div class="d-block me-5">
-                                <label for='variation_<?php echo $variation['id'] ?>'>
-                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick='handleVariationSelect(this)' />
-                                    <span id='stock_<?php echo $variation['id'] ?>'><?php echo $variation['variation_name'] ?>
-                                        (Stock: <span id='variation_stock_<?php echo $variation['id'] ?>'> <?= $variationTotalQuantity ?></span>)
-                                    </span>
+                                <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="bd-highlights">
+                                            <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                            <span id='stock_<?php echo $variation['id'] ?>'>
+                                                <?php echo $variation['variation_name'] ?> -
+                                                <span class="text-price"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                                        </div>
+                                        <div class="bd-highlights">
+                                            <small>
+                                                <span id='variation_stock_<?php echo $variation['id'] ?>'> <?= $variationTotalQuantity ?> qty.</span>
+                                            </small>
+                                        </div>
+                                    </div>
                                 </label>
                             </div>
                         <?php
@@ -228,11 +248,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         let cart_count = 0;
     });
 
-    function handleVariationSelect(variation) {
+    function handleVariationSelect(variation, variation_price) {
         if (variation.checked) {
             // Do something when the radio button is clicked and checked
-            console.log(`Selected value: ${variation.value}`);
+            console.log(`Selected value: ${variation.value} ${variation_price}`);
             $('#add_to_cart').removeAttr("disabled");
+            $('#default').hide("slow");
+            $('#selectedVariation').html(`₱ ${variation_price}`);
 
         }
     }
@@ -263,7 +285,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     },
                     success: function(resp) {
                         if (resp.status == 'success') {
-                            // update_cart_count(resp.cart_count);
                             fetch();
                             alert_toast("Product has been added to cart.", 'success');
                         } else if (!!resp.msg) {
@@ -315,13 +336,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 availability = data.available;
                 cart_count = data.cart_count;
                 initialize();
+                update_cart_count(cart_count);
             },
             error: err => {
                 console.log(err);
                 alert_toast("An error occurred", "error");
             },
         });
-
     }
 
     function buyNow() {

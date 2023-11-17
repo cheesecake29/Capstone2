@@ -81,7 +81,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
 			<div class="form-group">
 				<label for="price" class="control-label">Price</label>
-				<input name="price" id="price" type="number" class="form-control rounded-0 text-left" value="<?php echo isset($price) ? $price : 0; ?>" required>
+				<input name="price" id="price" type="text" class="CurrencyInput form-control rounded-0 text-left" value="<?php echo isset($price) ? $price : 0; ?>" required>
 			</div>
 
 			<label for="weight" class="control-label">Weight</label>
@@ -125,15 +125,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 									$delete_flag = $row['delete_flag'];
 							?>
 									<?php $index++; ?>
-									<div id="variationIndex-<?php echo $num ?>" class="variation-container d-flex mb-1 <?php if ($row['delete_flag'] == 1) : ?> border-left border-left-3 border-danger <?php endif; ?> ">
-										<input class="invisible w-0" value="<?php echo $row['id'] ?>" required type="hidden" name="variation_id[]">
-										<input class="invisible w-0" id="variation-<?php echo $num ?>" value="<?php echo $row['delete_flag'] ?>" required type="hidden" name="variation_delete_flag[]">
-										<input placeholder="Variation name" class="<?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 mr-1" value="<?php echo $row['variation_name'] ?>" required type="text" name="variation_name[]">
-										<input placeholder="Stocks" class="<?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 w-25" value="<?php echo $row['variation_stock'] ?>" required min="0" type="number" name="variation_stock[]">
-										<button class="btn btn-link text-danger ml-1 <?php if ($delete_flag == 0) : ?> visible position-relative <?php else: ?> invisible position-absolute <?php endif; ?>" type="button" id="variation-remove-<?php echo $num ?>" onclick="removeVariation('variationIndex-<?php echo $num; ?>')">
+									<div id="variationIndex-<?= $num ?>" class="variation-container d-flex mb-1 <?php if ($row['delete_flag'] == 1) : ?> border-left border-left-3 border-danger <?php endif; ?> ">
+										<input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="variation_id[]">
+										<input class="invisible w-0" id="variation-<?= $num ?>" value="<?= $row['delete_flag'] ?>" required type="hidden" name="variation_delete_flag[]">
+										<input placeholder="Variation name" class="mr-2 <?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 mr-1" value="<?= $row['variation_name'] ?>" required type="text" name="variation_name[]">
+										<input placeholder="Variation price" class="mr-2 CurrencyInput <?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 mr-1" value="<?= $row['variation_price'] ?>" required type="text" name="variation_price[]">
+										<input placeholder="Stocks" class="<?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 w-25" value="<?= $row['variation_stock'] ?>" required min="0" type="number" name="variation_stock[]">
+										<button class="btn btn-link text-danger ml-1 <?php if ($delete_flag == 0) : ?> visible position-relative <?php else : ?> invisible position-absolute <?php endif; ?>" type="button" id="variation-remove-<?= $num ?>" onclick="removeVariation('variationIndex-<?= $num; ?>')">
 											<i class="fas fa-times"></i>
 										</button>
-										<button class="btn btn-link text-info ml-1 <?php if ($delete_flag == 1) : ?> visible position-relative <?php else: ?> invisible position-absolute <?php endif; ?>" type="button" id="variation-res-<?php echo $num ?>" onclick="resVariation('variationIndex-<?php echo $num; ?>')">
+										<button class="btn btn-link text-info ml-1 <?php if ($delete_flag == 1) : ?> visible position-relative <?php else : ?> invisible position-absolute <?php endif; ?>" type="button" id="variation-res-<?= $num ?>" onclick="resVariation('variationIndex-<?= $num; ?>')">
 											<i class="fas fa-check"></i>
 										</button>
 									</div>
@@ -173,8 +174,25 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			_this.siblings('.custom-file-label').html("Choose file")
 		}
 	}
+	const currenctInput = document.getElementsByClassName('CurrencyInput');
+	for (let i = 0; i < currenctInput.length; i++) {
+		formatToCurrency(currenctInput[i], currenctInput[i].value);
+	}
 
+	function formatToCurrency(element, value) {
+		if (value) {
+			element.value = parseFloat(value).toLocaleString('en-US', {
+				style: 'decimal',
+				maximumFractionDigits: 2,
+				minimumFractionDigits: 2
+			});
+		}
+	}
 	$(document).ready(function() {
+		$('input.CurrencyInput').on('blur', function() {
+			const value = this.value.replace(/,/g, '');
+			formatToCurrency(this, value);
+		});
 		$('.select2').select2({
 			width: '100%',
 			placeholder: "Please Select Here"
@@ -186,10 +204,17 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			var _this = $(this)
 			$('.err-msg').remove();
 			const formData = new FormData($(this)[0]);
+			// Display the values
+			var productPrice = formData.get('price');
+			var productVariations = formData.getAll('variation_price[]')
+			if (productVariations.indexOf(productPrice) < 0) {
+				alert_toast("Price didn't match any the variation price", 'error');
+				return;
+			}
 			start_loader();
 			$.ajax({
 				url: _base_url_ + "classes/Master.php?f=save_product",
-				data: new FormData($(this)[0]),
+				data: formData,
 				cache: false,
 				contentType: false,
 				processData: false,
@@ -281,7 +306,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 	var addVariation = function() {
 		const lastVariationIndex = document.querySelectorAll(".variation-container:last-child");
 		const lastIndex = lastVariationIndex && lastVariationIndex.length > 0 ? lastVariationIndex[0].id.slice(15) : 0;
-		console.log(lastIndex)
 		var parent = document.body;
 		// Get variation main container
 		var fieldgroup = document.querySelector("div.variation-list");
@@ -307,13 +331,25 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		variationDeleteFlag.value = 0; // set value
 		// Add variation name input
 		var variationName = document.createElement("input");
-		variationName.className = "variations form-control rounded-0";
+		variationName.className = "mr-2 variations form-control rounded-0";
 		variationName.style = "display: block;";
 		variationName.type = "text";
 		variationName.required = true;
 		variationName.name = `variation_name[]`;
 		variationName.placeholder = "Variation name";
 		variationContainer.appendChild(variationName);
+		// Add variation price input
+		var variationPrice = document.createElement("input");
+		variationPrice.className = "mr-2 CurrencyInput variations form-control rounded-0";
+		variationPrice.style = "display: block;";
+		variationPrice.type = "text";
+		variationPrice.required = true;
+		variationPrice.name = `variation_price[]`;
+		variationPrice.placeholder = "Variation price";
+		variationPrice.onblur = function() {
+			formatToCurrency(this, this.value)
+		};
+		variationContainer.appendChild(variationPrice);
 		// Add variation stock input
 		var variationStock = document.createElement("input");
 		variationStock.className = "stocks form-control rounded-0 w-25";

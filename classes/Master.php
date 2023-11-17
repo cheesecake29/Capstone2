@@ -254,6 +254,7 @@ class Master extends DBConnection
 	function save_product()
 	{
 		$_POST['description'] = htmlentities($_POST['description']);
+		$_POST['price'] = (float)str_replace(',', '', $_POST['price']);
 		extract($_POST);
 		$data = "";
 		foreach ($_POST as $k => $v) {
@@ -274,28 +275,28 @@ class Master extends DBConnection
 			return json_encode($resp);
 			exit;
 		}
-
 		function processVariations($conn, $product_id)
 		{
 			if (isset($_POST['variation_name'])) {
 				$totalStocks = 0;
 				foreach ($_POST['variation_name'] as $row => $value) {
 					$variation_id = $_POST['variation_id'][$row];
+					$variation_price = (float)str_replace(',', '', $_POST['variation_price'][$row]);
 					$variation_name = $_POST['variation_name'][$row];
 					$variation_stock = $_POST['variation_stock'][$row];
 					$variation_delete_flag = $_POST['variation_delete_flag'][$row];
 					$totalStocks += $variation_stock;
 					if ($variation_id) {
-						$sqlProductVariationUpdate = "UPDATE `product_variations` set `delete_flag` = '{$variation_delete_flag}',  `variation_name` = '{$variation_name}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
+						$sqlProductVariationUpdate = "UPDATE `product_variations` set `delete_flag` = '{$variation_delete_flag}', `variation_name` = '{$variation_name}', `variation_price` = '{$variation_price}', `variation_stock` = '{$variation_stock}' where `id` = '{$variation_id}' ";
 						$conn->query($sqlProductVariationUpdate);
 					} else {
-						$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`, `delete_flag`) VALUES ('{$product_id}', '{$variation_name}', '{$variation_stock}', '{$variation_delete_flag}') ";
+						$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_price`, `variation_stock`, `delete_flag`) VALUES ('{$product_id}', '{$variation_name}', '{$variation_price}', '{$variation_stock}', '{$variation_delete_flag}') ";
 						$conn->query($sqlProductVariationInsert);
 					}
 				}
 				return $totalStocks;
 			} else {
-				$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_stock`, `delete_flag`, `default_flag`) VALUES ('{$product_id}', 'default', 0, 0, 1) ";
+				$sqlProductVariationInsert = "INSERT INTO `product_variations` (`product_id`, `variation_name`, `variation_price`, `variation_stock`, `delete_flag`, `default_flag`) VALUES ('{$product_id}', 'default', '{$_POST['price']}', 0, 0, 1) ";
 				$conn->query($sqlProductVariationInsert);
 				return 0;
 			}
@@ -613,7 +614,7 @@ class Master extends DBConnection
 
 		$check = $this->conn->query("SELECT * FROM `cart_list` where client_id = '{$client_id}' and product_id = '{$product_id}' and variation_id = '{$variation_id}'")->num_rows;
 		if ($check > 0) {
-			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}' and client_id = '{$client_id}' and variation_id = '{$variation_id}''";
+			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}' and client_id = '{$client_id}' and variation_id = '{$variation_id}'";
 		} else {
 			$sql = "INSERT INTO `cart_list` set quantity = quantity + {$quantity}, product_id = '{$product_id}', client_id = '{$client_id}', variation_id = '{$variation_id}'";
 		}
@@ -728,9 +729,16 @@ class Master extends DBConnection
 			$data = "";
 			$total_amount = 0;
 			if ($withShippingFee) {
-				$this->conn->query("INSERT INTO `shipping_fee`(`order_id`, `amount`) VALUES ('{$oid}', '{$shipping_amount}')");
+				$this->conn->query("INSERT INTO `shipping_fee` (`order_id`, `amount`) VALUES ('{$oid}', '{$shipping_amount}')");
 			}
-			$cart = $this->conn->query("SELECT c.*, p.price FROM cart_list c inner join product_list p on c.product_id = p.id where c.client_id = '{$client_id}'");
+			$cart = $this->conn->query(
+				"SELECT 
+					c.*,
+					pv.variation_price as price
+				FROM cart_list c 
+					inner join product_list p on c.product_id = p.id
+					inner join product_variations pv on pv.id = c.variation_id
+				where c.client_id = '{$client_id}'");
 			while ($row = $cart->fetch_assoc()) {
 				if (!empty($data)) $data .= ", ";
 				$data .= "('{$oid}','{$row['product_id']}','{$row['quantity']}', '{$row['variation_id']}')";

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap">
 </head>
-
 <style>
     /* Reset default margin and padding for all elements */
     *,
@@ -292,10 +291,10 @@
                     ?>
                     <div class="right-top d-flex align-items-end">
                         <!-- Cart and user dropdown -->
-                       
-                       <div class="navbar-nav">
-                        <div class="dropdown">
-                            <?php
+
+                        <div class="navbar-nav">
+                            <div class="dropdown">
+                                <?php
                                 echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
                                 echo '<i class="fas fa-bell"></i>';
 
@@ -337,8 +336,8 @@
                                 } else {
                                     echo 'No notifications available.';
                                 }
-                            ?>
-                                
+                                ?>
+
                                 <!-- <ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">
                                     <div class="notification-heading">
                                         <span class="menu-title">Notifications</span>
@@ -367,10 +366,10 @@
                                     </div>
                                 </ul> -->
                             </div>
-                        <div class="nav-item">
-                            <a href="./?p=cart" class="nav-link">
-                                <i class="fas fa-shopping-cart"></i> 
-                                <?php
+                            <div class="nav-item">
+                                <a href="./?p=cart" class="nav-link">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <?php
                                     if ($cart_count !== 0) {
                                         echo '<span id="cart_count"
                                         class="badge bg-danger"
@@ -386,10 +385,10 @@
                                         padding-left: 0.2px;
                                         text-align: center;
                                         border-width: 48px;
-                                        ">'. $cart_count. '</span>';
+                                        ">' . $cart_count . '</span>';
                                     }
-                                ?>
-                                
+                                    ?>
+
                                 </a>
                             </div>
                             <div class="nav-item dropdown">
@@ -407,13 +406,13 @@
                     </div>
 
 
-                    <?php else : ?>
-                        <a href="./login.php" class="text-light text-decoration-none mx-2 user-btn"><b>Login</b></a>
-                        <a href="./register.php" class="text-light text-decoration-none mx-2 user-btn"><b>Register</b></a>
+                <?php else : ?>
+                    <a href="./login.php" class="text-light text-decoration-none mx-2 user-btn"><b>Login</b></a>
+                    <a href="./register.php" class="text-light text-decoration-none mx-2 user-btn"><b>Register</b></a>
 
-                    <?php endif; ?>
-                    </div>
+                <?php endif; ?>
             </div>
+        </div>
     </nav>
 
     <!-- Your content goes here -->

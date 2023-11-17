@@ -9,6 +9,10 @@
     .cart-item p {
         font-size: 14px;
     }
+
+    .text-price {
+        color: firebrick;
+    }
 </style>
 <div class="content py-5 mt-3">
     <div class="container">
@@ -22,12 +26,12 @@
                     "SELECT 
                     c.*,
                     p.name,
-                    p.price,
                     p.image_path,
                     b.name as brand,
                     cc.category,
                     v.id as variation_id,
                     v.variation_name,
+                    v.variation_price as price,
                     v.variation_stock
                 FROM `cart_list` c
                     inner join product_list p on c.product_id = p.id
@@ -64,9 +68,9 @@
                                                 <button class="btn btn-sm btn-outline-secondary btn-plus" data-variation='<?= $row['variation_id'] ?>' data-id='<?= $row['id'] ?>'><i class="fa fa-plus"></i></button>
                                             </div>
                                         </div>
-                                        <span class="ms-3"> * <?= number_format($row['price'], 2) ?></span>
+                                        <span class="ms-3"> * ₱<?= number_format($row['price'], 2) ?></span>
                                     </div>
-                                    <button class="btn btn-link text-danger text-decoration-none px-0" data-id="<?= $row['id'] ?>"><i class="fa fa-times"></i> Remove</button>
+                                    <button class="btn btn-link text-danger text-decoration-none px-0 btn-remove" data-id="<?= $row['id'] ?>"><i class="fa fa-times"></i> Remove</button>
                                 </div>
                             </div>
                         </div>

@@ -44,7 +44,8 @@
               show: true,
               backdrop: 'static',
               keyboard: false,
-              focus: true
+              focus: true,
+              width: '100px',
             })
             end_loader()
           }

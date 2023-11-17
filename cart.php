@@ -66,7 +66,7 @@
                                         </div>
                                         <span class="ms-3"> * <?= number_format($row['price'], 2) ?></span>
                                     </div>
-                                    <button class="btn btn-link text-danger text-decoration-none px-0" data-id="<?= $row['id'] ?>"><i class="fa fa-times"></i> Remove</button>
+                                    <button class="btn btn-link text-danger text-decoration-none px-0 btn-remove" data-id="<?= $row['id'] ?>"><i class="fa fa-times"></i> Remove</button>
                                 </div>
                             </div>
                         </div>

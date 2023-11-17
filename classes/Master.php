@@ -611,11 +611,14 @@ class Master extends DBConnection
 		$_POST['client_id'] = $this->settings->userdata('id');
 		extract($_POST);
 
-		$check = $this->conn->query("SELECT * FROM `cart_list` where client_id = '{$client_id}' and product_id = '{$product_id}' and variation_id = '{$variation_id}'")->num_rows;
+		$check = $this->conn->query("SELECT * FROM `cart_list` where client_id = '{$client_id}'
+		and product_id = '{$product_id}' and variation_id = '{$variation_id}'")->num_rows;
 		if ($check > 0) {
-			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}' and client_id = '{$client_id}' and variation_id = '{$variation_id}''";
+			$sql = "UPDATE `cart_list` set quantity = quantity + {$quantity}  where product_id = '{$product_id}'
+			and client_id = '{$client_id}' and variation_id = '{$variation_id}'";
 		} else {
-			$sql = "INSERT INTO `cart_list` set quantity = quantity + {$quantity}, product_id = '{$product_id}', client_id = '{$client_id}', variation_id = '{$variation_id}'";
+			$sql = "INSERT INTO `cart_list` set quantity = quantity + {$quantity}, product_id = '{$product_id}',
+			client_id = '{$client_id}', variation_id = '{$variation_id}'";
 		}
 		$save = $this->conn->query($sql);
 		if ($save) {

@@ -287,6 +287,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         if (resp.status == 'success') {
                             fetch();
                             alert_toast("Product has been added to cart.", 'success');
+                            update_cart_count(resp.cart_count);
+                            //$('#cart_count').text(resp.cart_count)
                         } else if (!!resp.msg) {
                             alert_toast(resp.msg, 'error');
                         } else {
@@ -303,7 +305,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         }
     }
 
-
+    // function update_cart_count($count){
+    //     $('#cart_count').text($count)
+    // }
 
     function initialize() {
         console.log("available:", availability);
@@ -312,6 +316,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         var availableDiv = document.getElementById('available');
         var unavailableDiv = document.getElementById('unavailable');
         var limitReached = document.getElementById('limit');
+        //var cartNum = document.getElementById('cart_count');
 
         if (isAvailable) {
             availableDiv.style.display = 'block';
@@ -322,6 +327,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             unavailableDiv.style.display = 'block';
             limitReached.style.display = 'block';
         }
+        update_cart_count(cart_count);
+
+        //document.getElementById('cart_count').textContent = cart_count;
     }
 
     function fetch() {

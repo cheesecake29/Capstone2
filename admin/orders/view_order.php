@@ -85,7 +85,32 @@ if ($order->num_rows > 0) {
                             N/A
                         <?php endif; ?>
                     </div>
-                </div>
+                    <label for="" class="text-muted">Order Type</label>
+                        <div class="ml-3">
+                            <b>
+                            <?php
+                                switch ($order_type) {
+                                    case 1:
+                                        echo 'JRS';
+                                        break;
+                                    case 2:
+                                        echo 'Lalamove';
+                                        break;
+                                    case 3:
+                                        echo 'Meet Up: '.$other_address;
+                                        break;
+                                    case 4:
+                                        echo 'Pick Up: '.$other_address;
+                                        break;
+                                    default:
+                                        echo 'N/A';
+                                        break;
+                                }
+                                ?>
+                            </b>
+                        </div>
+
+                    </div>
                 <div class="col-md-6">
                     <?php
                     //get province name
@@ -145,21 +170,45 @@ if ($order->num_rows > 0) {
                 <div class="col-12">
                     <div class="w-100" id="order-list">
                         <?php
+                        $queryCheck = "SELECT order_id FROM shipping_fee WHERE order_id = '{$id}'";
+                        $result = $conn->query($queryCheck);
                         $total = 0;
                         if (isset($id)) :
-                            $order_item = $conn->query("SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category, ol.order_type, v.variation_name,
-                            GROUP_CONCAT(v.variation_name) AS all_variations,
-                            GROUP_CONCAT(v.variation_stock) AS all_variation_stock
-                            FROM `order_items` o
-                            INNER JOIN product_list p ON o.product_id = p.id
-                            INNER JOIN brand_list b ON p.brand_id = b.id
-                            INNER JOIN categories cc ON p.category_id = cc.id
-                            INNER JOIN product_variations v ON v.product_id = p.id and  v.id = o.variation_id
-                            INNER JOIN order_list ol ON ol.id = o.order_id
-                            WHERE o.order_id = '{$id}'
-                            GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, ol.order_type
-                            ORDER BY p.name ASC;
-                            ");
+                            $query = '';
+                            if ($result && $result->num_rows > 0) {
+                                $queryWithSF = "SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category, ol.order_type, v.variation_name,
+                                GROUP_CONCAT(v.variation_name) AS all_variations,
+                                GROUP_CONCAT(v.variation_stock) AS all_variation_stock
+                                FROM `order_items` o
+                                INNER JOIN product_list p ON o.product_id = p.id
+                                INNER JOIN brand_list b ON p.brand_id = b.id
+                                INNER JOIN categories cc ON p.category_id = cc.id
+                                INNER JOIN product_variations v ON v.product_id = p.id AND v.id = o.variation_id
+                                INNER JOIN order_list ol ON ol.id = o.order_id
+                                LEFT JOIN shipping_fee sf ON sf.order_id = o.order_id
+                                WHERE o.order_id = '{$id}'
+                                    AND (ol.order_type = 1 OR ol.order_type = 2)
+                                GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, ol.order_type
+                                ORDER BY p.name ASC";
+                                
+                                $query = $queryWithSF;
+                            }
+                            else{
+                                $queryWithoutSF = "SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category, ol.order_type, v.variation_name,
+                                GROUP_CONCAT(v.variation_name) AS all_variations,
+                                GROUP_CONCAT(v.variation_stock) AS all_variation_stock
+                                FROM `order_items` o
+                                INNER JOIN product_list p ON o.product_id = p.id
+                                INNER JOIN brand_list b ON p.brand_id = b.id
+                                INNER JOIN categories cc ON p.category_id = cc.id
+                                INNER JOIN product_variations v ON v.product_id = p.id and  v.id = o.variation_id
+                                INNER JOIN order_list ol ON ol.id = o.order_id
+                                WHERE o.order_id = '{$id}'
+                                GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, ol.order_type
+                                ORDER BY p.name ASC;";
+                                $query = $queryWithoutSF;
+                            }
+                            $order_item = $conn->query($query);
                             while ($row = $order_item->fetch_assoc()) :
                                 $total += ($row['quantity'] * $row['price']);
                         ?>

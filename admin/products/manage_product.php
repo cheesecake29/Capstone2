@@ -220,7 +220,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						<div id="lightbox">
 							<span class="close">&times;</span>
 							<img id="lightbox-image" src="" alt="Lightbox Image">
-							<button id="delete-image">Delete</button>
 						</div>
 					</div>
 				</div>
@@ -315,67 +314,40 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 	})
 
 	//display uploaded images for gallery
-		function displayGalleryImages(input) {
-			var galleryPreview = $('#gallery-preview');
-			galleryPreview.empty(); // Clear previous preview
+	function displayGalleryImages(input) {
+        var galleryPreview = $('#gallery-preview');
+        galleryPreview.empty(); // Clear previous preview
 
-			if (input.files && input.files.length > 0) {
-				for (var i = 0; i < input.files.length; i++) {
-					var reader = new FileReader();
+        if (input.files && input.files.length > 0) {
+            for (var i = 0; i < input.files.length; i++) {
+                var reader = new FileReader();
 
-					reader.onload = function (e) {
-						var image = $('<img>').attr('src', e.target.result).addClass('img-thumbnail').css('width', '27%').css('height', 'auto');
-						galleryPreview.append(image);
-					};
+                reader.onload = function (e) {
+                    var image = $('<img>').attr('src', e.target.result).addClass('img-thumbnail').css('width', '27%').css('height', 'auto');
+                    galleryPreview.append(image);
+                };
 
-					reader.readAsDataURL(input.files[i]);
-				}
-			}
-		}
+                reader.readAsDataURL(input.files[i]);
+            }
+        }
+    }
 
-		$('#gallery_images').on('change', function () {
-			displayGalleryImages(this);
-		});
-		//End
+    $('#gallery_images').on('change', function () {
+        displayGalleryImages(this);
+    });
+	//End
 
-		$(document).ready(function () {
-		// Open lightbox on image click
-		$('.gallery-item').on('click', function () {
-			var imageId = $(this).data('image-id');
-			var imagePath = $(this).data('image');
-			
-			// Set image ID for delete operation
-			$('#lightbox').data('image-id', imageId);
+	$(document).ready(function () {
+    // Open lightbox on image click
+    $('.gallery-item').on('click', function () {
+        var imagePath = $(this).data('image');
+        $('#lightbox-image').attr('src', imagePath);
+        $('#lightbox').fadeIn();
+    });
 
-			$('#lightbox-image').attr('src', imagePath);
-			$('#lightbox').fadeIn();
-		});
-
-		// Close lightbox on close button click or outside click
-		$('#lightbox, .close').on('click', function () {
-			$('#lightbox').fadeOut();
-		});
-
-		// Delete image on delete button click
-		$('#delete-image').on('click', function () {
-			var imageId = $('#lightbox').data('image-id');
-			// AJAX request to update is_delete status in the database
-			$.ajax({
-				type: 'POST',
-				url: _base_url_ + "classes/Master.php?f=delete_image_gallery", // Change the URL to your server-side script
-				data: { imageId: imageId },
-				success: function (response) {
-					// Handle the response from the server, e.g., show a message to the user
-					console.log(response);
-
-					// Close the lightbox after successful deletion
-					$('#lightbox').fadeOut();
-				},
-				error: function (error) {
-					// Handle errors, e.g., display an error message to the user
-					console.error(error);
-				}
-			});
+    // Close lightbox on close button click or outside click
+    $('#lightbox, .close').on('click', function () {
+        $('#lightbox').fadeOut();
 		});
 	});
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2023 at 02:33 PM
+-- Generation Time: Nov 19, 2023 at 07:33 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -120,7 +120,7 @@ CREATE TABLE `client_list` (
 INSERT INTO `client_list` (`id`, `firstname`, `lastname`, `contact`, `region`, `province`, `city`, `barangay`, `addressline1`, `addressline2`, `zipcode`, `email`, `password`, `verification_code`, `email_verified_at`, `status`, `delete_flag`, `date_created`, `date_added`) VALUES
 (10, 'jizzelle', 'salongcong', '097777777777', '', 'Select Province', 'Bangued', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'jewellsalongcong09@gmail.com', '363b122c528f54df4a0446b6bab05515', '', NULL, 1, 0, '2023-10-29 02:41:46', '2023-11-06 01:29:33'),
 (12, 'jewell', 'salongcong', '097777777777', 'visayas', 'aklan', 'makato', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'bellachingaling@gmail.com', '2db95e8e1a9267b7a1188556b2013b33', '', NULL, 1, 0, '2023-11-06 01:37:04', '2023-11-09 14:03:11'),
-(13, 'Test', 'Last', '', '', '', '', '', '', '', '', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', NULL),
+(13, 'Test', 'Last', '0946412222', '04', '0434', '043425', '', 'addddd 1', 'adddd 2', '3124', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', '2023-11-20 00:29:06'),
 (14, 'test', 'test', '', '', '', '', '', '', '', '', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', '', NULL, 1, 0, '2023-11-16 17:52:20', NULL);
 
 -- --------------------------------------------------------
@@ -200,7 +200,13 @@ INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`,
 (7, 14, 'test test  has placed an order.', 0, 2, 32),
 (8, 14, 'test test  has placed an order.', 0, 2, 33),
 (9, 14, 'test test  has placed an order.', 0, 2, 34),
-(10, 14, 'test test  has placed an order.', 0, 2, 35);
+(10, 14, 'test test  has placed an order.', 0, 2, 35),
+(11, 13, 'Test Last  has placed an order.', 0, 2, 36),
+(12, 13, 'Test Last  has placed an order.', 0, 2, 37),
+(13, 13, 'Test Last  has placed an order.', 0, 2, 39),
+(14, 13, 'Test Last  has placed an order.', 0, 2, 40),
+(15, 13, 'Test Last  has placed an order.', 0, 2, 41),
+(16, 13, 'Test Last  has placed an order.', 0, 2, 42);
 
 -- --------------------------------------------------------
 
@@ -226,7 +232,16 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quan
 (37, 34, 46, 50, 2, '2023-11-17 18:31:20'),
 (38, 34, 50, 53, 1, '2023-11-17 18:31:20'),
 (39, 35, 50, 52, 1, '2023-11-17 18:45:26'),
-(40, 35, 50, 53, 1, '2023-11-17 18:45:26');
+(40, 35, 50, 53, 1, '2023-11-17 18:45:26'),
+(41, 36, 50, 52, 1, '2023-11-20 02:24:10'),
+(42, 36, 50, 53, 1, '2023-11-20 02:24:10'),
+(43, 36, 46, 49, 1, '2023-11-20 02:24:10'),
+(46, 39, 46, 49, 1, '2023-11-20 02:27:58'),
+(47, 39, 46, 50, 1, '2023-11-20 02:27:58'),
+(48, 40, 50, 52, 1, '2023-11-20 02:30:30'),
+(49, 41, 50, 52, 1, '2023-11-20 02:31:12'),
+(50, 41, 50, 53, 1, '2023-11-20 02:31:12'),
+(51, 42, 46, 50, 1, '2023-11-20 02:31:42');
 
 -- --------------------------------------------------------
 
@@ -259,7 +274,12 @@ CREATE TABLE `order_list` (
 INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
 (33, '202311-00001', 14, 1150, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:13:04', '2023-11-17 18:13:04'),
 (34, '202311-00002', 14, 2650, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:31:20', '2023-11-17 18:31:20'),
-(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:45:26', '2023-11-17 18:45:26');
+(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:45:26', '2023-11-17 18:45:26'),
+(36, '202311-00004', 13, 1750, '', '0434', '043425', 'addddd 1', 'adddd 2', '3124', 1, '', 0, '2023-11-20 02:24:10', '2023-11-20 02:24:10'),
+(39, '202311-00005', 13, 2750, '', '1481', '148101', 'RTEST IDFF 1', 'TEST DIFF 2', 'DIFF ZIP22', 1, '', 0, '2023-11-20 02:27:58', '2023-11-20 02:27:58'),
+(40, '202311-00006', 13, 100, '', '0434', '043425', 'addddd 1', 'adddd 2', '3124', 2, '', 0, '2023-11-20 02:30:30', '2023-11-20 02:30:30'),
+(41, '202311-00007', 13, 250, '', '0434', '043425', 'addddd 1', 'adddd 2', '3124', 3, 'EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY', 0, '2023-11-20 02:31:12', '2023-11-20 02:31:12'),
+(42, '202311-00008', 13, 1250, '', '0434', '043425', 'addddd 1', 'adddd 2', '3124', 4, '', 0, '2023-11-20 02:31:42', '2023-11-20 02:31:42');
 
 -- --------------------------------------------------------
 
@@ -397,6 +417,16 @@ CREATE TABLE `shipping_fee` (
   `order_id` int(100) NOT NULL,
   `amount` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shipping_fee`
+--
+
+INSERT INTO `shipping_fee` (`id`, `order_id`, `amount`) VALUES
+(1, 36, 351),
+(2, 37, 234),
+(3, 38, 0),
+(4, 39, 234);
 
 -- --------------------------------------------------------
 
@@ -610,7 +640,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -640,19 +670,19 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `product_list`
@@ -682,7 +712,7 @@ ALTER TABLE `service_requests`
 -- AUTO_INCREMENT for table `shipping_fee`
 --
 ALTER TABLE `shipping_fee`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `stock_list`

@@ -134,6 +134,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         /* Change cursor to indicate non-interactivity */
         /* Optionally, you can add other styles like changing background color, text color, etc. */
     }
+
+    .text-price {
+        color: firebrick;
+    }
 </style>
 <div class="content ">
     <div class="containerr">
@@ -148,7 +152,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> </h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
                 </div>
-                <h3 class="text-success">₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong></h3>
+                <h3 class="text-success" id="default">
+                    ₱<?php
+                        $minVariation = $conn->query("SELECT MIN(variation_price) as lowestVariation FROM product_variations where product_id = $id")->fetch_assoc();
+                        echo number_format($minVariation['lowestVariation'], 2);
+                        ?> -
+                    ₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong>
+                </h3>
+                <h3 class="text-success" id="selectedVariation"></h3>
                 <div class="mt-3 border-bottom">
                     <h5>Details: </h3>
                 </div>
@@ -172,10 +183,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             $productQuantityQuery = $conn->query("SELECT * FROM stock_list where product_id = $id");
                             $productQuantity = $productQuantityQuery->fetch_assoc();
                             $orderItemStocks = $conn->query("SELECT SUM(quantity) as totalQuantity FROM order_items where product_id = '{$id}' and order_id in (SELECT id FROM order_list where `status` != 5)");
+                            $cartItemCount = $conn->query("SELECT SUM(quantity) as cartQuantity FROM cart_list where product_id = '{$id}'")->fetch_array()[0];
                             $productStockTotalQuantity = $productQuantity['quantity'];
                             if ($orderItemStocks->num_rows > 0) {
                                 $oiStocksQuantity = $orderItemStocks->fetch_assoc();
-                                $productStockTotalQuantity = $productQuantity['quantity'] - $oiStocksQuantity['totalQuantity'];
+                                $productStockQuantity = $productQuantity['quantity'] - $oiStocksQuantity['totalQuantity'];
+                                $productStockTotalQuantity = $productStockQuantity - $cartItemCount;
                             }
                             ?>
                             <span id="available_stock"><?= isset($productStockTotalQuantity) ? number_format($productStockTotalQuantity) : '' ?></span>
@@ -185,19 +198,33 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <?php
                         $variations = $conn->query("SELECT * FROM product_variations where product_id = $id");
                         while ($variation = $variations->fetch_assoc()) :
-                            $orderItemWithSameVariation = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}' and variation_id = '{$variation['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)");
+                            $orderItemWithSameVariation = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}'
+                                and variation_id = '{$variation['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)");
                             $variationTotalQuantity = $variation['variation_stock'];
+                            $cartVarItemCount = $conn->query("SELECT SUM(quantity) as cartQuantity FROM cart_list where product_id = '{$id}'
+                                and variation_id = '{$variation['id']}'")->fetch_array()[0];
                             if ($orderItemWithSameVariation->num_rows > 0) {
                                 $oitQuantity = $orderItemWithSameVariation->fetch_array()[0];
-                                $variationTotalQuantity = $variation['variation_stock'] - $oitQuantity;
+                                $variationQuantity = $variation['variation_stock'] - $oitQuantity;
+                                $variationTotalQuantity = $variationQuantity - $cartVarItemCount;
                             }
                         ?>
                             <div class="d-block me-5">
-                                <label for='variation_<?php echo $variation['id'] ?>'>
-                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick='handleVariationSelect(this)' />
-                                    <span id='stock_<?php echo $variation['id'] ?>'><?php echo $variation['variation_name'] ?>
-                                        (Stock: <span id='variation_stock_<?php echo $variation['id'] ?>'> <?= $variationTotalQuantity ?></span>)
-                                    </span>
+                                <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="bd-highlights">
+                                            <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                            <span id='stock_<?php echo $variation['id'] ?>'>
+                                                <?php echo $variation['variation_name'] ?> -
+                                                <span class="text-price"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                                        </div>
+                                        <div class="bd-highlights">
+                                            <small>
+                                                <span id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock"
+                                                    data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>" > <?= $variationTotalQuantity ?> qty.</span>
+                                            </small>
+                                        </div>
+                                    </div>
                                 </label>
                             </div>
                         <?php
@@ -228,11 +255,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         let cart_count = 0;
     });
 
-    function handleVariationSelect(variation) {
+    function handleVariationSelect(variation, variation_price) {
         if (variation.checked) {
-            // Do something when the radio button is clicked and checked
-            console.log(`Selected value: ${variation.value}`);
             $('#add_to_cart').removeAttr("disabled");
+            $('#default').hide("slow");
+            $('#selectedVariation').html(`₱ ${variation_price}`);
 
         }
     }
@@ -243,8 +270,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             availability--;
             let avail_stock = availability - cart_count;
             $('#available_stock').html(avail_stock);
-            console.log(variationId);
-
+            let var_item_stock = $('#variation_stock_' + variationId).data('total');
+            var_item_stock--;
+            $('#variation_stock_' + variationId).html(var_item_stock + " qty.");
             if (availability > 0) {
                 start_loader();
                 $.ajax({
@@ -263,9 +291,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     },
                     success: function(resp) {
                         if (resp.status == 'success') {
-                            // update_cart_count(resp.cart_count);
                             fetch();
                             alert_toast("Product has been added to cart.", 'success');
+                            update_cart_count(resp.cart_count);
+                            const cartCount = resp.cart_count;
+                            const cartCountSpan = $('#cart_count');
+
+                            if (cartCount !== 0) {
+                                cartCountSpan.text(cartCount).addClass('badge bg-danger cart-badge').removeClass('hidden');
+                            } else {
+                                cartCountSpan.text('').removeClass('badge bg-danger cart-badge').addClass('hidden');
+                            }
+
                         } else if (!!resp.msg) {
                             alert_toast(resp.msg, 'error');
                         } else {
@@ -282,7 +319,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         }
     }
 
-
+    // function update_cart_count($count){
+    //     $('#cart_count').text($count)
+    // }
 
     function initialize() {
         console.log("available:", availability);
@@ -291,6 +330,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         var availableDiv = document.getElementById('available');
         var unavailableDiv = document.getElementById('unavailable');
         var limitReached = document.getElementById('limit');
+        //var cartNum = document.getElementById('cart_count');
 
         if (isAvailable) {
             availableDiv.style.display = 'block';
@@ -321,7 +361,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 alert_toast("An error occurred", "error");
             },
         });
-
     }
 
     function buyNow() {

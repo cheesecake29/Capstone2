@@ -114,54 +114,55 @@ Class Users extends DBConnection {
 		extract($_POST);
 	
 		$data = "";
-		foreach ($_POST as $k => $v) {
-			if (!in_array($k, array('id'))) {
-				if (!empty($data)) $data .= ", ";
+		foreach($_POST as $k => $v){
+			if(!in_array($k, array('id'))){
+				if(!empty($data)) $data .= ", ";
 				$data .= " `{$k}` = '{$v}' ";
 			}
 		}
-	
-		// Your code for checking email uniqueness remains unchanged
-	
-		if (empty($id)) {
-			$sql = "INSERT INTO `client_list` SET $data";
-		} else {
-			$sql = "UPDATE `client_list` SET $data WHERE id = '{$id}'";
-		}
-	
-		$save = $this->conn->query($sql);
-	
-		if ($save) {
-			$resp['status'] = 'success';
-			if (empty($id)) {
-				$resp['msg'] = "Account is successfully registered.";
-			} else if ($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2) {
-				$resp['msg'] = "Account Details have been updated successfully.";
-				foreach ($_POST as $k => $v) {
-					if (!in_array($k, ['password'])) {
-						$this->settings->set_userdata($k, $v);
-					}
-				}
-			} else {
-				$resp['msg'] = "Client's Account Details have been updated successfully.";
-			}
-		} else {
+		$check = $this->conn->query("SELECT * FROM `client_list` where email = '{$email}' and delete_flag ='0' ".(is_numeric($id) && $id > 0 ? " and id != '{$id}'" : "")." ")->num_rows;
+		if($check > 0){
 			$resp['status'] = 'failed';
-			if (empty($id)) {
-				$resp['msg'] = "Account has failed to register for some reason.";
-			} else if ($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2) {
-				$resp['msg'] = "Account Details have failed to update.";
-			} else {
-				$resp['msg'] = "Client's Account Details have failed to update.";
+			$resp['msg'] = ' Email already exists';
+		}else{
+			if(empty($id)){
+				$sql = "INSERT INTO `client_list` set $data";
+			}else{
+				$sql = "UPDATE `client_list` set $data where id = '{$id}'";
+			}
+			$save = $this->conn->query($sql);
+			if($save){
+				$resp['status'] = 'success';
+				if(empty($id)){
+					$resp['msg'] = " Account is successfully registered.";
+				}else if($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2){
+					$resp['msg'] = " Account Details has been updated successfully.";
+					foreach($_POST as $k => $v){
+						if(!in_array($k,['password'])){
+							$this->settings->set_userdata($k,$v);
+						}
+					}
+				}else{
+					$resp['msg'] = " Client's Account Details has been updated successfully.";
+				}
+			}else{
+				$resp['status'] = 'failed';
+				if(empty($id)){
+					$resp['msg'] = " Account has failed to register for some reason.";
+				}else if($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2){
+					$resp['msg'] = " Account Details has failed to update.";
+				}else{
+					$resp['msg'] = " Client's Account Details has failed to update.";
+				}
 			}
 		}
-	
-		if ($resp['status'] == 'success') {
-			$this->settings->set_flashdata('success', $resp['msg']);
-		}
-	
+		
+		if($resp['status'] == 'success')
+		$this->settings->set_flashdata('success',$resp['msg']);
 		return json_encode($resp);
-	}
+
+	} 
+
 	
 
 

@@ -44,7 +44,8 @@
               show: true,
               backdrop: 'static',
               keyboard: false,
-              focus: true
+              focus: true,
+              width: '100px',
             })
             end_loader()
           }
@@ -73,7 +74,7 @@
 
   footer {
     width: 100%;
-    background-color: #004399;
+  /*  background-color: #004399;*/
     text-align: center;
     color: #fff;
     padding: 10px;
@@ -84,7 +85,7 @@
 
 
 <!-- Footer-->
-<footer class="py-5" style="background-color: #004399;">
+<footer class="py-5">
   <div class="container">
     <p class="m-0 text-center text-white"><?php echo $_settings->info('sys_shortname') ?> 2023</p>
     <!-- <p class="m-0 text-center text-white">Developed By: Jewell Salongcong</p>-->

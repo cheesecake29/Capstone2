@@ -45,12 +45,15 @@
               <input type="password" name="password" placeholder="Enter your password" required>
             </div>
           </div>
+
           <div class="back_to_shop">
             <a href="<?php echo base_url ?>">Back to Shop</a>
           </div>
+
           <div id="login-btn">
             <button type="submit">Log in</button>
           </div>
+          
           <div id="no-account">No account?
             <a href="<?php echo base_url . 'register.php' ?>"> Signup here.</a>
           </div>

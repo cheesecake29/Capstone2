@@ -4,70 +4,94 @@
 <html lang="en">
   <?php require_once('inc/header.php') ?>
  <!--- <link rel="stylesheet" href="registerstyle.css"> --->
+
+ <!-- Montserrat Font (800 weight) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap">
+
+<!-- Julius Sans One Font -->
+<link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+
+<!-- Montserrat Font (800 weight) and Poppins Font (200 weight) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@200;200&display=swap">
+<link rel="stylesheet" href="./css/register.css">
+
   <body>
-    <div class="container">
+
+    <div class="signin-container">
+
         <div class="left-signin ">
-           
-           
-            <div>
+        <h1>FIND YOUR PERFECT FIT</h1>
+          
                 <form id="register-frm" action="" method="POST">
+                <div class="signin-textfield-container">
                      <input type="hidden" name="id">
-                     <div>
-    <small for="firstname">First Name</small>
-    <input type="text" name="firstname" id="firstname" placeholder="Enter First Name" autofocus required>
-</div>
 
-
-
-            <div>
-            <small>Last Name</small>
-              <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" required>
-              
+                <div class="text-field-sign">
+              <div class="input-area">
+                <label class="label" for="firstname">First Name</label>
+                <input type="text" name="firstname" id="firstname" placeholder="Enter First Name" autofocus required>
+              </div>
             </div>
-           
-            <div>
-              <small>Email</small>
-              <input type="email" name="email" id="email" placeholder="email" required>
-             
-            </div>
-            
 
-                        
-                       
-            <div>
-              <div>
-              <small>Password</small>
+            <div class="text-field-sign">
+              <div class="input-area">
+                <label class="label" for="lastname">Last Name</label>
+                <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" required>
+              </div>
+            </div>
+
+            <div class="text-field-sign">
+              <div class="input-area">
+                <label class="label" for="email">Email</label>
+                <input type="email" name="email" id="email" placeholder="Enter your email" required>
+              </div>
+            </div>
+
+            <div class="text-field-sign">
+              <div class="input-area">
+                <label class="label" for="password">Password</label>
                 <input type="password" name="password" id="password" placeholder="Type your password" required>
               </div>
-              <div>
-              <small>Confirm Password</small>
+            </div>
+
+            <div class="text-field-sign">
+              <div class="input-area">
+                <label class="label" for="cpassword">Confirm Password</label>
                 <input type="password" id="cpassword" placeholder="Confirm Password" required>
               </div>
-
-
             </div>
-            <div>
-              <div>
+
+             
+
+
+           
+            <div class="back_to_shop">
                 <a href="<?php echo base_url ?>">Back to Shop</a>
               </div>
-              <div>
+
+              <div id="signin-btn">
                 <button type="submit">Register</button>
               </div>
-            </div>
+
+           
             <div>
-              <div>
-                <a href="<?php echo base_url.'login.php' ?>">Already have an Account</a>
+              <div id="have-account">Already have an Account?
+                <a href="<?php echo base_url.'login.php' ?>">Login here</a>
               </div>
             </div>
-                </form>
             </div>
+                </form>
+
+
+          
         </div>
         <div class="right-signin">
 
-         <center><img src="<?= validate_image($_settings->info('logo')) ?>" alt="System Logo"></center>
+   <img src="<?= validate_image($_settings->info('logo')) ?>" alt="System Logo">
             
         </div>
     </div>
+
 <script src="<?= base_url ?>plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="<?= base_url ?>plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -103,6 +127,27 @@
         el.show('slow')
         return false;
       }
+
+      var password = $('#password').val();
+
+    // Check if the password length is greater than 8
+    if (password.length <= 8) {
+      el.addClass('alert alert-danger err-msg').text('Password must be at least 8 characters long.');
+      _this.prepend(el);
+      el.show('fast');
+      return false;
+    }
+
+  if (/[^a-zA-Z\s]/.test(firstname)&&/[^a-zA-Z\s]/.test(lastname)) {
+    el.addClass('alert alert-danger err-msg').text('Letters only.');
+    _this.prepend(el);
+    el.show('fast');
+    return false;
+}
+
+
+
+      
 			start_loader();
 			$.ajax({
 				url:_base_url_+"classes/Users.php?f=save_client",

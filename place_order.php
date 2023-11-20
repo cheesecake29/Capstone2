@@ -358,7 +358,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     <div class="product-sum h-100">
                         <?php
                         $total = 0;
-                        $cart = $conn->query("SELECT c.*, p.name, p.price, p.image_path, p.weight, b.name as brand, cc.category, v.* FROM `cart_list` c
+                        $cart = $conn->query("SELECT c.*, p.name, p.image_path, p.weight, b.name as brand, cc.category, v.*, v.variation_price as price FROM `cart_list` c
                                     INNER JOIN product_list p ON c.product_id = p.id
                                     INNER JOIN brand_list b ON p.brand_id = b.id
                                     INNER JOIN categories cc ON p.category_id = cc.id
@@ -399,7 +399,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                                 <span><?= $row['quantity'] ?></span>
                                             </td>
                                             <td>
-                                                <span><?= $row['price'] ?></span>
+                                                <span><?= number_format($row['price'], 2) ?></span>
                                             </td>
                                         </tr>
                                         <?php

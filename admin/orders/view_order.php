@@ -62,6 +62,11 @@ if ($order->num_rows > 0) {
 <<<<<<< Updated upstream
                 <p><b>Client Name: <?php echo $fullname ?></b></p><br>
 
+<<<<<<< HEAD
+=======
+                <p><b>Client Name: <?php echo $fullname ?></b></p><br>
+
+>>>>>>> 7b85c3eb8b186b3415015145c5b192474d37f222
                 <div class="col-md-6">
                     <label for="" class="text-muted">Reference Code</label>
                     <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
@@ -173,6 +178,7 @@ if ($order->num_rows > 0) {
                         }
                     }
 
+<<<<<<< HEAD
                            
                             echo '<label for="" class="text-muted">Client Address</label>';
                             echo '<div class="ml-3" id="prov"> ' ,'<b>'. $cityName . ', ' . $provinceName . '</b>','</div>';
@@ -190,6 +196,20 @@ if ($order->num_rows > 0) {
                                
                                 echo '<div class="ml-3" id="adr2">' . $addressline2 . '</div>';
                             }
+=======
+                    echo '<b><p>Customer Address: </p></b>';
+                    echo '<span id="prov">' . $cityName . ', ' . $provinceName . '</span>';
+                    echo '<b><p>Customer Number: </p></b>';
+                    echo '<span id="contact">' . $contact . '</span>';
+                    if ($addressline1) {
+                        echo '<b><p>Address Line 1: </p></b>';
+                        echo '<span id="adr1">' . $addressline1 . '</span>';
+                    }
+                    if ($addressline2) {
+                        echo '<b><p>Address Line 2: </p></b>';
+                        echo '<span id="adr2">' . $addressline2 . '</span>';
+                    }
+>>>>>>> 7b85c3eb8b186b3415015145c5b192474d37f222
 
 
                     ?>

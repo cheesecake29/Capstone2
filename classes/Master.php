@@ -251,15 +251,55 @@ class Master extends DBConnection
 		}
 		return json_encode($resp);
 	}
+
+	function delete_image_gallery(){
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			// Validate and sanitize input
+			$imageId = $_POST['imageId'];
+			
+			// Check for a valid database connection
+			if ($conn->connect_error) {
+				die("Connection failed: " . $conn->connect_error);
+			}
+			// Use prepared statement to update the is_delete column
+			$stmt = $conn->prepare("UPDATE product_image_gallery SET is_deleted = 1 WHERE image_id = ?");
+			$stmt->bind_param("i", $imageId); // Assuming image_id is an integer, adjust if necessary
+			$stmt->execute();
+			// Check if the update was successful
+			$updateSuccess = $stmt->affected_rows > 0;
+			// Close the prepared statement
+			$stmt->close();
+			// Close the database connection
+			$conn->close();
+			// Provide a response to the client
+			if ($updateSuccess) {
+				echo 'Image deleted successfully';
+			} else {
+				echo 'Error deleting image';
+			}
+		} else {
+			// Handle invalid requests (e.g., direct access to this script)
+			echo 'Invalid request';
+		}
+	}
 	function save_product()
 	{
 		$_POST['description'] = htmlentities($_POST['description']);
 		$_POST['price'] = (float)str_replace(',', '', $_POST['price']);
 		extract($_POST);
 		$data = "";
-		foreach ($_POST as $k => $v) {
+		/*foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id'))) {
 				if (!str_contains($k, 'variation')) {
+					$v = $this->conn->real_escape_string($v);
+					if (!empty($data)) $data .= ",";
+					$data .= " `{$k}`='{$v}' ";
+				}
+			}
+		}*/
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id'))) {
+				if (strpos($k, 'variation') === false) {
 					$v = $this->conn->real_escape_string($v);
 					if (!empty($data)) $data .= ",";
 					$data .= " `{$k}`='{$v}' ";
@@ -344,6 +384,34 @@ class Master extends DBConnection
 		if (isset($resp['msg']) && $resp['status'] == 'success') {
 			$this->settings->set_flashdata('success', $resp['msg']);
 		}
+
+		if (!empty($_FILES['gallery_images']['tmp_name'][0])) {
+			$gallery_images = $_FILES['gallery_images'];
+			$gallery_urls = array();
+	
+			// Loop through gallery images and move them to the desired directory
+			foreach ($gallery_images['tmp_name'] as $key => $tmp_name) {
+				$ext = pathinfo($gallery_images['name'][$key], PATHINFO_EXTENSION);
+				$gallery_name = $pid . '_' . uniqid() . '.' . $ext;
+				$gallery_dir = base_app . "uploads/product_gallery/";
+	
+				if (!is_dir($gallery_dir)) {
+					mkdir($gallery_dir);
+				}
+	
+				$gallery_path = $gallery_dir . $gallery_name;
+				move_uploaded_file($tmp_name, $gallery_path);
+				$gallery_urls[] = "uploads/product_gallery/$gallery_name";
+			}
+	
+			// Insert gallery images into product_image_gallery table
+			foreach ($gallery_urls as $gallery_url) {
+				$gallery_url = $this->conn->real_escape_string($gallery_url);
+				$gallery_insert_sql = "INSERT INTO `product_image_gallery` (`product_id`, `image_url`) VALUES ('{$pid}', '{$gallery_url}')";
+				$this->conn->query($gallery_insert_sql);
+			}
+		}
+
 		return json_encode($resp);
 	}
 	function delete_product()

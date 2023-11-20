@@ -31,6 +31,47 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 	.bg-disabled {
 		background: #EEEE;
 	}
+	.gallery-image-container img {
+		/* width: 50%; */
+		height: 214px;
+		object-fit: cover;
+	}
+	.custom_gall {
+		border: 1px solid #d7d7d7;
+		padding: 5px;
+		border-radius: 5px;
+	}
+	.gallery-item {
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    #lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99999;
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    #lightbox img {
+        display: block;
+        margin: 50px auto;
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    #lightbox .close {
+        color: #fff;
+        font-size: 30px;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        cursor: pointer;
+    }
 </style>
 <div class="card card-outline card-info rounded-0">
 	<div class="card-header">
@@ -104,12 +145,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			</div>
 			<div class="form-group">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-md-8">
 						<div class="form-group product-image-container">
-							<label for="" class="control-label">Product Image</label>
+							<label for="" class="control-label">Product Featured Image</label>
 							<div class="custom-file">
 								<input type="file" class="custom-file-input rounded-circle" id="customFile" name="img" onchange="displayImg(this,$(this))">
 								<label class="custom-file-label" for="customFile">Choose file</label>
+
+								<label for="gallery_images" class="control-label">Product Image Gallery</label>
+								<input type="file" class="custom_gall form-control-file" id="gallery_images" name="gallery_images[]" multiple accept="image/*">
+								
 							</div>
 						</div>
 						<div class="variation-list form-group">
@@ -143,11 +188,41 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 									<?php $num++; ?>
 							<?php endwhile;
 							endif; ?>
+							
 						</div>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-4">
 						<div class="d-flex justify-content-center">
 							<img src="<?php echo validate_image(isset($image_path) ? $image_path : "") ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
+						</div>
+						<div class="d-flex justify-content-center gallery">
+						<?php
+							// Display existing gallery images
+							if (!empty($id)) {
+								$gallery_images_query = $conn->query("SELECT image_url FROM `product_image_gallery` WHERE `product_id` = '{$id}'");
+
+								$count = 0; // Initialize counter
+
+								while ($gallery_row = $gallery_images_query->fetch_assoc()) {
+									if ($count % 3 == 0) {
+										// Start a new row for every three images
+										echo '</div><div class="d-flex">';
+									}
+
+									echo '<div class="gallery-image-container gallery-item d-flex" data-image="../' . $gallery_row['image_url'] . '" >';
+									echo '<img src="../' . $gallery_row['image_url'] . '" alt="Gallery Image" class="img-thumbnail gallery-image">';
+									echo '</div>';
+
+									$count++;
+								}
+							}
+							?>
+							<div id="gallery-preview" style="overflow-x: auto; white-space: nowrap;">
+							
+						</div>
+						<div id="lightbox">
+							<span class="close">&times;</span>
+							<img id="lightbox-image" src="" alt="Lightbox Image">
 						</div>
 					</div>
 				</div>
@@ -264,6 +339,44 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			]
 		})
 	})
+
+	//display uploaded images for gallery
+	function displayGalleryImages(input) {
+        var galleryPreview = $('#gallery-preview');
+        galleryPreview.empty(); // Clear previous preview
+
+        if (input.files && input.files.length > 0) {
+            for (var i = 0; i < input.files.length; i++) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var image = $('<img>').attr('src', e.target.result).addClass('img-thumbnail').css('width', '27%').css('height', 'auto');
+                    galleryPreview.append(image);
+                };
+
+                reader.readAsDataURL(input.files[i]);
+            }
+        }
+    }
+
+    $('#gallery_images').on('change', function () {
+        displayGalleryImages(this);
+    });
+	//End
+
+	$(document).ready(function () {
+    // Open lightbox on image click
+    $('.gallery-item').on('click', function () {
+        var imagePath = $(this).data('image');
+        $('#lightbox-image').attr('src', imagePath);
+        $('#lightbox').fadeIn();
+    });
+
+    // Close lightbox on close button click or outside click
+    $('#lightbox, .close').on('click', function () {
+        $('#lightbox').fadeOut();
+		});
+	});
 
 	var resVariation = function(id) {
 		console.log("Res", id);

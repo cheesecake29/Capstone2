@@ -182,6 +182,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         right: 15px;
         cursor: pointer;
     }
+
+    .left-container {
+    position: sticky;
+    top: 20px;
+    height: 80vh;
+    overflow-y: auto;
+}
+
 </style>
 <div class="content ">
     <div class="containerr">

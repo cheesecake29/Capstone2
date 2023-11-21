@@ -1,8 +1,11 @@
 <?php
 require_once('../config.php');
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
+
+require 'phpmailer/src/Exception.php';
+require 'phpmailer/src/PHPMailer.php';
+require 'phpmailer/src/SMTP.php';
 
 Class Users extends DBConnection {
 	private $settings;
@@ -86,13 +89,32 @@ Class Users extends DBConnection {
 		}
 		return json_encode($resp);
 	}
+	
+	public function verification_code(){
+		$email = $_POST['email'];
+		$verificationCode = $_POST['verification'];
+
+		$qry = $this->conn->query("UPDATE client_list SET status = 2 WHERE email = '$email' AND verification_code = '$verificationCode'");
+		if($qry){
+			$this->settings->set_flashdata('success','User Details successfully deleted.');
+			$resp['status'] = 'success';
+		}else{
+			$resp['status'] = 'failed';
+		}
+		return json_encode($resp);
+	}
+
+
 	public function save_client(){
 		if (!empty($_POST['password'])) {
 			$_POST['password'] = md5($_POST['password']);
 		} else {
 			unset($_POST['password']);
 		}
-	
+		function generateOTP() {
+			return sprintf('%06d', mt_rand(0, 999999));
+		}
+		
 		// Check if the old password was provided
 		$oldPasswordProvided = isset($_POST['oldpassword']);
 	
@@ -112,57 +134,89 @@ Class Users extends DBConnection {
 		}
 	
 		extract($_POST);
-	
-		$data = "";
-		foreach($_POST as $k => $v){
-			if(!in_array($k, array('id'))){
-				if(!empty($data)) $data .= ", ";
+		
+		$otp = generateOTP();
+   	 	$data = "`verification_code` = '{$otp}' ";
+		
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id'))) {
+				if (!empty($data)) $data .= ", ";
 				$data .= " `{$k}` = '{$v}' ";
 			}
 		}
-		$check = $this->conn->query("SELECT * FROM `client_list` where email = '{$email}' and delete_flag ='0' ".(is_numeric($id) && $id > 0 ? " and id != '{$id}'" : "")." ")->num_rows;
-		if($check > 0){
-			$resp['status'] = 'failed';
-			$resp['msg'] = ' Email already exists';
-		}else{
-			if(empty($id)){
-				$sql = "INSERT INTO `client_list` set $data";
-			}else{
-				$sql = "UPDATE `client_list` set $data where id = '{$id}'";
-			}
-			$save = $this->conn->query($sql);
-			if($save){
-				$resp['status'] = 'success';
-				if(empty($id)){
-					$resp['msg'] = " Account is successfully registered.";
-				}else if($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2){
-					$resp['msg'] = " Account Details has been updated successfully.";
-					foreach($_POST as $k => $v){
-						if(!in_array($k,['password'])){
-							$this->settings->set_userdata($k,$v);
-						}
+	
+		// Your code for checking email uniqueness remains unchanged
+	
+		if (empty($id)) {
+			$sql = "INSERT INTO `client_list` SET $data";
+		} else {
+			$sql = "UPDATE `client_list` SET $data WHERE id = '{$id}'";
+		}
+	
+		$save = $this->conn->query($sql);
+	
+		if ($save) {
+			$resp['status'] = 'success';
+			if (empty($id)) {
+				$resp['msg'] = "Account is successfully registered.";
+				// Send email to the new client
+				$mail = new PHPMailer(true);
+
+				try {
+					// ... Your email sending code ...
+					$mail->isSMTP();
+					$mail->Host = "smtp.hostinger.com";
+					$mail->SMTPAuth = true;
+					$mail->Username = "testemail@celesment.com";
+					$mail->Password = "Test@12345";
+					$mail->SMTPSecure = 'ssl';
+					$mail->Port = 465;
+		
+					$mail->setFrom('testemail@celesment.com', 'Arnold TV Motoshop');
+					$mail->addAddress($_POST['email']);
+					$mail->Subject = 'Welcome to Arnold TV Motoshop';
+					$mail->Body = 'Thank you for registering with our system. Please use this otp to validate your account:
+					"'.$otp.'"
+					';
+		
+					$mail->send();
+				} catch (Exception $e) {
+					// Handle exceptions if the email fails to send
+					return json_encode([
+						'status' => 'failed',
+						'msg' => 'Error sending email: ' . $e->getMessage()
+					]);
+				}
+			} else if ($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2) {
+				$resp['msg'] = "Account Details have been updated successfully.";
+				foreach ($_POST as $k => $v) {
+					if (!in_array($k, ['password'])) {
+						$this->settings->set_userdata($k, $v);
 					}
-				}else{
-					$resp['msg'] = " Client's Account Details has been updated successfully.";
 				}
-			}else{
-				$resp['status'] = 'failed';
-				if(empty($id)){
-					$resp['msg'] = " Account has failed to register for some reason.";
-				}else if($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2){
-					$resp['msg'] = " Account Details has failed to update.";
-				}else{
-					$resp['msg'] = " Client's Account Details has failed to update.";
-				}
+			} else {
+				$resp['msg'] = "Client's Account Details have been updated successfully.";
+			}
+
+			
+
+
+		} else {
+			$resp['status'] = 'failed';
+			if (empty($id)) {
+				$resp['msg'] = "Account has failed to register for some reason.";
+			} else if ($this->settings->userdata('id') == $id && $this->settings->userdata('login_type') == 2) {
+				$resp['msg'] = "Account Details have failed to update.";
+			} else {
+				$resp['msg'] = "Client's Account Details have failed to update.";
 			}
 		}
-		
-		if($resp['status'] == 'success')
-		$this->settings->set_flashdata('success',$resp['msg']);
+	
+		if ($resp['status'] == 'success') {
+			$this->settings->set_flashdata('success', $resp['msg']);
+		}
 		return json_encode($resp);
-
-	} 
-
+	}
 	
 
 

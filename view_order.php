@@ -76,9 +76,17 @@ if ($order->num_rows > 0) {
 
     .rating>.rating-stars>:hover>input:checked~label:before {
         opacity: 0.4;
+
+    }
+
+    @media print {
+        .print-btn {
+            display: none !important;
+        }
     }
 </style>
-<div class="container-fluid">
+<div class="container-fluid" id="orderDetailsContainer">
+
     <div class="row">
         <div class="col-md-6">
             <label for="" class="text-muted">Name</label>
@@ -163,48 +171,48 @@ if ($order->num_rows > 0) {
                                                 <span class="ml-2">X <?= number_format($row['price'], 2) ?></span>
                                             </div>
                                         </div>
+                                        <div class="col-auto text-right">
+                                            <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-auto text-right">
-                                    <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
-                                </div>
+                                <?php if (!$row['rated'] && $status == 5) : ?>
+                                    <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
+                                        <div class="card">
+                                            <div class="card-header" id="reviewContent">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-primary text-left" type="button" data-toggle="collapse" data-target="#reviewSection-<?= $row['id'] ?>" aria-expanded="false" aria-controls="reviewSection-<?= $row['id'] ?>">
+                                                        Submit a review
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="reviewSection-<?= $row['id'] ?>" class="collapse" aria-labelledby="reviewContent" data-parent="#accordionExample-<?= $row['id'] ?>">
+                                                <form id="submit-review-<?= $row['id'] ?>" action="">
+                                                    <div class="card-body">
+                                                        <input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="order_id">
+                                                        <div class="rating">
+                                                            <label class="mt-1">Rate: </label>
+                                                            <div class="rating-stars">
+                                                                <input type="radio" name="rate_level" value="5" id="5-<?= $row['id'] ?>"><label for="5-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="4" id="4-<?= $row['id'] ?>"><label for="4-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="3" id="3-<?= $row['id'] ?>"><label for="3-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="2" id="2-<?= $row['id'] ?>"><label for="2-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="1" id="1-<?= $row['id'] ?>"><label for="1-<?= $row['id'] ?>">☆</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="exampleFormControlTextarea1">Comments: </label>
+                                                            <textarea class="form-control" name="rate_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                        </div>
+                                                        <button class="btn btn-flat btn-primary mt-3" onclick="submitForm('submit-review', '<?= $row['id'] ?>')" type="button">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <?php if (!$row['rated'] && $status == 5) : ?>
-                            <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
-                                <div class="card">
-                                    <div class="card-header" id="reviewContent">
-                                        <h2 class="mb-0">
-                                            <button class="btn btn-link btn-block text-primary text-left" type="button" data-toggle="collapse" data-target="#reviewSection-<?= $row['id'] ?>" aria-expanded="false" aria-controls="reviewSection-<?= $row['id'] ?>">
-                                                Submit a review
-                                            </button>
-                                        </h2>
-                                    </div>
-                                    <div id="reviewSection-<?= $row['id'] ?>" class="collapse" aria-labelledby="reviewContent" data-parent="#accordionExample-<?= $row['id'] ?>">
-                                        <form id="submit-review-<?= $row['id'] ?>" action="">
-                                            <div class="card-body">
-                                                <input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="order_id">
-                                                <div class="rating">
-                                                    <label class="mt-1">Rate: </label>
-                                                    <div class="rating-stars">
-                                                        <input type="radio" name="rate_level" value="5" id="5-<?= $row['id'] ?>"><label for="5-<?= $row['id'] ?>">☆</label>
-                                                        <input type="radio" name="rate_level" value="4" id="4-<?= $row['id'] ?>"><label for="4-<?= $row['id'] ?>">☆</label>
-                                                        <input type="radio" name="rate_level" value="3" id="3-<?= $row['id'] ?>"><label for="3-<?= $row['id'] ?>">☆</label>
-                                                        <input type="radio" name="rate_level" value="2" id="2-<?= $row['id'] ?>"><label for="2-<?= $row['id'] ?>">☆</label>
-                                                        <input type="radio" name="rate_level" value="1" id="1-<?= $row['id'] ?>"><label for="1-<?= $row['id'] ?>">☆</label>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="exampleFormControlTextarea1">Comments: </label>
-                                                    <textarea class="form-control" name="rate_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
-                                                </div>
-                                                <button class="btn btn-flat btn-primary mt-3" onclick="submitForm('submit-review', '<?= $row['id'] ?>')" type="button">Submit</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endif; ?>
                     <?php endwhile; ?>
                 <?php endif; ?>
                 <?php if (isset($order_item) && $order_item->num_rows <= 0) : ?>
@@ -224,15 +232,34 @@ if ($order->num_rows > 0) {
     </div>
     <div class="clear-fix my-2"></div>
     <div class="row">
-        <div class="col-12 text-right">
+        <div class="col-8 text-left" id="disregardThisDiv">
             <?php if (isset($status)  && $status == 0) : ?>
                 <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
             <?php endif; ?>
-            <button class="btn btn-dark btn-flat btn-sm" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            <button class="btn btn-dark btn-flat btn-sm print-btn" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+        </div>
+        <div class="col-4 text-right">
+            <button onclick="printOrderDetails()" class="btn btn-link print-btn">Print Order Details</button>
         </div>
     </div>
 </div>
 <script>
+    function printOrderDetails() {
+        // Specify the div to print using its ID
+        var printContents = document.getElementById("orderDetailsContainer").innerHTML;
+        // Create a new window for printing
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        document.getElementById("disregardThisDiv").style.display = 'none';
+        // Use the JavaScript print function to print the content of the div
+        window.print();
+        // Restore the original content after printing
+        document.body.innerHTML = originalContents;
+        $('#btn-cancel').click(function() {
+            _conf("Are you sure to cancel this order?", "cancel_order", [])
+        })
+    }
+    
     $('#btn-cancel').click(function() {
         _conf("Are you sure to cancel this order?", "cancel_order", [])
     })

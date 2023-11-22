@@ -43,6 +43,44 @@
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="<?php echo base_url ?>plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <style type="text/css">
+    /* Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #004399 #DFE9EB;
+    }
+
+    /* Chrome, Edge and Safari */
+    *::-webkit-scrollbar {
+      height: 5px;
+      width: 5px;
+    }
+
+    *::-webkit-scrollbar-track {
+      border-radius: 5px;
+      background-color: #DFE9EB;
+    }
+
+    *::-webkit-scrollbar-track:hover {
+      background-color: #B8C0C2;
+    }
+
+    *::-webkit-scrollbar-track:active {
+      background-color: #B8C0C2;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      border-radius: 2px;
+      background-color: #004399;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background-color: #005BD0;
+    }
+
+    *::-webkit-scrollbar-thumb:active {
+      background-color: #003578;
+    }
+
     /* Chart.js */
     @keyframes chartjs-render-animation {
       from {

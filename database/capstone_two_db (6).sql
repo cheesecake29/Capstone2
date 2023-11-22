@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2023 at 12:11 PM
+-- Generation Time: Nov 16, 2023 at 04:36 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -58,9 +58,17 @@ CREATE TABLE `cart_list` (
   `id` int(30) NOT NULL,
   `client_id` int(30) NOT NULL,
   `product_id` int(30) NOT NULL,
+  `variation_id` int(30) NOT NULL COMMENT 'product_variations (id)',
   `quantity` float NOT NULL,
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_list`
+--
+
+INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
+(54, 14, 46, 41, 1, '2023-11-16 21:29:16');
 
 -- --------------------------------------------------------
 
@@ -119,7 +127,8 @@ CREATE TABLE `client_list` (
 INSERT INTO `client_list` (`id`, `firstname`, `lastname`, `contact`, `region`, `province`, `city`, `barangay`, `addressline1`, `addressline2`, `zipcode`, `email`, `password`, `verification_code`, `email_verified_at`, `status`, `delete_flag`, `date_created`, `date_added`) VALUES
 (10, 'jizzelle', 'salongcong', '097777777777', '', 'Select Province', 'Bangued', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'jewellsalongcong09@gmail.com', '363b122c528f54df4a0446b6bab05515', '', NULL, 1, 0, '2023-10-29 02:41:46', '2023-11-06 01:29:33'),
 (12, 'jewell', 'salongcong', '097777777777', 'visayas', 'aklan', 'makato', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'bellachingaling@gmail.com', '2db95e8e1a9267b7a1188556b2013b33', '', NULL, 1, 0, '2023-11-06 01:37:04', '2023-11-09 14:03:11'),
-(13, 'Test', 'Last', '', '', '', '', '', '', '', '', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', NULL);
+(13, 'Test', 'Last', '0912312132', '04', '0421', '042102', '', 'ADr 1 test', 'adr 2 test', '3412', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', '2023-11-16 22:21:09'),
+(14, 'test', 'test', '', '', '', '', '', '', '', '', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', '', NULL, 1, 0, '2023-11-16 17:52:20', NULL);
 
 -- --------------------------------------------------------
 
@@ -147,6 +156,31 @@ INSERT INTO `mechanics_list` (`id`, `name`, `contact`, `email`, `status`, `date_
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `meet_up_address`
+--
+
+CREATE TABLE `meet_up_address` (
+  `id` int(11) NOT NULL,
+  `text` varchar(250) NOT NULL,
+  `active` int(10) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Meet up address';
+
+--
+-- Dumping data for table `meet_up_address`
+--
+
+INSERT INTO `meet_up_address` (`id`, `text`, `active`) VALUES
+(1, 'DASMARINAS AREA', 1),
+(2, 'IMUS AGUINALDO HIGHWAY', 1),
+(3, 'BACOOR AGUINALDO HIGHWAY', 1),
+(4, 'ZAPOTE PALENGKE', 1),
+(5, 'LAS PINAS HOSPITAL', 1),
+(6, 'SM SUCAT BUILDING 2', 1),
+(7, 'AIRPORT ROAD', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notifications`
 --
 
@@ -164,11 +198,8 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`, `order_id`) VALUES
-(1, 13, '0', 0, 1, 0),
-(2, 13, '0', 0, 1, 0),
-(3, 13, 'Your order is confirmed.', 0, 1, 29),
-(4, 13, 'Test Last. has placed an order.', 0, 2, 30),
-(5, 13, 'Your order is confirmed.', 0, 1, 0);
+(9, 13, 'Your order Lorem ipum is confirmed.', 0, 1, 35),
+(10, 13, 'Test Last  has placed an order.', 0, 2, 36);
 
 -- --------------------------------------------------------
 
@@ -180,6 +211,7 @@ CREATE TABLE `order_items` (
   `id` int(30) NOT NULL,
   `order_id` int(30) NOT NULL,
   `product_id` int(30) NOT NULL,
+  `variation_id` int(11) NOT NULL,
   `quantity` float NOT NULL DEFAULT 0,
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -188,19 +220,12 @@ CREATE TABLE `order_items` (
 -- Dumping data for table `order_items`
 --
 
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `date_added`) VALUES
-(20, 16, 6, 1, '2023-10-31 18:14:23'),
-(21, 18, 7, 1, '2023-10-31 18:33:59'),
-(22, 20, 9, 1, '2023-10-31 19:05:40'),
-(23, 22, 6, 1, '2023-11-02 02:10:46'),
-(24, 23, 11, 6, '2023-11-02 10:58:34'),
-(25, 24, 7, 1, '2023-11-02 11:17:31'),
-(26, 25, 8, 1, '2023-11-02 11:18:45'),
-(27, 26, 10, 1, '2023-11-02 11:25:52'),
-(28, 27, 9, 1, '2023-11-06 02:17:21'),
-(29, 28, 6, 1, '2023-11-06 02:39:39'),
-(30, 29, 10, 1, '2023-11-09 21:08:19'),
-(31, 30, 9, 2, '2023-11-12 18:38:33');
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
+(35, 32, 48, 45, 1, '2023-11-16 21:20:36'),
+(36, 35, 46, 41, 3, '2023-11-16 21:49:54'),
+(37, 36, 47, 44, 2, '2023-11-16 22:21:51'),
+(38, 36, 47, 43, 1, '2023-11-16 22:21:51'),
+(39, 36, 46, 41, 1, '2023-11-16 22:21:51');
 
 -- --------------------------------------------------------
 
@@ -220,6 +245,7 @@ CREATE TABLE `order_list` (
   `addressline2` varchar(255) NOT NULL,
   `zipcode` varchar(10) NOT NULL,
   `order_type` tinyint(4) NOT NULL DEFAULT 1,
+  `other_address` varchar(1000) NOT NULL COMMENT 'Pick up / Meet up',
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=pending,1 = packed, 2 = for delivery, 3 = on the way, 4 = delivered, 5=cancelled',
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
@@ -229,22 +255,12 @@ CREATE TABLE `order_list` (
 -- Dumping data for table `order_list`
 --
 
-INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `status`, `date_created`, `date_updated`) VALUES
-(16, '202310-00001', 10, 300, '', '', '', '', '', '', 1, 0, '2023-10-31 18:14:23', '2023-10-31 18:14:23'),
-(17, '202310-00002', 10, 0, '', '', '', '', '', '', 1, 0, '2023-10-31 18:14:23', NULL),
-(18, '202310-00003', 10, 1200, '', '', '', '', '', '', 1, 0, '2023-10-31 18:33:59', '2023-10-31 18:33:59'),
-(19, '202310-00004', 10, 0, '', '', '', '', '', '', 1, 0, '2023-10-31 18:33:59', NULL),
-(20, '202310-00005', 10, 2800, '', '', '', '', '', '', 1, 1, '2023-10-31 19:05:40', '2023-11-02 01:52:00'),
-(21, '202310-00006', 10, 0, '', '', '', '', '', '', 1, 0, '2023-10-31 19:05:40', NULL),
-(22, '202311-00001', 10, 300, '', '', '', '', '', '', 1, 0, '2023-11-02 02:10:46', '2023-11-02 02:10:46'),
-(23, '202311-00002', 10, 33600, '', '', '', '', '', '', 1, 4, '2023-11-02 10:58:34', '2023-11-02 11:00:01'),
-(24, '202311-00003', 10, 1200, '', 'Select Province', '', '', '', '', 1, 0, '2023-11-02 11:17:31', '2023-11-02 11:17:31'),
-(25, '202311-00004', 10, 2300, '', '', '', 'FIRST MARITIME PLACE', '', '', 1, 0, '2023-11-02 11:18:45', '2023-11-02 11:18:45'),
-(26, '202311-00005', 10, 2400, '', '', '', 'FIRST MARITIME PLACE', '', '', 1, 5, '2023-11-02 11:25:52', '2023-11-02 11:26:38'),
-(27, '202311-00006', 12, 2800, '', '', '', 'FIRST MARITIME PLACE', '', '', 1, 6, '2023-11-06 02:17:21', '2023-11-06 02:36:06'),
-(28, '202311-00007', 12, 300, '', '', '', 'FIRST MARITIME PLACE', '', '', 1, 0, '2023-11-06 02:39:39', '2023-11-06 02:39:39'),
-(29, '202311-00008', 13, 2400, '', '', '', 'TEST ADDRESS', '', '', 1, 1, '2023-11-09 21:08:19', '2023-11-11 00:20:30'),
-(30, '202311-00009', 13, 5600, '', '', '', '', '', '', 1, 1, '2023-11-12 18:38:33', '2023-11-12 19:08:03');
+INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
+(32, '202311-00001', 14, 150, '', '1401', '175301', '', '', '', 3, 'EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY', 0, '2023-11-16 21:20:36', '2023-11-16 21:20:36'),
+(33, '202311-00002', 13, 0, '', '0410', '041001', 'adre`1', '', '15115', 1, '', 0, '2023-11-16 21:42:47', NULL),
+(34, '202311-00003', 13, 0, '', '0410', '041001', 'adre`1', '', '15115', 1, '', 0, '2023-11-16 21:42:57', NULL),
+(35, '202311-00004', 13, 4500, '', '0421', '042106', 'sadp 1', '', '14485', 1, '', 1, '2023-11-16 21:49:54', '2023-11-16 22:19:52'),
+(36, '202311-00005', 13, 1800, '', '0421', '042102', 'ADr 1 test', '', '3412', 2, '', 0, '2023-11-16 22:21:51', '2023-11-16 22:21:51');
 
 -- --------------------------------------------------------
 
@@ -273,12 +289,11 @@ CREATE TABLE `product_list` (
 --
 
 INSERT INTO `product_list` (`id`, `brand_id`, `category_id`, `name`, `models`, `description`, `price`, `weight`, `status`, `image_path`, `delete_flag`, `date_created`, `date_updated`) VALUES
-(6, 8, 10, 'Front Fender', 'Mio Soul 125', '&lt;p&gt;&lt;font color=&quot;#000000&quot; face=&quot;Josefin Sans&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;Front fender is a motorcycle accessory that is designed to protect the rider and other drivers from debris kicked up by the front wheel. It also has an impact on air drag and speed capabilities.&lt;/span&gt;&lt;/font&gt;&lt;br&gt;&lt;/p&gt;', 300, '500g and below', 1, 'uploads/products/6.png?v=1698284267', 0, '2023-10-22 16:53:47', '2023-11-02 19:05:02'),
-(7, 9, 11, 'Mini Driving  Lights Set  Bracket  With Bracket', 'For  Mio i, Mio M3, Mio i 125s, TMX 125, TMX 155, Rusi, Racal, SkyGo', '&lt;p&gt;Driving light bracket sets available for motorcycles that are designed to mount driving lights onto the motorcycle. These bracket sets are made from different materials and are compatible with different motorcycle makes and models.&lt;br&gt;&lt;/p&gt;', 1200, '5kg – 6kg', 1, 'uploads/products/7.png?v=1698284223', 0, '2023-10-22 23:58:55', '2023-10-28 19:24:13'),
-(8, 8, 10, 'Mono Rack Bracket', 'Mio i, Mio M3, Mio i 125s, Honda Beat & Click V1/2/3, Mio Soul i125, Honda PCX 150/160, Mio Sporty/Soulty, Mio Gear 125', '&lt;p&gt;Mono rack bracket is a specialized bracket used to attach a top box or luggage carrier to the rear of a motorcycle. It provides a secure and stable mounting point for carrying luggage and is made of heavy-duty and durable materials.&lt;br&gt;&lt;/p&gt;', 2300, '5kg – 6kg', 1, 'uploads/products/8.png?v=1698284212', 0, '2023-10-23 11:46:53', '2023-10-28 19:24:20'),
-(9, 8, 11, 'Gas Cap', 'TMX 155', '&lt;p&gt;Gas cap is a motorcycle accessory that covers the opening of the gas tank, providing a secure seal and preventing fuel from spilling or evaporating.&amp;nbsp;&lt;br&gt;&lt;/p&gt;', 2800, '5kg – 6kg', 1, 'uploads/products/9.png?v=1698284257', 0, '2023-10-23 11:55:41', '2023-10-28 19:23:55'),
-(10, 9, 10, 'Gas Tank', 'TMX 155', '&lt;p&gt;Gas tank is an essential component of a motorcycle that stores fuel for the engine. Gas tank accessories are available to enhance the functionality and appearance of the gas tank, such as gas caps, fuel sight gauges, and fuel line hoses.&lt;br&gt;&lt;/p&gt;', 2400, '5kg – 6kg', 1, 'uploads/products/10.png?v=1698284236', 0, '2023-10-23 12:01:10', '2023-10-28 19:24:04'),
-(11, 9, 10, 'Side Cover', 'For TMX 155 / TMX 125', '&lt;p&gt;Side covers for the TMX 155 and TMX 125 motorcycles are accessories that provide both functional and aesthetic benefits. They are designed to fit specific models, made from durable materials, and can enhance the appearance of the motorcycle.&lt;br&gt;&lt;/p&gt;', 5600, '5kg – 6kg', 1, 'uploads/products/11.png?v=1698284197', 0, '2023-10-23 12:03:22', '2023-10-28 19:24:28');
+(45, 9, 11, 'test', 'test', '&lt;p&gt;testdada&lt;/p&gt;', 11, 'select', 1, '', 0, '2023-11-15 18:27:04', '2023-11-16 16:52:06'),
+(46, 10, 11, 'Lorem ipum', 'All model', '&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;Open Sans&amp;quot;, Arial, sans-serif; font-size: 14px; text-align: justify;&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel semper libero. Vestibulum eu urna bibendum, tempus sapien eu, elementum tellus. Nullam congue, est vel semper porta, libero justo varius massa, vestibulum faucibus arcu augue a nisi. Morbi nec rutrum nunc. Phasellus congue consectetur lectus ac aliquam. Integer nec tellus faucibus, lobortis tortor ullamcorper, laoreet massa. Vivamus a odio sem. Donec at rhoncus urna. Nulla aliquet justo vel pulvinar accumsan. Phasellus at augue commodo, volutpat est sit amet, tristique justo.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;', 1500, '500g and below', 1, 'uploads/products/46.png?v=1700142033', 0, '2023-11-15 18:31:10', '2023-11-16 21:40:33'),
+(47, 9, 11, 'test again', 'test again', '&lt;p&gt;test again&lt;br&gt;&lt;/p&gt;', 100, '500g and below', 1, '', 0, '2023-11-15 18:44:09', NULL),
+(48, 9, 11, 'test product', 'test product', '&lt;p&gt;test product&lt;br&gt;&lt;/p&gt;', 150, '500g and below', 1, 'uploads/products/48.jpg?v=1700045109', 0, '2023-11-15 18:45:09', '2023-11-15 18:45:09'),
+(49, 10, 11, 'test with default variation', 'test', '&lt;p&gt;test with default variation&lt;/p&gt;', 1231, '500g – 1kg', 1, 'uploads/products/49.jpg?v=1700124831', 0, '2023-11-16 16:53:51', '2023-11-16 16:53:51');
 
 -- --------------------------------------------------------
 
@@ -287,13 +302,32 @@ INSERT INTO `product_list` (`id`, `brand_id`, `category_id`, `name`, `models`, `
 --
 
 CREATE TABLE `product_variations` (
-  `id` int(30) NOT NULL,
-  `product_id` int(30) NOT NULL,
-  `color_id` int(30) NOT NULL,
-  `delete_flag` tinyint(4) NOT NULL DEFAULT 0,
+  `id` int(30) NOT NULL COMMENT 'auto inc',
+  `product_id` int(30) NOT NULL COMMENT 'product_list (id)',
+  `variation_name` varchar(250) NOT NULL COMMENT 'eg: Blue/Red/Green',
+  `variation_stock` int(100) NOT NULL,
+  `delete_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0 = false, 1 = true',
+  `default_flag` int(10) NOT NULL DEFAULT 0 COMMENT '0 - False / 1 - True',
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_variations`
+--
+
+INSERT INTO `product_variations` (`id`, `product_id`, `variation_name`, `variation_stock`, `delete_flag`, `default_flag`, `date_created`, `date_updated`) VALUES
+(38, 45, '1', 12, 0, 0, '2023-11-15 18:27:04', NULL),
+(39, 45, '2', 12, 0, 0, '2023-11-15 18:27:04', NULL),
+(40, 46, 'Black', 10, 0, 0, '2023-11-15 18:31:10', NULL),
+(41, 46, 'Red', 23, 0, 0, '2023-11-15 18:31:10', NULL),
+(42, 46, 'Gray', 38, 0, 0, '2023-11-15 18:31:10', NULL),
+(43, 47, 'test 1', 100, 0, 0, '2023-11-15 18:44:09', NULL),
+(44, 47, 'test 2', 34, 0, 0, '2023-11-15 18:44:09', NULL),
+(45, 48, 'test product var 1', 1, 0, 0, '2023-11-15 18:45:09', NULL),
+(46, 48, 'test product var 2', 2, 0, 0, '2023-11-15 18:45:09', NULL),
+(47, 48, 'test product var 3', 3, 1, 0, '2023-11-15 18:45:09', NULL),
+(48, 49, 'default', 12131, 0, 1, '2023-11-16 16:53:51', NULL);
 
 -- --------------------------------------------------------
 
@@ -364,6 +398,25 @@ CREATE TABLE `service_requests` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `shipping_fee`
+--
+
+CREATE TABLE `shipping_fee` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `amount` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shipping_fee`
+--
+
+INSERT INTO `shipping_fee` (`id`, `order_id`, `amount`) VALUES
+(1, 35, 117);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `stock_list`
 --
 
@@ -380,12 +433,14 @@ CREATE TABLE `stock_list` (
 --
 
 INSERT INTO `stock_list` (`id`, `product_id`, `quantity`, `type`, `date_created`) VALUES
-(9, 6, 5, 1, '2023-10-22 16:54:16'),
-(10, 7, 3, 1, '2023-10-22 23:59:34'),
-(11, 8, 7, 1, '2023-10-23 11:47:07'),
-(12, 9, 6, 1, '2023-10-23 11:56:05'),
-(13, 10, 1, 1, '2023-10-23 12:01:22'),
-(15, 11, 1, 1, '2023-11-02 11:03:35');
+(32, 45, 24, 1, '2023-11-15 18:27:04'),
+(33, 46, 71, 1, '2023-11-15 18:31:10'),
+(34, 47, 134, 1, '2023-11-15 18:44:09'),
+(35, 48, 6, 1, '2023-11-15 18:45:09'),
+(36, 49, 0, 1, '2023-11-16 16:53:51'),
+(37, 47, 134, 1, '2023-11-16 17:43:33'),
+(38, 47, 134, 1, '2023-11-16 17:44:00'),
+(39, 49, 12131, 1, '2023-11-16 17:44:33');
 
 -- --------------------------------------------------------
 
@@ -435,8 +490,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `password`, `avatar`, `last_login`, `type`, `date_added`, `date_updated`) VALUES
 (1, 'Adminstrator', 'Admin', 'admin', '0192023a7bbd73250516f069df18b500', 'uploads/1624240500_avatar.png', NULL, 1, '2021-01-20 14:02:37', '2021-06-21 09:55:07'),
-(6, 'Claire', 'Blake', 'cblake', 'cd74fae0a3adf459f73bbf187607ccea', 'uploads/1632990840_ava.jpg', NULL, 2, '2021-09-30 16:34:02', '2021-09-30 16:35:26'),
-(7, 'Test', 'Admin', 'admin2', 'asd', NULL, NULL, 1, '2023-11-09 21:09:54', '2023-11-09 21:10:21');
+(6, 'Claire', 'Blake', 'cblake', 'cd74fae0a3adf459f73bbf187607ccea', 'uploads/1632990840_ava.jpg', NULL, 2, '2021-09-30 16:34:02', '2021-09-30 16:35:26');
 
 --
 -- Indexes for dumped tables
@@ -454,7 +508,8 @@ ALTER TABLE `brand_list`
 ALTER TABLE `cart_list`
   ADD PRIMARY KEY (`id`),
   ADD KEY `client_id` (`client_id`),
-  ADD KEY `product_id` (`product_id`);
+  ADD KEY `product_id` (`product_id`),
+  ADD KEY `variation_id` (`variation_id`);
 
 --
 -- Indexes for table `categories`
@@ -476,6 +531,12 @@ ALTER TABLE `mechanics_list`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `meet_up_address`
+--
+ALTER TABLE `meet_up_address`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -487,7 +548,8 @@ ALTER TABLE `notifications`
 ALTER TABLE `order_items`
   ADD PRIMARY KEY (`id`),
   ADD KEY `order_id` (`order_id`),
-  ADD KEY `product_id` (`product_id`);
+  ADD KEY `product_id` (`product_id`),
+  ADD KEY `variation_id` (`variation_id`);
 
 --
 -- Indexes for table `order_list`
@@ -508,6 +570,7 @@ ALTER TABLE `product_list`
 -- Indexes for table `product_variations`
 --
 ALTER TABLE `product_variations`
+  ADD PRIMARY KEY (`id`),
   ADD KEY `product_id` (`product_id`);
 
 --
@@ -529,6 +592,12 @@ ALTER TABLE `service_requests`
   ADD PRIMARY KEY (`id`),
   ADD KEY `client_id` (`client_id`),
   ADD KEY `mechanic_id` (`mechanic_id`);
+
+--
+-- Indexes for table `shipping_fee`
+--
+ALTER TABLE `shipping_fee`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `stock_list`
@@ -563,7 +632,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -575,7 +644,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `client_list`
 --
 ALTER TABLE `client_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `mechanics_list`
@@ -584,28 +653,40 @@ ALTER TABLE `mechanics_list`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `meet_up_address`
+--
+ALTER TABLE `meet_up_address`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `product_list`
 --
 ALTER TABLE `product_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+
+--
+-- AUTO_INCREMENT for table `product_variations`
+--
+ALTER TABLE `product_variations`
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc', AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `service_list`
@@ -620,10 +701,16 @@ ALTER TABLE `service_requests`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `shipping_fee`
+--
+ALTER TABLE `shipping_fee`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `stock_list`
 --
 ALTER TABLE `stock_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `system_info`

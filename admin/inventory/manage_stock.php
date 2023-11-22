@@ -1,19 +1,31 @@
 <?php
 require_once('./../../config.php');
-if (isset($_GET['pid']) && !empty($_GET['pid']))
-	$product_id = $_GET['pid'];
-if (isset($_GET['id']) && $_GET['id'] > 0) {
-	$qry = $conn->query("SELECT * from `stock_list` where id = '{$_GET['id']}' ");
-	if ($qry->num_rows > 0) {
-		foreach ($qry->fetch_assoc() as $k => $v) {
-			$$k = stripslashes($v);
-		}
-	}
+
+$product_id = ''; // Initialize $product_id to an empty string
+
+if (isset($_GET['pid']) && !empty($_GET['pid'])) {
+    $product_id = $_GET['pid'];
 }
-$qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' and default_flag = 0 ");
-$qryDefaultVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' and default_flag = 1 limit 1");
-$defaultVariation = $qryDefaultVariations->fetch_assoc();
+
+if (isset($_GET['id']) && $_GET['id'] > 0) {
+    $qry = $conn->query("SELECT * from `stock_list` where id = '{$_GET['id']}' ");
+    if ($qry->num_rows > 0) {
+        foreach ($qry->fetch_assoc() as $k => $v) {
+            $$k = stripslashes($v);
+        }
+    }
+}
+
+if ($product_id) { // Check if $product_id is set
+    $qryVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' and default_flag = 0 ");
+    $qryDefaultVariations = $conn->query("SELECT * from `product_variations` where product_id = '{$product_id}' and default_flag = 1 limit 1");
+    $defaultVariation = $qryDefaultVariations->fetch_assoc();
+} else {
+    // Handle the case where $product_id is not set (e.g., show an error message)
+    echo "Product ID is not set.";
+}
 ?>
+
 <div class="container-fluid">
 	<!-- TEST <?php echo json_encode($defaultVariation); ?> -->
 	<form action="" id="stock-form">

@@ -44,7 +44,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
     }
     .left,
     .right{
-            width: 50%;
+            width: 70%;
             margin:2%;
             border: none;
             border-radius: 2px;
@@ -133,27 +133,52 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
 
     .input-form-fname,
-    .input-form-lname,
-    .input-form-email,
-    .input-form-contact
-    {
-        display: inline-block;
-        border: 1px solid #B3B3B3 ;
-        margin: 2% 3%;
-        width:  50%;
-        
-        border-radius: 5px;
-    }
+.input-form-lname,
+.input-form-email,
+.input-form-contact,
+.input-form-zip,
+.input-form-province,
+.input-form-city,
+.input-form-add1,
+.input-form-add2,
+.input-form-region {
+    display: inline-block;
+    border: 1px solid #B3B3B3;
+    margin: 1%; /* Adjusted margin values */
+    width: 48%; /* Adjusted width to accommodate two inline blocks in a row */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    padding: 2%; /* Add padding for better spacing */
+}
 
-  
+.input-form-add1,
+.input-form-add2,
+.input-form-region {
+    width: 98%; /* Adjusted width for full width with a slight margin */
+}
 
- 
+ .address-holder{
+    display: inline-block;
+    border: 1px solid #B3B3B3;
+    margin: 1%; /* Adjusted margin values */
+    width: 98%;
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    padding: 2%; /* Add padding for better spacing */
+ }
 
     .input-form input,
     .input-form-fname input,
     .input-form-lname input,
     .input-form-email input,
-    .input-form-contact input
+    .input-form-contact input,
+    .input-form-add1 input,
+    .input-form-add2 input,
+    .input-form-zip input
     {
         outline: none;
         border: none;
@@ -164,17 +189,25 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
    
     }
 
+    
+
   
 
     .input-form small,
     .input-form-fname small,
     .input-form-lname small,
     .input-form-email small,
-    .input-form-contact small
+    .input-form-contact small,
+    .input-form-add1 small,
+    .input-form-add2 small,
+    .input-form-zip small,
+    .input-form-province small,
+    .input-form-city small,
+    .input-form-region small
     {
         display: block;
         font-size: 12px;
-        color: gray;
+        color: #004399;
         margin: 1% 3% ;
 
        
@@ -182,9 +215,27 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
    
 .fname-lname-holder,
-.contact-email-holder{
+.contact-email-holder
+{
     display: flex;
     flex-direction: row;
+}
+
+.input-form-region select,
+.input-form-province select,
+.input-form-city select{
+    font-size: 18px;
+    width: 100%; /* Adjust the width as needed */
+    outline: none;
+    border: none;
+    display: block;
+    line-height: 1.2em;
+    font-size: 14pt;
+    padding: 2%;
+}
+
+.ad{
+    color: #004399;
 }
   
 
@@ -237,47 +288,149 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                                 <input type="text" name="contact" id="contact" placeholder="Contact Number" value="<?= isset($contact) ? $contact : "" ?>" required>
                             </div>
                         </div>
-
+                        <br>
                         <h4 style="font-weight: bold; font-size: 20px; margin: 0 3%;">Default Address</h4>
-                            <div class="left">
-                                <div class="col-md-12">
 
-                                <?php
-                                $api_url_region = 'https://ph-locations-api.buonzz.com/v1/regions';
-                                $response1 = file_get_contents($api_url_region);
-                                
-                                // Handle JSON data
-                                $regions = json_decode($response1, true);
+                        <div class="col-md-12">
 
-                                if ($regions['data'] && is_array($regions['data'])) {
-                                    echo '<select name="region" id="regions">';
-                                    foreach ($regions['data'] as $option) {
-                                        echo '<option value="' . $option['id'] . '">' . $option['name'] . '</option>';
-                                    }
-                                    echo '</select>';
-                                } else {
-                                    echo 'Failed to fetch or decode data.';
+                            <?php
+                            $api_url_region = 'https://ph-locations-api.buonzz.com/v1/regions';
+                            $response1 = file_get_contents($api_url_region);
+
+                            // Handle JSON data
+                            $regions = json_decode($response1, true);
+
+                            if ($regions['data'] && is_array($regions['data'])) {
+                                echo '<div class="input-form-region">';
+                                echo '<small class="label">Select Region</small>';
+                                echo '<select name="region" id="regions">';
+                                foreach ($regions['data'] as $option) {
+                                    echo '<option value="' . $option['id'] . '">' . $option['name'] . '</option>';
                                 }
+                                echo '</select>';
+                                echo '</div>';
+                            } else {
+                                echo 'Failed to fetch or decode data.';
+                            }
 
-                                echo '<select name="province" id="provinces" disabled>
-                                        <option>Select Province</option>
-                                    </select>';
-                                echo '<select name="city" id="cities" disabled>
-                                        <option>Select City</option>
-                                    </select>';
+
+                            echo '<div class="province-city-holder">';
+                            echo '<div class="input-form-province">';
+                            echo '<small class="label">Select Province</small>';
+                            echo '<select name="province" id="provinces" disabled>
+
+                                    <option>Select Province</option>
+                                </select>';
+                            echo '</div>';
+
+                            echo '<div class="input-form-city">';
+                            echo '<small class="label">Select City</small>';
+                            echo '<select name="city" id="cities" disabled>
+
+                                    <option>Select City</option>
+                                </select>';
+                            echo '</div>';
+                            echo '</div>';
+
                             ?>
 
-                                </div>
+                            </div>
+
+
+                          
+                       
+
+
+                            <div class="addresses">
+                        <?php
+                             //get region name
+                             $api_url1 = 'https://ph-locations-api.buonzz.com/v1/regions';
+                             $response3 = file_get_contents($api_url1);
+ 
+                             $regions = json_decode($response3, true);
+ 
+                             $regionCode = $region;
+ 
+                             $regionName = null;
+ 
+                             
+ 
+                             foreach ($regions['data'] as $region) {
+                                 if ($region['id'] === $regionCode) {
+                                     $regionName = $region['name'];
+                                     break; 
+                                 }
+                             }
+
+                            //get province name
+                            $api_url = 'https://ph-locations-api.buonzz.com/v1/provinces';
+                            $response = file_get_contents($api_url);
+
+                            $provinces = json_decode($response, true);
+
+                            $provinceCode = $province;
+
+                            $provinceName = null;
+
+                            foreach ($provinces['data'] as $province) {
+                                if ($province['id'] === $provinceCode) {
+                                    $provinceName = $province['name'];
+                                    break; 
+                                }
+                            }
+
+                            //get city name
+                            $api_url2 = 'https://ph-locations-api.buonzz.com/v1/cities';
+                            $response2 = file_get_contents($api_url2);
+
+                            $cities = json_decode($response2, true);
+
+                            $cityCode = $city;
+
+                            $cityName = null;
+
+
+
+                            foreach ($cities['data'] as $city) {
+                                if ($city['id'] === $cityCode) {
+                                    $cityName = $city['name'];
+                                    break; 
+                                }
+                            }
+
+                             
+                            echo '<div class="address-holder">';
+                            echo '<b><p>Customer Address: </p></b>';
+                            echo '<small class="ad">Region: </small>' . $regionName ;
+                            echo '<br>' ;
+                            echo '<small class="ad">Province: </small>' . $provinceName ;
+                            echo '<br>' ;
+                            echo '<small  class="ad">City:  </small>' . $cityName ;
+                            echo '</div>';
+
+
+                        ?>
+
+
+                </div>
+              <!-- <button class="btn btn-primary btn-flat btn-sm" type="button" id="edit_address"><i class="fa fa-edit"></i>Edit address</button> -->
                             
                         <!-- Address inputs (Address Line 1, Address Line 2, Zip Code) -->
+                        <div class ="input-form-add1">
+                        <small class="label">Address Line 1</small>
                         <input name="addressline1" id="addressline1" rows="3" class="form-control form-control-sm rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>" required>
+                        </div>
+
+                        <div class ="input-form-add2">
+                        <small class="label">Address Line 2</small>
                         <input name="addressline2" id="addressline2" rows="3" class="form-control form-control-sm rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>" optional>
-                        <div class="zip">
+                        </div>
+
+                        <div class="input-form-zip">
                             <small>Zip Code</small>
                             <input type="varchar" name="zipcode" id="zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>" required>
                         </div>
-                            </div>
-
+                           
                         
 
                         <!-- Update button -->
@@ -333,6 +486,12 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
 
 <script>
+$(function(){
+    $('#edit_address').click(function(){
+        uni_modal("Edit Address", "edit_address.php","mid-large");
+    })
+    });
+
     $(function(){
     fetchProvince();
     fetchCities();

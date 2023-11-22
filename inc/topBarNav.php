@@ -255,6 +255,27 @@
     }
 
     /* END: NOTIFICATIONS */
+
+    .cart-badge {
+    width: 30px;
+    height: 30px;
+    padding: 15.2px 7.8px;
+    font-size: 27px;
+    border-radius: 26px;
+    transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
+    transform-origin: top;
+    padding-right: 0;
+    padding-top: 0.2px;
+    padding-left: 0.2px;
+    text-align: center;
+    border-width: 48px;
+}
+
+.hidden {
+    display: none;
+}
+
+
 </style>
 
 <body>
@@ -334,6 +355,7 @@
                                     echo '</div>';
                                     echo '</ul>';
                                 } else {
+                                    echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
                                     echo 'No notifications available.';
                                 }
                                 ?>
@@ -370,24 +392,12 @@
                                 <a href="./?p=cart" class="nav-link">
                                     <i class="fas fa-shopping-cart"></i>
                                     <?php
-                                    if ($cart_count !== 0) {
-                                        echo '<span id="cart_count"
-                                        class="badge bg-danger"
-                                        style="width: 30px;
-                                        height: 30px;
-                                        padding: 15.2px 7.8px;
-                                        font-size: 27px;
-                                        border-radius: 26px;
-                                        transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
-                                        transform-origin: top;
-                                        padding-right: 0;
-                                        padding-top: 0.2px;
-                                        padding-left: 0.2px;
-                                        text-align: center;
-                                        border-width: 48px;
-                                        ">' . $cart_count . '</span>';
-                                    }
+                                        $styleClass = ($cart_count !== 0) ? 'badge bg-danger cart-badge' : 'hidden';
+
+                                        echo ($cart_count !== 0) ? '<span id="cart_count" class="' . $styleClass . '">' . $cart_count . '</span>'
+                                        : '<span id="cart_count" class="' . $styleClass . '"></span>';
                                     ?>
+
 
                                 </a>
                             </div>

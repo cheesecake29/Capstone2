@@ -1,4 +1,10 @@
-<h1 class=""><?php echo $_settings->info('homename') ?></h1>
+<style>
+  a {
+    color: black;
+  }
+  </style>
+
+
 <hr>
 <div class="row">
           <div class="col-12 col-sm-6 col-md-3">
@@ -6,6 +12,7 @@
               <span class="info-box-icon bg-gradient-dark elevation-1"><i class="fas fa-copyright"></i></span>
 
               <div class="info-box-content">
+                <a href="<?php echo base_url ?>admin/?page=maintenance/brands">
                 <span class="info-box-text">Total Brands</span>
                 <span class="info-box-number">
                   <?php 
@@ -13,6 +20,7 @@
                     echo number_format($inv);
                   ?>
                   <?php ?>
+</a>
                 </span>
               </div>
               <!-- /.info-box-content -->
@@ -22,9 +30,11 @@
           <!-- /.col -->
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box">
+              
               <span class="info-box-icon bg-light elevation-1"><i class="fas fa-th-list"></i></span>
 
               <div class="info-box-content">
+              <a href="<?php echo base_url ?>admin/?page=maintenance/category">
                 <span class="info-box-text">Total Category</span>
                 <span class="info-box-number">
                   <?php 
@@ -32,6 +42,7 @@
                     echo number_format($inv);
                   ?>
                   <?php ?>
+                  </a>
                 </span>
               </div>
               <!-- /.info-box-content -->
@@ -49,12 +60,14 @@
               <span class="info-box-icon bg-success elevation-1"><i class="fas fa-th-list"></i></span>
 
               <div class="info-box-content">
+              <a href="<?php echo base_url ?>admin/?page=maintenance/services">
                 <span class="info-box-text">Services</span>
                 <span class="info-box-number">
                 <?php 
-                    $services = $conn->query("SELECT sum(id) as total FROM `service_list` where status = 1 ")->fetch_assoc()['total'];
+                    $services = $conn->query("SELECT id  FROM `service_list` where status = 1 ")->fetch_assoc()['id'];
                     echo number_format($services);
                   ?>
+                    </a>
                 </span>
               </div>
               <!-- /.info-box-content -->
@@ -69,7 +82,7 @@
                 <span class="info-box-text">Registered Clients</span>
                 <span class="info-box-number">
                 <?php 
-                    $services = $conn->query("SELECT sum(id) as total FROM `client_list` where status = 1 and delete_flag = 0 ")->fetch_assoc()['total'];
+                    $services = $conn->query("SELECT id FROM `client_list` where status = 1 and delete_flag = 0 ")->fetch_assoc()['id'];
                     echo number_format($services);
                   ?>
                 </span>
@@ -86,7 +99,7 @@
                 <span class="info-box-text">Pending Orders</span>
                 <span class="info-box-number">
                 <?php 
-                    $services = $conn->query("SELECT sum(id) as total FROM `order_list` where status = 0 ")->fetch_assoc()['total'];
+                    $services = $conn->query("SELECT id FROM `order_list` where status = 0 ")->fetch_assoc()['id'];
                     echo number_format($services);
                   ?>
                 </span>

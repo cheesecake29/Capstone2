@@ -26,17 +26,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
+                    <?php 
                     $i = 1;
                     $orders = $conn->query("SELECT o.*,concat(c.lastname,', ', c.firstname) as fullname FROM `order_list` o inner join client_list c on o.client_id = c.id order by o.status asc, unix_timestamp(o.date_created) desc ");
-                    while ($row = $orders->fetch_assoc()) :
+                    while($row = $orders->fetch_assoc()):
                     ?>
                         <tr>
                             <td class="text-center"><?= $i++ ?></td>
                             <td><?= date("Y-m-d H:i", strtotime($row['date_created'])) ?></td>
                             <td><?= $row['ref_code'] ?></td>
                             <td><?= $row['fullname'] ?></td>
-                            <td class="text-right"><?= number_format($row['total_amount'], 2) ?></td>
+                            <td class="text-right"><?= number_format($row['total_amount'],2) ?></td>
                             <td class="text-center">
                                 <!-- 0=pending,1 = confirmed, 2 = packed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled	 -->
                                 <?php if ($row['status'] == 0) : ?>
@@ -66,30 +66,30 @@
     </div>
 </div>
 <script>
-    < script >
-        $(function() {
-            // Function to check for new orders
-            function checkForNewOrders() {
-                // Make an AJAX request to check for new orders
-                $.ajax({
-                    url: 'check_for_new_orders.php', // Replace with the actual URL to check for new orders
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.newOrder) {
-                            // If there's a new order, display an alert
-                            alert("New order received. Please confirm the order.");
-                        }
-                    },
-                    error: function() {
-                        console.log("Error while checking for new orders.");
+   <script>
+    $(function() {
+        // Function to check for new orders
+        function checkForNewOrders() {
+            // Make an AJAX request to check for new orders
+            $.ajax({
+                url: 'check_for_new_orders.php', // Replace with the actual URL to check for new orders
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.newOrder) {
+                        // If there's a new order, display an alert
+                        alert("New order received. Please confirm the order.");
                     }
-                });
-            }
+                },
+                error: function() {
+                    console.log("Error while checking for new orders.");
+                }
+            });
+        }
 
-            // Call the function to check for new orders every 5 minutes (you can adjust the interval)
-            setInterval(checkForNewOrders, 300000); // 300,000 milliseconds = 5 minutes
-        });
+        // Call the function to check for new orders every 5 minutes (you can adjust the interval)
+        setInterval(checkForNewOrders, 300000); // 300,000 milliseconds = 5 minutes
+    });
 </script>
 
 </script>

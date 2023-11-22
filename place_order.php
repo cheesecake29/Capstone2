@@ -196,59 +196,130 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                         </div>
                     </div>
 
-                    <div class="province jnt-holder">
-                        <h1 class="label-info"><strong>Province</strong></h1>
-                        <!-- <select  id="province" name="province" placeholder="Please select your province"class="option select2" required>
+                    <div class="billing-address">
+                        <h1 class="label-info"><strong>Billing Address</strong></h1>
+                        <div class="custom-control custom-radio addresstype">
+                            <input class="custom-control-input" type="radio" id="default" name="address_type" value="1" checked>
+                            <label class="custom-control-label" for="default"><strong>Same as shipping address</strong></label>
+                        </div>
+                        <div class="custom-control custom-radio addresstype">
+                            <input class="custom-control-input" type="radio" id="diff" name="address_type" value="2">
+                            <label class="custom-control-label" for="diff"><strong>Use a different billing address</strong></label>
+                        </div>
+                            <div class="default-add">
+                                <div class="province jnt-holder">
+                                    <span class="custom-control-input custom-control-input-primary">Province</span>
+                                    <!-- <select  id="province" name="province" placeholder="Please select your province"class="option select2" required>
 
-	                    <option type="varchar" value="bataan" <?= (isset($province) && $province === 'bataan') ? 'selected' : '' ?>>Bataan</option>
-                        </select> -->
-                        <?php
-                        $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
-                        $response1 = file_get_contents($api_url_province);
+                                    <option type="varchar" value="bataan" <?= (isset($province) && $province === 'bataan') ? 'selected' : '' ?>>Bataan</option>
+                                    </select> -->
+                                    <?php
+                                    $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
+                                    $response1 = file_get_contents($api_url_province);
 
-                        // Handle JSON data
-                        $provinces = json_decode($response1, true);
-                        $selectedProvinceId = $province;
+                                    // Handle JSON data
+                                    $provinces = json_decode($response1, true);
+                                    $selectedProvinceId = $province;
 
-                        if ($provinces['data'] && is_array($provinces['data'])) {
-                            echo '<select name="province" id="provinces" class="form-control">';
-                            foreach ($provinces['data'] as $option) {
-                                $optionId = $option['id'];
-                                $optionName = $option['name'];
+                                    if ($provinces['data'] && is_array($provinces['data'])) {
+                                        echo '<select name="province" id="provinces" class="form-control">';
+                                        foreach ($provinces['data'] as $option) {
+                                            $optionId = $option['id'];
+                                            $optionName = $option['name'];
 
-                                $selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
-                                echo '<option value="' . $optionId . '" ' . $selected1 . '>' . $optionName . '</option>';
-                            }
-                            echo '</select>';
-                        } else {
-                            echo 'Failed to fetch or decode data.';
-                        }
-                        /*** */
-                        $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
-                        $response2 = file_get_contents($api_url_city);
-                        // Handle JSON data
-                        $cities = json_decode($response2, true);
-                        $selectedCityId = $city;
+                                            $selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
+                                            echo '<option value="' . $optionId . '" ' . $selected1 . '>' . $optionName . '</option>';
+                                        }
+                                        echo '</select>';
+                                    } else {
+                                        echo 'Failed to fetch or decode data.';
+                                    }
+                                    /*** */
+                                    $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
+                                    $response2 = file_get_contents($api_url_city);
+                                    // Handle JSON data
+                                    $cities = json_decode($response2, true);
+                                    $selectedCityId = $city;
 
-                        if ($cities['data'] && is_array($cities['data'])) {
-                            echo '<select name="city" id="cities" class="form-control">';
-                            foreach ($cities['data'] as $option) {
-                                $optionId = $option['id'];
-                                $optionName = $option['name'];
+                                    if ($cities['data'] && is_array($cities['data'])) {
+                                        echo '<select name="city" id="cities" class="form-control">';
+                                        foreach ($cities['data'] as $option) {
+                                            $optionId = $option['id'];
+                                            $optionName = $option['name'];
 
-                                $selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
-                                echo '<option value="' . $optionId . '" ' . $selected2 . '>' . $optionName . '</option>';
-                            }
-                            echo '</select>';
-                        } else {
-                            echo 'Failed to fetch or decode data.';
-                        }
-                        ?>
-                        <input name="addressline1" id="addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input required>
-                        <input name="addressline2" id="addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input optional>
-                        <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>"></input required>
+                                            $selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
+                                            echo '<option value="' . $optionId . '" ' . $selected2 . '>' . $optionName . '</option>';
+                                        }
+                                        echo '</select>';
+                                    } else {
+                                        echo 'Failed to fetch or decode data.';
+                                    }
+                                    ?>
+                                    <input name="addressline1" id="addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input>
+                                    <input name="addressline2" id="addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
+                                    <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>"></input>
 
-                    </div> <!--J&T-HOLDER-END-->
+                                </div> 
+                            </div>
+
+                            <div class="diff-add">
+                                <div class="province jnt-holder">
+                                    <span class="custom-control-input custom-control-input-primary">Province</span>
+
+                                    <?php
+                                    $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
+                                    $response1 = file_get_contents($api_url_province);
+
+                                    // Handle JSON data
+                                    $provinces = json_decode($response1, true);
+                                    //$selectedProvinceId = $province;
+
+                                    if ($provinces['data'] && is_array($provinces['data'])) {
+                                        echo '<select name="province2" id="provinces2" class="form-control">';
+                                        echo '<option value="0">-- Select Province --</option>';
+                                        foreach ($provinces['data'] as $option) {
+                                            $optionId = $option['id'];
+                                            $optionName = $option['name'];
+
+                                            //$selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
+                                            echo '<option value="' . $optionId . '">' . $optionName . '</option>';
+                                        }
+                                        echo '</select>';
+                                    } else {
+                                        echo 'Failed to fetch or decode data.';
+                                    }
+                                    ?>
+
+                                    <?php
+                                    $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
+                                    $response2 = file_get_contents($api_url_city);
+                                    // Handle JSON data
+                                    $cities = json_decode($response2, true);
+                                    //$selectedCityId = $city;
+
+                                    if ($cities['data'] && is_array($cities['data'])) {
+                                        echo '<select name="city2" id="cities2" class="form-control" disabled>';
+                                        echo '<option value="0">-- Select City --</option>';
+                                        foreach ($cities['data'] as $option) {
+                                            $optionId = $option['id'];
+                                            $optionName = $option['name'];
+
+                                            //$selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
+                                            echo '<option value="' . $optionId . '">' . $optionName . '</option>';
+                                        }
+                                        echo '</select>';
+                                    } else {
+                                        echo 'Failed to fetch or decode data.';
+                                    }
+                                    ?>
+
+                                    <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
+                                    <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
+                                    <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+                                </div>
+
+                            </div>
+                    </div>
 
                     <div class="pick-up-holder">
                         <h1 class="label-info"><strong>Pick-Up Address</strong></h1>
@@ -378,15 +449,18 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     </div>
     <script>
         $(function() {
+            let addressTypeVal = 1;
             $('.pick-up-holder').hide('slow');
             $('.meet-up-holder').hide('slow');
             $('.other-meet-up').hide('slow');
+            $('.diff-add').hide('slow');
             $('#totalWithoutSf').hide('slow');
+            $('.billing-address').show('slow');
             fetchCities();
             setOtherMeetup();
 
             function fetchCities() {
-                document.getElementById('provinces').addEventListener('change', function() {
+                document.getElementById('provinces2').addEventListener('change', function() {
                     let dropdown = this;
                     var selectedProvinceCode = this.value;
                     selectedProvince = dropdown.options[dropdown.selectedIndex].text;
@@ -397,7 +471,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     fetch('https://ph-locations-api.buonzz.com/v1/cities')
                         .then(response => response.json())
                         .then(data => {
-                            var citiesDropdown = document.getElementById('cities');
+                            var citiesDropdown = document.getElementById('cities2');
                             citiesDropdown.innerHTML = ''; // Clear previous options
                             citiesDropdown.removeAttribute('disabled');
 
@@ -445,12 +519,14 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     $('#totalWithSf').show('slow');
                     $('#totalWithoutSf').hide('slow');
                     $('#sf').show('slow');
+                    $('.billing-address').show('slow');
                 } else if ($(this).val() == 2) {
                     $('.jnt-holder').hide('slow');
                     $('.pick-up-holder').hide('slow');
                     $('.meet-up-holder').hide('slow');
                     $('#totalWithSf').hide('slow');
                     $('#totalWithoutSf').show('slow');
+                    $('.billing-address').hide('slow');
                     $('#sf').hide('slow');
                 } else if ($(this).val() == 3) {
                     $('.jnt-holder').hide('slow');
@@ -460,6 +536,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     $('#totalWithSf').hide('slow');
                     $('#totalWithoutSf').show('slow');
                     $('#sf').hide('slow');
+                    $('.billing-address').hide('slow');
                 } else if ($(this).val() == 4) {
                     $('.jnt-holder').hide('slow');
                     $('.pick-up-holder').hide('slow');
@@ -467,6 +544,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     $('#totalWithSf').hide('slow');
                     $('#totalWithoutSf').show('slow');
                     $('#sf').hide('slow');
+                    $('.billing-address').hide('slow');
                 } else {
                     $('.jnt-holder').show('slow');
                     $('.pick-up-holder').hide('slow');
@@ -474,17 +552,34 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     $('#totalWithSf').hide('slow');
                     $('#totalWithoutSf').show('slow');
                     $('#sf').hide('slow');
+                    $('.billing-address').show('slow');
                 }
+            });
+
+            $('[name="address_type"]').change(function() {
+                if ($(this).val() == 1) {
+                    addressTypeVal = 1;
+                    $('.default-add').show('slow');
+                    $('.diff-add').hide('slow');
+                }else{
+                    addressTypeVal = 2;
+                    $('.default-add').hide('slow');
+                    $('.diff-add').show('slow');
+                }
+
             });
 
             $('#place_order').submit(function(e) {
                 e.preventDefault();
-                var _this = $(this)
+                var _this = $(this);
+                var formData = new FormData($(this)[0]);
+
+                formData.append('address_type', addressTypeVal);
                 $('.err-msg').remove();
                 start_loader();
                 $.ajax({
                     url: _base_url_ + "classes/Master.php?f=place_order",
-                    data: new FormData($(this)[0]),
+                    data: formData,
                     cache: false,
                     contentType: false,
                     processData: false,

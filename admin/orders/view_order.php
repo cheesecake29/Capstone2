@@ -31,6 +31,13 @@ if ($order->num_rows > 0) {
         object-fit: scale-down;
         object-position: center center;
     }
+
+    .row{
+        display: flex;
+        flex-direction: column;
+    }
+
+ 
 </style>
 <div class="card card-outline card-dark shadow rounded0-0">
     <div class="card-header">
@@ -45,19 +52,43 @@ if ($order->num_rows > 0) {
 
     <div class="card-body">
         <div class="container-fluid">
-            <div class="row">
+        <div class="row">
+            <div class="info1 col-md-6">
+                <label for="" class="text-muted">Client Name</label>
+                <div class="ml-3"><b><?php echo $fullname?></b></div>
+            
+                <br>
 
+<<<<<<< Updated upstream
                 <p><b>Client Name: <?php echo $fullname ?></b></p><br>
 
+<<<<<<< HEAD
+=======
+                <p><b>Client Name: <?php echo $fullname ?></b></p><br>
+
+>>>>>>> 7b85c3eb8b186b3415015145c5b192474d37f222
                 <div class="col-md-6">
                     <label for="" class="text-muted">Reference Code</label>
                     <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
                 </div>
                 <div class="col-md-6">
                     <label for="" class="text-muted">Date Ordered</label>
-                    <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></div>
+                    <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></
                 </div>
+=======
+               
+            
+                <label for="" class="text-muted">Reference Code</label>
+                <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
+            
+                <br>
+            
+                <label for="" class="text-muted">Date Ordered</label>
+                <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></div>
+>>>>>>> Stashed changes
             </div>
+        </div>
+
             <div class="row">
                 <div class="col-md-6">
                     <label for="" class="text-muted">Status</label>
@@ -85,7 +116,32 @@ if ($order->num_rows > 0) {
                             N/A
                         <?php endif; ?>
                     </div>
-                </div>
+                    <label for="" class="text-muted">Order Type</label>
+                        <div class="ml-3">
+                            <b>
+                            <?php
+                                switch ($order_type) {
+                                    case 1:
+                                        echo 'JRS';
+                                        break;
+                                    case 2:
+                                        echo 'Lalamove';
+                                        break;
+                                    case 3:
+                                        echo 'Meet Up: '.$other_address;
+                                        break;
+                                    case 4:
+                                        echo 'Pick Up: '.$other_address;
+                                        break;
+                                    default:
+                                        echo 'N/A';
+                                        break;
+                                }
+                                ?>
+                            </b>
+                        </div>
+
+                    </div>
                 <div class="col-md-6">
                     <?php
                     //get province name
@@ -122,6 +178,25 @@ if ($order->num_rows > 0) {
                         }
                     }
 
+<<<<<<< HEAD
+                           
+                            echo '<label for="" class="text-muted">Client Address</label>';
+                            echo '<div class="ml-3" id="prov"> ' ,'<b>'. $cityName . ', ' . $provinceName . '</b>','</div>';
+                          
+                            echo '<label for="" class="text-muted">Customer Number:</label>';
+                            echo '<div class="ml-3" id="contact">' . $contact . '</div>';
+                            if($addressline1){
+                              
+                                echo '<label for="" class="text-muted">Address Line 1</label>';
+                               
+                                echo '<div class="ml-3" id="adr1">'  ,'<b>'. $addressline1 . '</b>','</div>';
+                            }
+                            if($addressline2){
+                                echo '<label for="" class="text-muted">Address Line 2</label>';
+                               
+                                echo '<div class="ml-3" id="adr2">' . $addressline2 . '</div>';
+                            }
+=======
                     echo '<b><p>Customer Address: </p></b>';
                     echo '<span id="prov">' . $cityName . ', ' . $provinceName . '</span>';
                     echo '<b><p>Customer Number: </p></b>';
@@ -134,32 +209,58 @@ if ($order->num_rows > 0) {
                         echo '<b><p>Address Line 2: </p></b>';
                         echo '<span id="adr2">' . $addressline2 . '</span>';
                     }
+>>>>>>> 7b85c3eb8b186b3415015145c5b192474d37f222
 
 
                     ?>
 
                 </div>
+              
             </div>
             <div class="clear-fix my-2"></div>
             <div class="row">
                 <div class="col-12">
                     <div class="w-100" id="order-list">
                         <?php
+                        $queryCheck = "SELECT order_id FROM shipping_fee WHERE order_id = '{$id}'";
+                        $result = $conn->query($queryCheck);
                         $total = 0;
                         if (isset($id)) :
-                            $order_item = $conn->query("SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category, ol.order_type, v.variation_name,
-                            GROUP_CONCAT(v.variation_name) AS all_variations,
-                            GROUP_CONCAT(v.variation_stock) AS all_variation_stock
-                            FROM `order_items` o
-                            INNER JOIN product_list p ON o.product_id = p.id
-                            INNER JOIN brand_list b ON p.brand_id = b.id
-                            INNER JOIN categories cc ON p.category_id = cc.id
-                            INNER JOIN product_variations v ON v.product_id = p.id and  v.id = o.variation_id
-                            INNER JOIN order_list ol ON ol.id = o.order_id
-                            WHERE o.order_id = '{$id}'
-                            GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, ol.order_type
-                            ORDER BY p.name ASC;
-                            ");
+                            $query = '';
+                            if ($result && $result->num_rows > 0) {
+                                $queryWithSF = "SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category, ol.order_type, v.variation_name,
+                                GROUP_CONCAT(v.variation_name) AS all_variations,
+                                GROUP_CONCAT(v.variation_stock) AS all_variation_stock
+                                FROM `order_items` o
+                                INNER JOIN product_list p ON o.product_id = p.id
+                                INNER JOIN brand_list b ON p.brand_id = b.id
+                                INNER JOIN categories cc ON p.category_id = cc.id
+                                INNER JOIN product_variations v ON v.product_id = p.id AND v.id = o.variation_id
+                                INNER JOIN order_list ol ON ol.id = o.order_id
+                                LEFT JOIN shipping_fee sf ON sf.order_id = o.order_id
+                                WHERE o.order_id = '{$id}'
+                                    AND (ol.order_type = 1 OR ol.order_type = 2)
+                                GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, ol.order_type
+                                ORDER BY p.name ASC";
+                                
+                                $query = $queryWithSF;
+                            }
+                            else{
+                                $queryWithoutSF = "SELECT o.*, p.name, p.price, p.image_path, b.name AS brand, cc.category, ol.order_type, v.variation_name,
+                                GROUP_CONCAT(v.variation_name) AS all_variations,
+                                GROUP_CONCAT(v.variation_stock) AS all_variation_stock
+                                FROM `order_items` o
+                                INNER JOIN product_list p ON o.product_id = p.id
+                                INNER JOIN brand_list b ON p.brand_id = b.id
+                                INNER JOIN categories cc ON p.category_id = cc.id
+                                INNER JOIN product_variations v ON v.product_id = p.id and  v.id = o.variation_id
+                                INNER JOIN order_list ol ON ol.id = o.order_id
+                                WHERE o.order_id = '{$id}'
+                                GROUP BY o.id, p.id, o.quantity, p.name, p.price, p.image_path, b.name, cc.category, ol.order_type
+                                ORDER BY p.name ASC;";
+                                $query = $queryWithoutSF;
+                            }
+                            $order_item = $conn->query($query);
                             while ($row = $order_item->fetch_assoc()) :
                                 $total += ($row['quantity'] * $row['price']);
                         ?>

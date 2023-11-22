@@ -22,8 +22,8 @@ window.alert_toast = function($msg = 'TEST', $bg = 'success', $pos = '') {
 }
 
 window.update_cart_count = function($count = 0) {
-    console.log($('#cart_count'))
     if ($count > 0 && $('#cart_count').length > 0) {
+        console.log($('#cart_count'))
         $('#cart_count').text($count)
     }
 }

@@ -210,13 +210,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         font-size: 14px;
         text-align: justify;
     }
-</style>
-
-.img-thumbnail{
+    .img-thumbnail{
     box-shadow: 0 3px 10px rgba(3, 3, 3, 0.619);
 }
-
 </style>
+
 <div class="content ">
     <div class="container">
         <div class="d-flex">

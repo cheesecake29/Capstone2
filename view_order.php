@@ -85,17 +85,8 @@ if ($order->num_rows > 0) {
         }
     }
 </style>
-<<<<<<< Updated upstream
 <div class="container-fluid" id="orderDetailsContainer">
 
-=======
-
-<div class="container-fluid">
-
-<div class="container-fluid" id="orderDetailsContainer">
-
-
->>>>>>> Stashed changes
     <div class="row">
         <div class="col-md-6">
             <label for="" class="text-muted">Name</label>
@@ -116,7 +107,6 @@ if ($order->num_rows > 0) {
             <div class="ml-3">
                 <?php if (isset($status)) : ?>
                     <?php if ($status == 0) : ?>
-<<<<<<< Updated upstream
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
                     <?php elseif ($status == 1) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Confirmed</span>
@@ -130,22 +120,6 @@ if ($order->num_rows > 0) {
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Delivered</span>
                     <?php else : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Cancelled</span>
-=======
-                        <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">Pending</span>
-
-                    <?php elseif ($status == 1) : ?>
-                        <span class="badge badge-secondary px-3 rounded-pill " style="color: black;">Confirm</span>
-                    <?php elseif ($status == 2) : ?>
-                        <span class="badge badge-primary px-3 rounded-pill" style="color: black;">Packed</span>
-                    <?php elseif ($status == 3) : ?>
-                        <span class="badge badge-success px-3 rounded-pill" style="color: black;">For Delivery</span>
-                    <?php elseif ($status == 4) : ?>
-                        <span class="badge badge-warning px-3 rounded-pill" style="color: black;">On the Way</span>
-                    <?php elseif ($status == 5) : ?>
-                        <span class="badge badge-default bg-gradient-teal px-3 rounded-pill" style="color: black;">Delivered</span>
-                    <?php else : ?>
-                        <span class="badge badge-danger px-3 rounded-pill" style="color: black;">Cancelled</span>
->>>>>>> Stashed changes
                     <?php endif; ?>
                 <?php else : ?>
                     N/A
@@ -179,7 +153,6 @@ if ($order->num_rows > 0) {
                     while ($row = $order_item->fetch_assoc()) :
                         $total += ($row['quantity'] * $row['price']);
                 ?>
-<<<<<<< Updated upstream
                         <div class="d-flex flex-column">
                             <div class="d-flex align-items-center w-100 border cart-item px-3" data-id="<?= $row['id'] ?>">
                                 <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
@@ -202,30 +175,10 @@ if ($order->num_rows > 0) {
                                             <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
                                         </div>
                                     </div>
-=======
-
-
-                        
-
-                <div class="d-flex align-items-center w-100 border cart-item p-2" data-id="<?= $row['id'] ?>">
-                    <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-                        <div class="d-flex align-items-center w-100">
-                            <div class="col-auto">
-                                <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-thumbnail prod-cart-img">
-                            </div>
-                            <div class="col-auto flex-grow-1 flex-shrink-1  p-2">
-                                <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="h4 text-muted" target="_blank">
-                                    <p class="text-truncate-1 m-0"><?= $row['name'] ?></p>
-                                </a>
-                                <small><?= $row['brand'] ?></small><br>
-                                <small><?= $row['category'] ?></small><br>
-                                <div class="d-flex align-items-center w-100 mb-1">
-                                    <span><?= number_format($row['quantity']) ?></span>
-                                    <span class="ml-2">X <?= number_format($row['price'],2) ?></span>
-
->>>>>>> Stashed changes
                                 </div>
-                                <?php if (!$row['rated'] && $status == 5) : ?>
+                            </div>
+                            
+                            <?php if (!$row['rated'] && $status == 5) : ?>
                                     <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
                                         <div class="card">
                                             <div class="card-header" id="reviewContent">
@@ -260,7 +213,6 @@ if ($order->num_rows > 0) {
                                         </div>
                                     </div>
                                 <?php endif; ?>
-                            </div>
                         </div>
                     <?php endwhile; ?>
                 <?php endif; ?>
@@ -271,36 +223,16 @@ if ($order->num_rows > 0) {
                         </div>
                     </div>
                 <?php endif; ?>
-<<<<<<< Updated upstream
                 <div class="d-flex align-items-center justify-content-end w-100 border px-3">
                     <h3> TOTAL:
                         <b class="text-primary"><?= number_format($total, 2) ?></b> PHP
                     </h3>
-=======
-                <div class="d-flex align-items-center w-100 border">
-                    <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-
-                        <h3 class="text-center">TOTAL</h3>
-                    </div>
-                    <div class="col-auto text-right">
-                        <h3>
-                            <b><?= number_format($total, 2) ?></b>
-                        </h3>
-
-                            <span>TOTAL</span>
-                    </div>
-                    <div class="col-auto text-right">
-                        <span><b><?= number_format($total,2) ?></b></span>
-
-                    </div>
->>>>>>> Stashed changes
                 </div>
             </div>
         </div>
     </div>
     <div class="clear-fix my-2"></div>
     <div class="row">
-<<<<<<< Updated upstream
         <div class="col-8 text-left" id="disregardThisDiv">
             <?php if (isset($status)  && $status == 0) : ?>
                 <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
@@ -313,30 +245,6 @@ if ($order->num_rows > 0) {
     </div>
 </div>
 <script>
-=======
-
-      
-
-        <div class="col-12 text-right " id="disregardThisDiv">
-            <?php if(isset($status)  && $status == 0): ?>
-            <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
-
-            <?php endif; ?>
-        <button class="btn btn-dark btn-flat btn-sm print-btn" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-          <!---<button onclick="printOrderDetails()" class="print-btn">Print Order Details</button>---->
-    </div>
-</div>
-<script>
-
-    $('#btn-cancel').click(function() {
-        _conf("Are you sure to cancel this order?", "cancel_order", [])
-    })
-
-
-    $('#btn-cancel').click(function() {
-        _conf("Are you sure to cancel this order?", "cancel_order", [])
-    })
->>>>>>> Stashed changes
     function printOrderDetails() {
         // Specify the div to print using its ID
         var printContents = document.getElementById("orderDetailsContainer").innerHTML;
@@ -404,13 +312,6 @@ if ($order->num_rows > 0) {
             }
         })
     }
-<<<<<<< Updated upstream
-=======
-    $('#btn-cancel').click(function(){
-        _conf("Are you sure to cancel this order?","cancel_order",[])
-
-    })
->>>>>>> Stashed changes
 
 
     function cancel_order() {

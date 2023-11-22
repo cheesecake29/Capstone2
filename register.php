@@ -138,7 +138,7 @@
       return false;
     }
 
-  if (/[^a-zA-Z\s]/.test(firstname)&&/[^a-zA-Z\s]/.test(lastname)) {
+  if (!/[^a-zA-Z\s]/.test(firstname)&&!/[^a-zA-Z\s]/.test(lastname)) {
     el.addClass('alert alert-danger err-msg').text('Letters only.');
     _this.prepend(el);
     el.show('fast');

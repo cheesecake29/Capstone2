@@ -216,7 +216,7 @@ $where = "";
                                     <p class="price">₱<?= strip_tags(html_entity_decode($row['price'])) ?>
                                         <span class="fas fa-tag"></span>
                                     </p>
-                                    <h4 class="stock card-title my-0">Stock: <b><?= number_format($row['available']) ?></b></h4><br>
+                                   
                                 </div>
                             </div>
                         </a>

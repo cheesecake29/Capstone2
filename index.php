@@ -14,7 +14,7 @@
 <?php require_once('inc/header.php') ?>
 
 <body>
-  <?php $page = isset($_GET['p']) ? $_GET['p'] : 'home';  ?>
+  <?php $page = isset($_GET['p']) ? $_GET['p'] : 'homes';  ?>
   <?php require_once('inc/topBarNav.php') ?>
   <?php if ($_settings->chk_flashdata('success')) : ?>
     <script>

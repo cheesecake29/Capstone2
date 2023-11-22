@@ -31,21 +31,22 @@
     }
 
     .Homepage {
-        background-image: url(bg12.png);
+       
         background-size: cover;
         height: 200px;
         max-width: 100%;
         max-height: 100%;
         background-repeat: no-repeat;
-        background-attachment: fixed;
+        background-attachment: relative;
         background-position: center;
     }
 
     .index-header-container {
         display: flex;
         justify-content: space-between;
+        text-align: center;
         align-items: center;
-        padding: 2.5%;
+        padding: 1% 2.5%;
         background-color: #FFFFFF;
     }
 
@@ -123,15 +124,13 @@
         font-size: 14px;
     }
 
-    .home-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        margin: 7%;
-        flex-grow: 1;
+      .home-container {
+        margin: 5% ;
     }
 
+    .home-container .text-white {
+        text-align: left;
+    }
     .home-container h1 {
         font-size: 60px;
         color: #004399;
@@ -147,8 +146,9 @@
         width: 10%;
         cursor: pointer;
         background-color: #004399;
-        border-radius: 20px;
-        box-shadow: 0 3px 10px rgba(3, 3, 3, 0.6);
+        
+       box-shadow: 0 3px 10px rgba(3, 3, 3, 0.3);
+        border: none;
         padding: 10px;
         margin-top: 70px;
         text-align: center;
@@ -254,6 +254,48 @@
         border-width: 48px;
     }
 
+  
+    .name {
+        text-align: center;
+        white-space: nowrap;
+        /* Prevent text from wrapping */
+        overflow: hidden;
+        /* Hide overflowing text */
+        text-overflow: ellipsis;
+        /* Show ellipsis (...) when text overflows */
+        max-width: 100%;
+        /* Limit the maximum width to prevent container resizing */
+        font-size: 20px;
+        cursor: pointer;
+        /* Change cursor to pointer on hover */
+    }
+
+.product-container{
+    margin: 3% 0;
+}
+
+h1.new-arrivals{
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #427EA9;
+    color: white;
+    padding: 1%;
+    width: 40%;
+}
+
+.containerrr{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+}
+  
+ 
+
     /* END: NOTIFICATIONS */
 
     .cart-badge {
@@ -279,8 +321,9 @@
 </style>
 
 <body>
-    <nav id="topNavBar">
-        <div class="index-header-container">
+    <nav class="navbar navbar-expand-lg navbar-white" id="topNavBar">
+        <div class="container  ">
+            
             <a class="navbar-brand" href="./">
                 <img src="<?php echo validate_image($_settings->info('logo')) ?>" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
                 <?php echo $_settings->info('sys_shortname') ?>
@@ -292,11 +335,11 @@
 
             <div id="navbarSupportedContent">
                 <ul class="nav">
-                    <li><a class="nav-link nav-item <?= isset($page) && $page == 'home' ? "active" : '' ?>" aria-current="page" href="./">Home</a></li>
+                    <li><a class="nav-link nav-item <?= isset($page) && $page == 'homes' ? "active" : '' ?>" aria-current="page" href="./">Home</a></li>
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'products' ? "active" : '' ?>" href="./?p=products">Products</a></li>
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'services' ? "active" : '' ?>" href="./?p=services">Services</a></li>
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'contactus' ? "active" : '' ?>" href="./?p=contactus">Contact us</a></li>
-                    <li><a class="nav-link nav-item <?= isset($page) && $page == 'about' ? "active" : '' ?>" href="./?p=about">About Us</a></li>
+                   
                 </ul>
 
                 <div class="search-cart">
@@ -363,7 +406,7 @@
                                 <!-- <ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">
                                     <div class="notification-heading">
                                         <span class="menu-title">Notifications</span>
-                                    </div>
+                                    </di
                                     <li class="divider"></li>
                                     <div class="notifications-wrapper">
                                         <a class="content" href="#">

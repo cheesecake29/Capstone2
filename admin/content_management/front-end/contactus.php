@@ -3,7 +3,13 @@
 	alert_toast("<?php echo $_settings->flashdata('success') ?>", 'success')
 </script>
 <?php endif; ?>
-
+<style>
+    .img-fluid.img-thumbnail {
+    width: 30%;
+    height: 20%;
+  
+}
+</style>
 <div class="col-lg-12">
     <div class="card card-outline card-primary">
         <div class="card-header">
@@ -16,7 +22,7 @@
                 
 
 
-
+            
               
                 <div class="form-group">
              
@@ -33,8 +39,16 @@
                     <label class="label" for="link"style="font-size: 13px; color: #4A4A4B; ">Social Media Link</label>
 					<input type="link" class="form-control form-control-sm" name="link" id="link" value="<?php echo $_settings->info('link') ?>"> 
 
-
                 </div>
+
+                <div class="form-group">
+                    <label for="" class="control-label">System Logo</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input rounded-circle" id="coimg" name="contactus1" onchange="displayImg4(this,$(this))">
+                        <label class="custom-file-label" for="coimg">Choose file</label>
+                    </div>
+                </div>
+               
 
               
                
@@ -51,6 +65,17 @@
 </div>
 
 <script>
+        function displayImg4(input, _this) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#coimg').attr('src', e.target.result);
+                _this.siblings('.custom-file-label').html(input.files[0].name)
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 $(document).ready(function(){
     var summernoteInstance = $('.summernote').summernote({
         toolbar: [

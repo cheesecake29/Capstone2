@@ -1,5 +1,7 @@
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <?php
+include 'sendemailporder.php';
+
 if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     $qry = $conn->query("SELECT * FROM `client_list` where id = '{$_settings->userdata('id')}'");
     if ($qry->num_rows > 0) {
@@ -347,7 +349,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     </div>
 
                     <div class="place-order form-group text-right">
-                        <button class="btn btn-flat btn-primary">Place Order</button>
+                        <button class="btn btn-flat btn-primary" type="submit" name="submit">Place Order</button>
                     </div>
 
                     <!-- TODO: saving of meet up address -->
@@ -608,6 +610,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                             end_loader();
                             console.log(resp)
                         }
+                        
                     }
                 })
             })

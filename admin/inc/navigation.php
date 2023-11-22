@@ -102,27 +102,7 @@
 
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fab fa-cc-visa"></i>
-                        <p>Payments</p>
-                        <i class="right fas fa-angle-left"></i>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=payments/gcash" class="nav-link nav-payments_gcash">
-                                <i class="nav-icon  fab fa-google-wallet"></i>
-                                <p>Gcash</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=payments/COD" class="nav-link nav-payments_COD">
-                                <i class="nav-icon  fas fa-money-bill-wave"></i>
-                                <p>Cash on delivery</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+              
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-info-circle"></i>
@@ -142,19 +122,22 @@
                                 <p>Service Requests</p>
                             </a>
                         </li>
-                        <!--  <li class="nav-item">
-                    <a href="<?php echo base_url ?>admin/?page=mechanics" class="nav-link nav-mechanics">
-                        <i class="nav-icon fas fa-user-friends"></i>
-                        <p>Mechanic List</p>
-                    </a>
-                </li>
-                --->
+                        
+             
                         <li class="nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=clients" class="nav-link nav-clients">
+                            <a href="<?php echo base_url?>admin/?page=clients" class="nav-link nav-clients">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>Registered Clients</p>
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                        <a href="<?php echo base_url?>admin/?page=clients/inquiries" class="nav-link nav-clients_inquiries">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>Customer Inquiries</p>
+                        </a>
+                    </li>
+
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -164,12 +147,7 @@
                         <i class="right fas fa-angle-left"></i>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=report/service_requests" class="nav-link nav-report_service_requests">
-                                <i class="fas fa-circle nav-icon"></i>
-                                <p>Service Requests Report</p>
-                            </a>
-                        </li>
+                        
                         <li class="nav-item">
                             <a href="<?php echo base_url ?>admin/?page=report/orders" class="nav-link nav-report_orders">
                                 <i class="fas fa-circle nav-icon"></i>

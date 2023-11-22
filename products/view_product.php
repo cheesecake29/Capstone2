@@ -336,9 +336,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <div class="product-review">
             <?php
             $productReviews = $conn->query(
-                "SELECT oi.rate_level, oi.rate_comments, oi.date_updated, cl.firstname, cl.lastname FROM `order_items` oi
+                "SELECT oi.rate_level, oi.rate_comments, oi.date_updated, cl.firstname, cl.lastname, pv.variation_name FROM `order_items` oi
                     inner join `order_list` ol on ol.id = oi.order_id
                     inner join `client_list` cl on cl.id = ol.client_id
+                    inner join `product_variations` pv on oi.variation_id = pv.id
                 where oi.product_id =  $id and oi.rated = 1 order by unix_timestamp(oi.date_updated) desc;
                 "
             );
@@ -350,7 +351,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <p><?= ucfirst($review['lastname']), ', ', ucfirst($review['firstname']) ?></p>
                         </blockquote>
                         <figcaption class="blockquote-footer mb-1">
-                            <?= date("Y-m-d h:i:s A", strtotime($review['date_updated'])) ?>
+                            <?= date("Y-m-d h:i:s A", strtotime($review['date_updated'])) ?> | Variation: <?= $review['variation_name'] ?>
                         </figcaption>
                     </figure>
                     <div class="review-details">

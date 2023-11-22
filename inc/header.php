@@ -43,44 +43,6 @@
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="<?php echo base_url ?>plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <style type="text/css">
-    /* Firefox */
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: #004399 #DFE9EB;
-    }
-
-    /* Chrome, Edge and Safari */
-    *::-webkit-scrollbar {
-      height: 5px;
-      width: 5px;
-    }
-
-    *::-webkit-scrollbar-track {
-      border-radius: 5px;
-      background-color: #DFE9EB;
-    }
-
-    *::-webkit-scrollbar-track:hover {
-      background-color: #B8C0C2;
-    }
-
-    *::-webkit-scrollbar-track:active {
-      background-color: #B8C0C2;
-    }
-
-    *::-webkit-scrollbar-thumb {
-      border-radius: 2px;
-      background-color: #004399;
-    }
-
-    *::-webkit-scrollbar-thumb:hover {
-      background-color: #005BD0;
-    }
-
-    *::-webkit-scrollbar-thumb:active {
-      background-color: #003578;
-    }
-
     /* Chart.js */
     @keyframes chartjs-render-animation {
       from {
@@ -151,29 +113,25 @@
     }
 
     #main-header {
-    position: relative;
-    background: rgb(0, 0, 0) !important;
-    background: none !important;
-    height: 75vh; /* Set the height of the header */
-}
+      position: relative;
+      background: rgb(0, 0, 0) !important;
+      background: radial-gradient(circle, rgba(0, 0, 0, 0.48503151260504207) 22%, rgba(0, 0, 0, 0.39539565826330536) 49%, rgba(0, 212, 255, 0) 100%) !important;
+      height: 70vh;
+    }
 
-#main-header:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url(<?php echo base_url.$_settings->info('cover') ?>);
-    background-repeat: no-repeat;
-    background-position: relative;
-    background-size: cover;
-    filter: drop-shadow(0 0 49px 0 #879090); /* Fix typo: 49px instead of 49x */
-    z-index: -1;
-}
-
-
-
-
+    #main-header:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      filter: drop-shadow(0px 7px 6px black);
+      z-index: -1;
+    }
   </style>
 </head>

@@ -14,7 +14,7 @@
 <?php require_once('inc/header.php') ?>
 
 <body>
-  <?php $page = isset($_GET['p']) ? $_GET['p'] : 'homes';  ?>
+  <?php $page = isset($_GET['p']) ? $_GET['p'] : 'home';  ?>
   <?php require_once('inc/topBarNav.php') ?>
   <?php if ($_settings->chk_flashdata('success')) : ?>
     <script>
@@ -35,7 +35,7 @@
 
   <div class="modal fade" id="uni_modal" role='dialog'>
     <div class="modal-dialog modal-md modal-dialog-centered" role="document" style="min-width:  50%;">
-      <div class="modal-content rounded-0">
+      <div class="modal-content  rounded-0">
         <div class="modal-header">
           <h5 class="modal-title"></h5>
         </div>

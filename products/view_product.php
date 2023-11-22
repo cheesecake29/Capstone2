@@ -1,7 +1,7 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $result = $conn->query("SELECT * from product_image_gallery where product_id = '" . $_GET['id'] . "' AND is_deleted = 0");
-
+    $result = $conn->query("SELECT * from product_image_gallery where product_id = '".$_GET['id']."' AND is_deleted = 0");
+   
     $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p
         inner join brand_list b on p.brand_id = b.id
         inner join categories c on p.category_id = c.id
@@ -109,8 +109,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
     .containerr {
 
-        margin:  4%;
+        margin: 0 4%;
         width: 80%;
+
+    }
+
+    .content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
 
     }
 
@@ -133,28 +141,19 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .text-price {
         color: firebrick;
     }
-
     .gallery-item img {
         height: 119px;
         object-fit: cover;
         width: 100%;
     }
-
-    .gallery-container {
-        overflow: auto;
-        width: 100%;
-    }
-
     .gallery {
-        position: relative;
-        white-space: nowrap;
-        height: 100%;
+        display: grid;
+        grid-auto-columns: auto;
+        grid-template-columns: repeat(3, 1fr);
     }
-
     .gallery-item {
         margin: 10px;
         cursor: pointer;
-        display: inline-block;
     }
 
     #lightbox {
@@ -184,63 +183,36 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         cursor: pointer;
     }
 
-    .product_title_description {
-        text-align: justify;
-    }
-
-    .checked {
-        color: #f7d72c;
-    }
-
     .left-container {
-        max-width: 25vw;
-        min-width: 25vw;
-    }
-
-    .product-image img {
-        object-fit: cover;
-        width: 100%;
-    }
-
-    .review-section .review-details i:not(.checked) {
-        color: #a5a3a3;
-    }
-
-    .review-section .review-details .reviewer-comments {
-        font-size: 14px;
-        text-align: justify;
-    }
-</style>
-
-.img-thumbnail{
-    box-shadow: 0 3px 10px rgba(3, 3, 3, 0.619);
+    position: sticky;
+    top: 20px;
+    height: 80vh;
+    overflow-y: auto;
 }
 
 </style>
 <div class="content ">
-    <div class="container">
-        <div class="d-flex">
-            <div class="left-container">
-                <div class="image product-image text-center">
+    <div class="containerr">
+        <div class="row">
+            <div class="left-container px-5 col-md-4">
+                <div class="image text-center">
                     <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
                 </div>
-                <div class="gallery-container">
-                    <div class="gallery">
-                        <?php
-                        while ($row = $result->fetch_assoc()) {
+                <div class="gallery">
+                    <?php
+                         while ($row = $result->fetch_assoc()) {
                             echo '<div class="gallery-item" data-image="' . $row['image_url'] . '">
                                       <img src="' . $row['image_url'] . '" alt="Gallery Image">
                                   </div>';
                         }
-                        ?>
-                    </div>
+                    ?>
                 </div>
                 <div id="lightbox">
                     <span class="close">&times;</span>
                     <img id="lightbox-image" src="" alt="Lightbox Image">
                 </div>
             </div>
-            <div class="right-container px-5">
+            <div class="right-container px-5 flex-grow-1 col-md-8">
                 <div class="info">
                     <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> </h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
@@ -249,7 +221,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     ₱<?php
                         $minVariation = $conn->query("SELECT MIN(variation_price) as lowestVariation FROM product_variations where product_id = $id")->fetch_assoc();
                         echo number_format($minVariation['lowestVariation'], 2);
-                        ?> 
+                        ?> -
+                    ₱<strong><?= isset($price) ? number_format($price, 2) : '' ?></strong>
                 </h3>
                 <h3 class="text-success" id="selectedVariation"></h3>
                 <div class="mt-3 border-bottom">
@@ -312,7 +285,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                         </div>
                                         <div class="bd-highlights">
                                             <small>
-                                                <span id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</span>
+                                                <span id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock"
+                                                    data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>" > <?= $variationTotalQuantity ?> qty.</span>
                                             </small>
                                         </div>
                                     </div>
@@ -332,72 +306,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="container my-5">
-        <div class="product-review">
-            <?php
-            $productReviews = $conn->query(
-                "SELECT oi.rate_level, oi.rate_comments, oi.date_updated, cl.firstname, cl.lastname FROM `order_items` oi
-                    inner join `order_list` ol on ol.id = oi.order_id
-                    inner join `client_list` cl on cl.id = ol.client_id
-                where oi.product_id =  $id and oi.rated = 1 order by unix_timestamp(oi.date_updated) desc;
-                "
-            );
-            while ($review = $productReviews->fetch_assoc()) :
-            ?>
-                <div class="review-section mb-3 border rounded p-3">
-                    <figure class="mb-1">
-                        <blockquote class="blockquote">
-                            <p><?= ucfirst($review['lastname']), ', ', ucfirst($review['firstname']) ?></p>
-                        </blockquote>
-                        <figcaption class="blockquote-footer mb-1">
-                            <?= date("Y-m-d h:i:s A", strtotime($review['date_updated'])) ?>
-                        </figcaption>
-                    </figure>
-                    <div class="review-details">
-                        <?php switch (strval($review['rate_level'])):
-                            case "1": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "2": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "3": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "4": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "5": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                            <?php break;
-                            default: ?>
-                        <?php endswitch; ?>
-                        <p class="reviewer-comments mt-3"><?= ucfirst($review['rate_comments']) ?></p>
-                    </div>
-                </div>
-            <?php endwhile; ?>
         </div>
     </div>
 </div>
@@ -558,17 +466,17 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             alert_toast("Please Login First!", 'warning');
         }
     }
-    $(document).ready(function() {
-        // Open lightbox on image click
-        $('.gallery-item').on('click', function() {
-            var imagePath = $(this).data('image');
-            $('#lightbox-image').attr('src', imagePath);
-            $('#lightbox').fadeIn();
-        });
-
-        // Close lightbox on close button click or outside click
-        $('#lightbox, .close').on('click', function() {
-            $('#lightbox').fadeOut();
-        });
+    $(document).ready(function () {
+    // Open lightbox on image click
+    $('.gallery-item').on('click', function () {
+        var imagePath = $(this).data('image');
+        $('#lightbox-image').attr('src', imagePath);
+        $('#lightbox').fadeIn();
     });
+
+    // Close lightbox on close button click or outside click
+    $('#lightbox, .close').on('click', function () {
+        $('#lightbox').fadeOut();
+    });
+});
 </script>

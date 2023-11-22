@@ -1,19 +1,12 @@
-<?php
-include 'sendemail.php';
 
-
-
-?>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <link rel="stylesheet" href="contact.css">
+        <link rel="stylesheet" href="style.css">
         <script src="https://kit.fontawesome.com/8714a42433.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     </head>
     <style>
     /*--------------------------------------Contact-Us-Layout-----------------------------------------------------*/
@@ -88,7 +81,12 @@ include 'sendemail.php';
     flex-direction:column;
     justify-content: center;
     align-items: center;
-
+    
+    
+    
+    
+    
+    
   }
 
   .connect-with-us > h2{
@@ -101,51 +99,6 @@ include 'sendemail.php';
     color: #004399;
     font-size: 24px;
   }
-
-  .contact-section{
-    display: flex;
-    flex-direction: row;
-    
-    justify-content: center;
-  align-items: center;
- 
-}
-
-.contact{
-    display: flex;
-    flex-direction: column;
-    padding: 4%;
-}
-
-
-
-
-.contact-form{
-
-  width: 50%;
-  margin: 5%;
-  border: none;
-  background-color: white;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.619);
-}
-
-
-
-.text-box, textarea{
-  border-radius: 25px;
-  padding: 2%;
-  border: none;
-  background-color: #D4EEFA;
-  margin: 2% 0;
-}
-
-.send-btn{
-  background-color: #004399;
-  color: white;
-  border-radius: 25px;
-  padding: 2%;
-  border: none;
-}
   
 /*-------------------------------------End-Contact-Us-Layout-----------------------------------------------------*/
     </style>
@@ -181,47 +134,13 @@ include 'sendemail.php';
             <?php echo $_settings->info('email') ?>
         </div>
 
-       
      </div>
-
-
-
         <div class="connect-with-us">
        <h2>Connect with us!</h2>
 
        <a href=" <?php echo $_settings->info('link') ?>"><i class="fab fa-facebook"><?php echo $_settings->info('link') ?> </i></a>
-       </div>
-    </div>
-
-
-
-    
-
-    <div class="contact-section">
-
-    
-    <div class="contact-form">
       
-        <form class="contact" action="" method="post">
-            <input type="varchar" id="name" name="name" class="text-box" placeholder="Your Name" required>
-            <input type="email" id="email" name="email" class="text-box" placeholder="Your Email" required>
-            <textarea type="text" name="message" id="message" rows="5" placeholder="Message" required></textarea>
-            <input type="submit" name="submit" class="send-btn" value="Send">
-
-        </form>
     </div>
-   
-</div>
-<?php if (!empty($alert)) : ?>
-    <div class="alert"><?php echo $alert; ?></div>
-<?php endif; ?>
-
-<script type="text/javascript">
-    if (window.history.replaceState) {
-        window.history.replaceState(null, null, window.location.href);
-    }
-</script>
-
 
 </body>
 

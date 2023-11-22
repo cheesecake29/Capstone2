@@ -3,9 +3,9 @@ require_once('../config.php');
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'phpmailer/src/Exception.php';
-require 'phpmailer/src/PHPMailer.php';
-require 'phpmailer/src/SMTP.php';
+require 'phpmailers/src/Exception.php';
+require 'phpmailers/src/PHPMailer.php';
+require 'phpmailers/src/SMTP.php';
 
 Class Users extends DBConnection {
 	private $settings;

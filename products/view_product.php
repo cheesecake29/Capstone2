@@ -111,14 +111,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
     }
 
-    .content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-
-    }
-
 
     .card {
         border: none;
@@ -138,17 +130,37 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .text-price {
         color: firebrick;
     }
+
+    .product_title_description {
+        text-align: justify;
+    }
+
+    .checked {
+        color: #f7d72c;
+    }
+
+
+    .review-section .review-details {}
+
+    .review-section .review-details i:not(.checked) {
+        color: #a5a3a3;
+    }
+
+    .review-section .review-details .reviewer-comments {
+        font-size: 14px;
+        text-align: justify;
+    }
 </style>
-<div class="content ">
-    <div class="containerr">
+<div class="content">
+    <div class="container">
         <div class="d-flex">
-            <div class="left-container px-5">
+            <div class="left-container">
                 <div class="image text-center">
                     <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
                 </div>
             </div>
             <div class="right-container px-5 flex-grow-1">
-                <div class="info">
+                <div class="info product_title_description">
                     <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> </h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
                 </div>
@@ -234,6 +246,72 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="container my-5">
+        <div class="product-review">
+            <?php
+            $productReviews = $conn->query(
+                "SELECT oi.rate_level, oi.rate_comments, oi.date_updated, cl.firstname, cl.lastname FROM `order_items` oi
+                    inner join `order_list` ol on ol.id = oi.order_id
+                    inner join `client_list` cl on cl.id = ol.client_id
+                where oi.product_id =  $id and oi.rated = 1 order by unix_timestamp(oi.date_updated) desc;
+                "
+            );
+            while ($review = $productReviews->fetch_assoc()) :
+            ?>
+                <div class="review-section mb-3 border rounded p-3">
+                    <figure class="mb-1">
+                        <blockquote class="blockquote">
+                            <p><?= ucfirst($review['lastname']), ', ', ucfirst($review['firstname']) ?></p>
+                        </blockquote>
+                        <figcaption class="blockquote-footer mb-1">
+                            <?= date("Y-m-d h:i:s A", strtotime($review['date_updated'])) ?>
+                        </figcaption>
+                    </figure>
+                    <div class="review-details">
+                        <?php switch (strval($review['rate_level'])):
+                            case "1": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "2": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "3": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "4": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "5": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                            <?php break;
+                            default: ?>
+                        <?php endswitch; ?>
+                        <p class="reviewer-comments mt-3"><?= ucfirst($review['rate_comments']) ?></p>
+                    </div>
+                </div>
+            <?php endwhile; ?>
         </div>
     </div>
 </div>

@@ -741,7 +741,8 @@ class Master extends DBConnection
 				FROM cart_list c 
 					inner join product_list p on c.product_id = p.id
 					inner join product_variations pv on pv.id = c.variation_id
-				where c.client_id = '{$client_id}'");
+				where c.client_id = '{$client_id}'"
+			);
 			while ($row = $cart->fetch_assoc()) {
 				if (!empty($data)) $data .= ", ";
 				$data .= "('{$oid}','{$row['product_id']}','{$row['quantity']}', '{$row['variation_id']}')";
@@ -888,6 +889,32 @@ class Master extends DBConnection
 			$this->settings->set_flashdata('success', $resp['msg']);
 		return json_encode($resp);
 	}
+
+	function submit_review()
+	{
+		extract($_POST);
+		$orderId = $_POST['order_id'];
+		$rateLevel = $_POST['rate_level'];
+		$rateComments = $_POST['rate_comments'];
+		if (empty($orderId)) {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Order ID not found";
+			return json_encode($resp);
+		}
+		$submitReview = $this->conn->query("UPDATE `order_items` SET rated = 1, `rate_level` = '{$rateLevel}' , `rate_comments` = '{$rateComments}'  where id = '{$orderId}'");
+		if ($submitReview) {
+			$resp['status'] = 'success';
+			$resp['msg'] = "Review succefully submitted";
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		if ($resp['status'] == 'success')
+			$this->settings->set_flashdata('success', $resp['msg']);
+		return json_encode($resp);
+	}
 }
 
 $Master = new Master();
@@ -960,6 +987,9 @@ switch ($action) {
 	case 'delete_order':
 		echo $Master->delete_order();
 		break;
+	case 'submit_review':
+		echo $Master->submit_review();
+
 	default:
 		// echo $sysset->index();
 		break;

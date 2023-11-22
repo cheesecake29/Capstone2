@@ -4,7 +4,7 @@
     <title>Your Website Title</title>
     <!-- Add your other meta tags, stylesheets, and scripts here -->
     <script src="https://kit.fontawesome.com/8714a42433.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap">
 </head>
 <style>

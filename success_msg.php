@@ -1,6 +1,7 @@
 <style>
-    #uni_modal .modal-footer,#uni_modal .modal-header{
-        display:none
+    #uni_modal .modal-footer,
+    #uni_modal .modal-header {
+        display: none
     }
 </style>
 <div class="container-fluid">

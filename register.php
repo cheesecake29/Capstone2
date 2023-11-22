@@ -126,6 +126,22 @@
         el.show('slow')
         return false;
       }
+      var password = $('#password').val();
+
+        // Check if the password length is greater than 8
+        if (password.length <= 8) {
+          el.addClass('alert alert-danger err-msg').text('Password must be at least 8 characters long.');
+          _this.prepend(el);
+          el.show('fast');
+          return false;
+        }
+
+        if (!/[^a-zA-Z\s]/.test(firstname)&&!/[^a-zA-Z\s]/.test(lastname)) {
+        el.addClass('alert alert-danger err-msg').text('Letters only.');
+        _this.prepend(el);
+        el.show('fast');
+        return false;
+        }
       start_loader();
       $.ajax({
         url:_base_url_+"classes/Users.php?f=save_client",

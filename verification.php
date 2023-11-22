@@ -24,7 +24,14 @@ if (!$email) {
 <!-- Montserrat Font (800 weight) and Poppins Font (200 weight) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@200;200&display=swap">
 <link rel="stylesheet" href="./css/login.css">
+<style>
+.login-textfield-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
+</style>
 <body>
   <script>
     start_loader();

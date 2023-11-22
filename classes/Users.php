@@ -175,7 +175,7 @@ Class Users extends DBConnection {
 					$mail->setFrom('testemail@celesment.com', 'Arnold TV Motoshop');
 					$mail->addAddress($_POST['email']);
 					$mail->Subject = 'Welcome to Arnold TV Motoshop';
-					$mail->Body = 'Thank you for registering with our system. Please use this otp to validate your account:
+					$mail->Body = 'Thank you for registering with our website. Please use this otp to validate your account:
 					"'.$otp.'"
 					';
 		

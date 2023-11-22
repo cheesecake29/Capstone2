@@ -308,6 +308,73 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             </div>
         </div>
     </div>
+    <div class="container my-5">
+        <div class="product-review">
+            <?php
+            $productReviews = $conn->query(
+                "SELECT oi.rate_level, oi.rate_comments, oi.date_updated, cl.firstname, cl.lastname, pv.variation_name FROM `order_items` oi
+                    inner join `order_list` ol on ol.id = oi.order_id
+                    inner join `client_list` cl on cl.id = ol.client_id
+                    inner join `product_variations` pv on oi.variation_id = pv.id
+                where oi.product_id =  $id and oi.rated = 1 order by unix_timestamp(oi.date_updated) desc;
+                "
+            );
+            while ($review = $productReviews->fetch_assoc()) :
+            ?>
+                <div class="review-section mb-3 border rounded p-3">
+                    <figure class="mb-1">
+                        <blockquote class="blockquote">
+                            <p><?= ucfirst($review['lastname']), ', ', ucfirst($review['firstname']) ?></p>
+                        </blockquote>
+                        <figcaption class="blockquote-footer mb-1">
+                            <?= date("Y-m-d h:i:s A", strtotime($review['date_updated'])) ?> | Variation: <?= $review['variation_name'] ?>
+                        </figcaption>
+                    </figure>
+                    <div class="review-details">
+                        <?php switch (strval($review['rate_level'])):
+                            case "1": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "2": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "3": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "4": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star-o"></i>
+                            <?php break;
+                            case "5": ?>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                                <i class="fa fa-star checked"></i>
+                            <?php break;
+                            default: ?>
+                        <?php endswitch; ?>
+                        <p class="reviewer-comments mt-3"><?= ucfirst($review['rate_comments']) ?></p>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
+    </div>
 </div>
 
 

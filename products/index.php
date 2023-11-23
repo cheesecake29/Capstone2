@@ -73,6 +73,20 @@ $where = "";
     .search-input:focus {
         box-shadow: none !important;
     }
+span.ribbon {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 5px 10px;
+    /* transform: rotate(45deg); */
+    z-index: 1;
+    border-radius: 32px;
+    font-size: 14px;
+    font-weight: 100;
+    letter-spacing: 1px;
+}
 </style>
 
 
@@ -198,13 +212,14 @@ $where = "";
                         <div class="card ">
                             <div class="product-img-holder overflow-hidden position-relative">
                                 <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-top" style="width: 100%; height: 250px; display: flex; justify-content: center; align-items: center;" />
+                                <span class="ribbon">Best seller</span>
                                 <span class="position-absolute price-tag rounded-pill bg-gradient-primary text-light px-3">
                                     <i class="fa fa-tags"></i> <b><?= number_format($row['price'], 2) ?></b>
                                 </span>
                             </div>
                             <div class="card-body border-top">
                                 <div class="name card-title my-0">
-                                    <b>Best seller</b><br>
+                                    <br>
                                     <b><?= $row['name'] ?></b>
 
                                 </div>

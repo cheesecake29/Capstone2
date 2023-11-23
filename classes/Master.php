@@ -1001,6 +1001,39 @@ class Master extends DBConnection
 			$this->settings->set_flashdata('success', $resp['msg']);
 		return json_encode($resp);
 	}
+
+	function submit_return()
+	{
+		extract($_POST);
+		$productId = $_POST['product_id'];
+		$productName = $_POST['product_name'];
+		// $variationId = $_POST['variation_id'];
+		$authorName = $_POST['author_name'];
+		$authorEmail = $_POST['author_email'];
+		$orderId = $_POST['order_id'];
+		$authorComments = $_POST['author_comments'];
+		if (empty($orderId)) {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Order ID not found";
+			return json_encode($resp);
+		}
+		$this->conn->query("UPDATE `order_list` ol SET ol.status = 7 where id = '{$orderId}'");
+		$submitReturn = $this->conn->query("INSERT into `product_returns` (`product_id`, `product_name`, `author_name`, `author_email`, `author_comment`)
+		VALUES ('{$productId}', '{$productName}', '{$authorName}', '{$authorEmail}', '{$authorComments}' )
+		");
+		if ($submitReturn) {
+			$resp['status'] = 'success';
+			$resp['msg'] = "Return succefully submitted";
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		if ($resp['status'] == 'success')
+			$this->settings->set_flashdata('success', $resp['msg']);
+		return json_encode($resp);
+	}
 }
 
 $Master = new Master();
@@ -1075,6 +1108,8 @@ switch ($action) {
 		break;
 	case 'submit_review':
 		echo $Master->submit_review();
+	case 'submit_return':
+		echo $Master->submit_return();
 
 	default:
 		// echo $sysset->index();

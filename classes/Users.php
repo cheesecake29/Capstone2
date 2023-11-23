@@ -110,21 +110,19 @@ class Users extends DBConnection
 	}
 
 
-	public function save_client()
-	{
+	public function save_client(){
 		if (!empty($_POST['password'])) {
 			$_POST['password'] = md5($_POST['password']);
 		} else {
 			unset($_POST['password']);
 		}
-		function generateOTP()
-		{
-			return sprintf('%06d', mt_rand(0, 999999));
+		function generateOTP() {
+			return bin2hex(random_bytes(16));
 		}
-
+		
 		// Check if the old password was provided
 		$oldPasswordProvided = isset($_POST['oldpassword']);
-
+	
 		// If old password was provided, check if it's correct
 		if ($oldPasswordProvided) {
 			if ($this->settings->userdata('id') > 0 && $this->settings->userdata('login_type') == 2) {
@@ -139,11 +137,11 @@ class Users extends DBConnection
 			}
 			unset($_POST['oldpassword']);
 		}
-
+	
 		extract($_POST);
-
+		
 		$otp = generateOTP();
-		$data = "`verification_code` = '{$otp}' ";
+		$data = "`verification_code` = '{$otp}', `status` = '2'";
 
 		foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id'))) {
@@ -151,21 +149,21 @@ class Users extends DBConnection
 				$data .= " `{$k}` = '{$v}' ";
 			}
 		}
-
+	
 		// Your code for checking email uniqueness remains unchanged
-
+	
 		if (empty($id)) {
 			$sql = "INSERT INTO `client_list` SET $data";
 		} else {
 			$sql = "UPDATE `client_list` SET $data WHERE id = '{$id}'";
 		}
-
+	
 		$save = $this->conn->query($sql);
-
+	
 		if ($save) {
 			$resp['status'] = 'success';
 			if (empty($id)) {
-				$resp['msg'] = "Account is successfully registered.";
+				$resp['msg'] = "Account is successfully registered Kindly check your email for verification before logging in.";
 				// Send email to the new client
 				$mail = new PHPMailer(true);
 
@@ -178,14 +176,13 @@ class Users extends DBConnection
 					$mail->Password = "Test@12345";
 					$mail->SMTPSecure = 'ssl';
 					$mail->Port = 465;
-
+		
 					$mail->setFrom('testemail@celesment.com', 'Arnold TV Motoshop');
 					$mail->addAddress($_POST['email']);
 					$mail->Subject = 'Welcome to Arnold TV Motoshop';
 					$mail->Body = 'Thank you for registering with our system. Please use this otp to validate your account:
-					"' . $otp . '"
-					';
-
+					http://localhost/Capstone2/verification.php?token='.$otp.' ';
+		
 					$mail->send();
 				} catch (Exception $e) {
 					// Handle exceptions if the email fails to send
@@ -204,6 +201,10 @@ class Users extends DBConnection
 			} else {
 				$resp['msg'] = "Client's Account Details have been updated successfully.";
 			}
+
+			
+
+
 		} else {
 			$resp['status'] = 'failed';
 			if (empty($id)) {
@@ -214,7 +215,7 @@ class Users extends DBConnection
 				$resp['msg'] = "Client's Account Details have failed to update.";
 			}
 		}
-
+	
 		if ($resp['status'] == 'success') {
 			$this->settings->set_flashdata('success', $resp['msg']);
 		}

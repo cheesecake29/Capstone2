@@ -1,19 +1,25 @@
-<?php require_once('./config.php');  ?>
+<?php 
+require_once('./config.php');
+
+  // Validate and sanitize the input
+  function validateInput($input) {
+    // Implement your validation logic here if needed
+    return htmlspecialchars(trim($input));
+}
+
+  // Extract the token from the URL
+  $token = validateInput($_GET['token']);
+
+  // Create a new PDO instance
+  $pdo = new PDO("mysql:host=localhost;dbname=capstone_two_db", "root", "");
+  $query = $pdo->prepare("UPDATE client_list SET status = 1 WHERE verification_code = :token");
+  $query->bindParam(':token', $token);
+  $query->execute();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <?php require_once('inc/header.php');  ?>
-<?php
-// verification.php
-
-// Validate and sanitize the email parameter
-$email = isset($_GET['email']) ? filter_var($_GET['email'], FILTER_VALIDATE_EMAIL) : null;
-
-if (!$email) {
-    die('Invalid email parameter');
-}
-
-// Display the OTP input form
-?>
 
 <!-- Montserrat Font (800 weight) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap">
@@ -24,7 +30,29 @@ if (!$email) {
 <!-- Montserrat Font (800 weight) and Poppins Font (200 weight) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@200;200&display=swap">
 <link rel="stylesheet" href="./css/login.css">
-
+<style>
+.login-textfield-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.left-login {
+    text-align: center;
+    align-items: center;
+}
+#login-btn a{
+  margin-top: 8%;
+    background-color: #b6dff4;
+    width: 30%;
+    color: black;
+    font-size: 15px;
+    padding: 1%;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    text-decoration:none;
+}
+</style>
 <body>
   <script>
     start_loader();
@@ -39,20 +67,10 @@ if (!$email) {
 
   <div class="login-container">
     <div class="left-login">
-      <h1>OTP Verification</h1>
-      <form id="verification-frm" action="" method="post">
-        <div class="login-textfield-container">
-          <div class="text-field-login">
-            <div class="input-area">
-              <label class="label" for="email">Email</label>
-              <input type="email" name="email" autofocus placeholder="Enter OTP" value="<?php echo $email; ?>" required disabled>
-
-              <label class="label" for="verification">OTP</label>
-              <input type="text" name="verification" autofocus placeholder="Enter OTP" required>
-            </div>
-          </div>
-        </div>
-        </form>
+      <h1>Your Email is Already verified you can login now.</h1>
+      <div id="login-btn">
+        <a class="btn-success" href="<?php echo base_url . 'login.php' ?>">Login Now</a>
+      </div>
     </div>
     <div class="right-login">
       <img src="<?= validate_image($_settings->info('logo')) ?>" alt="System Logo">
@@ -90,7 +108,6 @@ if (!$email) {
         },
         success: function(resp){
           if(typeof resp == 'object' && resp.status == 'success'){
-            var emailInput = $("#email").val(); // Get the email input value
             location.href = "login.php";
           } else if(resp.status == 'failed' && !!resp.msg){   
             el.addClass("alert alert-danger err-msg").text(resp.msg)

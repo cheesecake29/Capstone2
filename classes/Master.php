@@ -252,17 +252,18 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function delete_image_gallery(){
+	function delete_image_gallery()
+	{
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			// Validate and sanitize input
 			$imageId = $_POST['imageId'];
-			
+
 			// Check for a valid database connection
-			if ($conn->connect_error) {
-				die("Connection failed: " . $conn->connect_error);
+			if ($this->conn->connect_error) {
+				die("Connection failed: " . $this->conn->connect_error);
 			}
 			// Use prepared statement to update the is_delete column
-			$stmt = $conn->prepare("UPDATE product_image_gallery SET is_deleted = 1 WHERE image_id = ?");
+			$stmt = $this->conn->prepare("UPDATE product_image_gallery SET is_deleted = 1 WHERE image_id = ?");
 			$stmt->bind_param("i", $imageId); // Assuming image_id is an integer, adjust if necessary
 			$stmt->execute();
 			// Check if the update was successful
@@ -270,7 +271,7 @@ class Master extends DBConnection
 			// Close the prepared statement
 			$stmt->close();
 			// Close the database connection
-			$conn->close();
+			$this->conn->close();
 			// Provide a response to the client
 			if ($updateSuccess) {
 				echo 'Image deleted successfully';
@@ -388,22 +389,22 @@ class Master extends DBConnection
 		if (!empty($_FILES['gallery_images']['tmp_name'][0])) {
 			$gallery_images = $_FILES['gallery_images'];
 			$gallery_urls = array();
-	
+
 			// Loop through gallery images and move them to the desired directory
 			foreach ($gallery_images['tmp_name'] as $key => $tmp_name) {
 				$ext = pathinfo($gallery_images['name'][$key], PATHINFO_EXTENSION);
 				$gallery_name = $pid . '_' . uniqid() . '.' . $ext;
 				$gallery_dir = base_app . "uploads/product_gallery/";
-	
+
 				if (!is_dir($gallery_dir)) {
 					mkdir($gallery_dir);
 				}
-	
+
 				$gallery_path = $gallery_dir . $gallery_name;
 				move_uploaded_file($tmp_name, $gallery_path);
 				$gallery_urls[] = "uploads/product_gallery/$gallery_name";
 			}
-	
+
 			// Insert gallery images into product_image_gallery table
 			foreach ($gallery_urls as $gallery_url) {
 				$gallery_url = $this->conn->real_escape_string($gallery_url);
@@ -793,11 +794,11 @@ class Master extends DBConnection
 				break;
 		}
 		$save = '';
-		if($address_type == 1){
+		if ($address_type == 1) {
 			$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`,`addressline2`, `province`, `city`, `zipcode`, `order_type`, `other_address`)
 			VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$addressline2}','{$province}','{$city}','{$zipcode}','{$order_type}', '{$other_address}')";
 			$save = $this->conn->query($sql1);
-		}else{
+		} else {
 			$sql2 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`,`addressline2`, `province`, `city`, `zipcode`, `order_type`)
 			VALUES ('{$ref_code}','{$client_id}','{$different_addressline1}','{$different_addressline2}','{$province2}','{$city2}','{$different_zipcode}','{$order_type}')";
 			$save = $this->conn->query($sql2);
@@ -969,16 +970,25 @@ class Master extends DBConnection
 	function submit_review()
 	{
 		extract($_POST);
+		$productId = $_POST['product_id'];
+		$productName = $_POST['product_name'];
+		$variationId = $_POST['variation_id'];
+		$authorName = $_POST['author_name'];
+		$authorEmail = $_POST['author_email'];
+		$authorEmail = $_POST['author_email'];
 		$orderId = $_POST['order_id'];
-		$rateLevel = $_POST['rate_level'];
-		$rateComments = $_POST['rate_comments'];
+		$authorRate = $_POST['rate_level'];
+		$authorComments = $_POST['author_comments'];
 		if (empty($orderId)) {
 			$resp['error'] = $this->conn->error;
 			$resp['status'] = 'failed';
 			$resp['msg'] = "Order ID not found";
 			return json_encode($resp);
 		}
-		$submitReview = $this->conn->query("UPDATE `order_items` SET rated = 1, `rate_level` = '{$rateLevel}' , `rate_comments` = '{$rateComments}'  where id = '{$orderId}'");
+		$this->conn->query("UPDATE `order_items` SET rated = 1 where id = '{$orderId}'");
+		$submitReview = $this->conn->query("INSERT into `product_reviews` (`product_id`, `variation_id`, `product_name`, `author_name`, `author_email`, `author_comment`, `author_rate`)
+		VALUES ('{$productId}', '{$variationId}', '{$productName}', '{$authorName}', '{$authorEmail}', '{$authorComments}', '{$authorRate}' )
+		");
 		if ($submitReview) {
 			$resp['status'] = 'success';
 			$resp['msg'] = "Review succefully submitted";

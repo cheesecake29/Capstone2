@@ -140,12 +140,18 @@ if ($order->num_rows > 0) {
                         o.*,
                         p.name,
                         pv.variation_price as price,
+                        pv.variation_name,
                         p.image_path,b.name as brand,
+                        cl.firstname,
+                        cl.lastname,
+                        cl.email,
                         cc.category
                     FROM `order_items` o
                         inner join product_list p on o.product_id = p.id
                         inner join brand_list b on p.brand_id = b.id
                         inner join categories cc on p.category_id = cc.id
+                        inner join order_list ol on ol.id = o.order_id
+                        inner join client_list cl on cl.id = ol.client_id
                         inner join product_variations pv on pv.id = o.variation_id 
                     where o.order_id = '{$id}' order by p.name asc
                 "
@@ -191,6 +197,11 @@ if ($order->num_rows > 0) {
                                             <div id="reviewSection-<?= $row['id'] ?>" class="collapse" aria-labelledby="reviewContent" data-parent="#accordionExample-<?= $row['id'] ?>">
                                                 <form id="submit-review-<?= $row['id'] ?>" action="">
                                                     <div class="card-body">
+                                                        <input class="invisible w-0" value="<?= $row['product_id'] ?>" required type="hidden" name="product_id">
+                                                        <input class="invisible w-0" value="<?= $row['variation_id'] ?>" required type="hidden" name="variation_id">
+                                                        <input class="invisible w-0" value="<?= $row['name'] ?>" required type="hidden" name="product_name">
+                                                        <input class="invisible w-0" value="<?= $row['lastname'], ', ', $row['firstname'] ?>" required type="hidden" name="author_name">
+                                                        <input class="invisible w-0" value="<?= $row['email'] ?>" required type="hidden" name="author_email">
                                                         <input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="order_id">
                                                         <div class="rating">
                                                             <label class="mt-1">Rate: </label>
@@ -204,9 +215,9 @@ if ($order->num_rows > 0) {
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="exampleFormControlTextarea1">Comments: </label>
-                                                            <textarea class="form-control" name="rate_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                            <textarea class="form-control" name="author_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
                                                         </div>
-                                                        <button class="btn btn-flat btn-primary mt-3" onclick="submitForm('submit-review', '<?= $row['id'] ?>')" type="button">Submit</button>
+                                                        <button class="btn btn-flat btn-primary mt-3" onclick="submitReview('submit-review', '<?= $row['id'] ?>')" type="button">Submit</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -265,7 +276,7 @@ if ($order->num_rows > 0) {
         _conf("Are you sure to cancel this order?", "cancel_order", [])
     })
 
-    function submitForm(form, formId) {
+    function submitReview(form, formId) {
         var elements = document.getElementById(`${form}-${formId}`).elements;
         var obj = {};
         for (var i = 0; i < elements.length; i++) {

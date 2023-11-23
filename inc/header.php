@@ -151,29 +151,27 @@
     }
 
     #main-header {
-    position: relative;
-    background: rgb(0, 0, 0) !important;
-    background: none !important;
-    height: 75vh; /* Set the height of the header */
-}
+      position: relative;
+      background: rgb(0, 0, 0) !important;
+      background: none !important;
+      height: 75vh;
+      /* Set the height of the header */
+    }
 
-#main-header:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url(<?php echo base_url.$_settings->info('cover') ?>);
-    background-repeat: no-repeat;
-    background-position: relative;
-    background-size: cover;
-    filter: drop-shadow(0 0 49px 0 #879090); /* Fix typo: 49px instead of 49x */
-    z-index: -1;
-}
-
-
-
-
+    #main-header:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 75vh;
+      background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
+      background-repeat: no-repeat;
+      background-position: relative;
+      background-size: cover;
+      filter: drop-shadow(0 0 49px 0 #879090);
+      /* Fix typo: 49px instead of 49x */
+      z-index: -1;
+    }
   </style>
 </head>

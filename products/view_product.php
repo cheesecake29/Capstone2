@@ -109,7 +109,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
     .containerr {
 
-        margin:  4%;
+        margin: 4%;
         width: 80%;
 
     }
@@ -210,12 +210,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         font-size: 14px;
         text-align: justify;
     }
-    .img-thumbnail{
-    box-shadow: 0 3px 10px rgba(3, 3, 3, 0.619);
-}
+
+    .img-thumbnail {
+        box-shadow: 0 3px 10px rgba(3, 3, 3, 0.619);
+    }
 </style>
 
-<div class="content ">
+<div class="content my-3">
     <div class="container">
         <div class="d-flex">
             <div class="left-container">
@@ -247,7 +248,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     ₱<?php
                         $minVariation = $conn->query("SELECT MIN(variation_price) as lowestVariation FROM product_variations where product_id = $id")->fetch_assoc();
                         echo number_format($minVariation['lowestVariation'], 2);
-                        ?> 
+                        ?>
                 </h3>
                 <h3 class="text-success" id="selectedVariation"></h3>
                 <div class="mt-3 border-bottom">
@@ -336,11 +337,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <div class="product-review">
             <?php
             $productReviews = $conn->query(
-                "SELECT oi.rate_level, oi.rate_comments, oi.date_updated, cl.firstname, cl.lastname, pv.variation_name FROM `order_items` oi
-                    inner join `order_list` ol on ol.id = oi.order_id
-                    inner join `client_list` cl on cl.id = ol.client_id
-                    inner join `product_variations` pv on oi.variation_id = pv.id
-                where oi.product_id =  $id and oi.rated = 1 order by unix_timestamp(oi.date_updated) desc;
+                "SELECT pr.author_rate, pr.author_comment, pr.date_created, pr.author_name, pv.variation_name FROM `product_reviews` pr
+                    inner join `product_variations` pv on pr.variation_id = pv.id
+                where pr.product_id =  $id order by unix_timestamp(pr.date_created) desc;
                 "
             );
             while ($review = $productReviews->fetch_assoc()) :
@@ -348,14 +347,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 <div class="review-section mb-3 border rounded p-3">
                     <figure class="mb-1">
                         <blockquote class="blockquote">
-                            <p><?= ucfirst($review['lastname']), ', ', ucfirst($review['firstname']) ?></p>
+                            <p><?= ucfirst($review['author_name']) ?></p>
                         </blockquote>
                         <figcaption class="blockquote-footer mb-1">
-                            <?= date("Y-m-d h:i:s A", strtotime($review['date_updated'])) ?> | Variation: <?= $review['variation_name'] ?>
+                            <?= date("Y-m-d h:i:s A", strtotime($review['date_created'])) ?> | Variation: <?= $review['variation_name'] ?>
                         </figcaption>
                     </figure>
                     <div class="review-details">
-                        <?php switch (strval($review['rate_level'])):
+                        <?php switch (strval($review['author_rate'])):
                             case "1": ?>
                                 <i class="fa fa-star checked"></i>
                                 <i class="fa fa-star-o"></i>
@@ -393,7 +392,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <?php break;
                             default: ?>
                         <?php endswitch; ?>
-                        <p class="reviewer-comments mt-3"><?= ucfirst($review['rate_comments']) ?></p>
+                        <p class="reviewer-comments mt-3"><?= ucfirst($review['author_comment']) ?></p>
                     </div>
                 </div>
             <?php endwhile; ?>

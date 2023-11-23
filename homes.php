@@ -7,41 +7,32 @@
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
     <script src="https://kit.fontawesome.com/8714a42433.js" crossorigin="anonymous"></script>
 </head>
 
-<header class="" id="main-header">
-<div class="home-container ">
-        <div class="">
-             <h1><?php echo $_settings->info('homename1') ?></h1>
-        <p><?php echo $_settings->info('homedes1')  ?> </p>
-            <div class="col-auto mt-2">
-                <button class="shop-now"><a href="./?p=products">Shop now</a></button>
-            </div>
-        </div>
-    </div>
-</header>
 
 <body class="Homepage">
-
-
-<section class="py-5">
-    <div class="containerrr">
-        <h1 class="new-arrivals">New Arrivals</h1>
-        <div class="row row-cols-sm-1 row-cols-md-2 row-cols-xl-4">
-            <?php 
+    <header class="" id="main-header">
+        <div class="home-container d-flex flex-column justify-content-center h-100 px-5">
+            <h1><?php echo $_settings->info('homename1') ?></h1>
+            <p><?php echo $_settings->info('homedes1')  ?> </p>
+            <button class="shop-now"><a href="./?p=products">Shop now</a></button>
+        </div>
+    </header>
+    <section class="py-5">
+        <div class="containerrr">
+            <h1 class="new-arrivals">New Arrivals</h1>
+            <div class="row row-cols-sm-1 row-cols-md-2 row-cols-xl-4">
+                <?php
                 $products = $conn->query("SELECT p.*, b.name as brand, c.category FROM `product_list` p INNER JOIN brand_list b ON p.brand_id = b.id INNER JOIN `categories` c ON p.category_id = c.id WHERE p.delete_flag = 0 AND p.status = 1 LIMIT 4");
-
                 // Counter variable to keep track of displayed products
                 $counter = 0;
-
-                while ($row = $products->fetch_assoc()):
+                while ($row = $products->fetch_assoc()) :
                     // Increment the counter
                     $counter++;
-
                     // Display your product information here
-            ?>
+                ?>
                     <a class="product-container1" href="./?p=products/view_product&id=<?= $row['id'] ?>" style="width: 250px;">
                         <div class="card">
                             <div class="product-img-holder">
@@ -57,16 +48,16 @@
                             </div>
                         </div>
                     </a>
-            <?php
+                <?php
                     // Check if we have displayed 4 products, and break out of the loop if true
                     if ($counter >= 4) {
                         break;
                     }
                 endwhile;
-            ?>
+                ?>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
 </body>
 

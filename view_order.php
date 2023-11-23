@@ -101,12 +101,18 @@ if ($order->num_rows > 0) {
                         o.*,
                         p.name,
                         pv.variation_price as price,
+                        pv.variation_name,
                         p.image_path,b.name as brand,
+                        cl.firstname,
+                        cl.lastname,
+                        cl.email,
                         cc.category
                     FROM `order_items` o
                         inner join product_list p on o.product_id = p.id
                         inner join brand_list b on p.brand_id = b.id
                         inner join categories cc on p.category_id = cc.id
+                        inner join order_list ol on ol.id = o.order_id
+                        inner join client_list cl on cl.id = ol.client_id
                         inner join product_variations pv on pv.id = o.variation_id 
                     where o.order_id = '{$id}' order by p.name asc
                 "
@@ -151,9 +157,53 @@ if ($order->num_rows > 0) {
 >>>>>>> f23a26e6234cdb19298c5e275c3492301c6fe8ee
                                 </div>
                             </div>
+<<<<<<< HEAD
                             <div class="col-auto text-right">
                                 <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
                             </div>
+=======
+                            
+                            <?php if (!$row['rated'] && $status == 5) : ?>
+                                    <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
+                                        <div class="card">
+                                            <div class="card-header" id="reviewContent">
+                                                <h2 class="mb-0">
+                                                    <button class="btn btn-link btn-block text-primary text-left" type="button" data-toggle="collapse" data-target="#reviewSection-<?= $row['id'] ?>" aria-expanded="false" aria-controls="reviewSection-<?= $row['id'] ?>">
+                                                        Submit a review
+                                                    </button>
+                                                </h2>
+                                            </div>
+                                            <div id="reviewSection-<?= $row['id'] ?>" class="collapse" aria-labelledby="reviewContent" data-parent="#accordionExample-<?= $row['id'] ?>">
+                                                <form id="submit-review-<?= $row['id'] ?>" action="">
+                                                    <div class="card-body">
+                                                        <input class="invisible w-0" value="<?= $row['product_id'] ?>" required type="hidden" name="product_id">
+                                                        <input class="invisible w-0" value="<?= $row['variation_id'] ?>" required type="hidden" name="variation_id">
+                                                        <input class="invisible w-0" value="<?= $row['name'] ?>" required type="hidden" name="product_name">
+                                                        <input class="invisible w-0" value="<?= $row['lastname'], ', ', $row['firstname'] ?>" required type="hidden" name="author_name">
+                                                        <input class="invisible w-0" value="<?= $row['email'] ?>" required type="hidden" name="author_email">
+                                                        <input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="order_id">
+                                                        <div class="rating">
+                                                            <label class="mt-1">Rate: </label>
+                                                            <div class="rating-stars">
+                                                                <input type="radio" name="rate_level" value="5" id="5-<?= $row['id'] ?>"><label for="5-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="4" id="4-<?= $row['id'] ?>"><label for="4-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="3" id="3-<?= $row['id'] ?>"><label for="3-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="2" id="2-<?= $row['id'] ?>"><label for="2-<?= $row['id'] ?>">☆</label>
+                                                                <input type="radio" name="rate_level" value="1" id="1-<?= $row['id'] ?>"><label for="1-<?= $row['id'] ?>">☆</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="exampleFormControlTextarea1">Comments: </label>
+                                                            <textarea class="form-control" name="author_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                        </div>
+                                                        <button class="btn btn-flat btn-primary mt-3" onclick="submitReview('submit-review', '<?= $row['id'] ?>')" type="button">Submit</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
                         </div>
                 <?php
                     endwhile;
@@ -226,6 +276,55 @@ if ($order->num_rows > 0) {
         _conf("Are you sure to cancel this order?","cancel_order",[])
     })
 
+<<<<<<< HEAD
+=======
+    function submitReview(form, formId) {
+        var elements = document.getElementById(`${form}-${formId}`).elements;
+        var obj = {};
+        for (var i = 0; i < elements.length; i++) {
+            var item = elements.item(i);
+            if (item.name === 'rate_level') {
+                if (item.checked) {
+                    obj[item.name] = item.value;
+                }
+            } else {
+                obj[item.name] = item.value;
+            }
+        }
+        const formData = new FormData();
+        for (var key in obj) {
+            formData.append(key, obj[key]);
+        }
+
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=submit_review",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            method: 'POST',
+            type: 'POST',
+            dataType: 'json',
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'success') {
+                    $(`#reviewSection-${formId}`).removeClass('show')
+                    $(`#accordionExample-${formId}`).css('display', 'none');
+                    alert_toast(resp.msg, 'success')
+                } else if (resp.status === 'failed') {
+                    console.log(resp.error)
+                    alert_toast(resp.msg, 'error')
+                } else {
+                    alert_toast('An error occurred.', 'error')
+                }
+            }
+        })
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
     }
     $('#btn-cancel').click(function(){
         _conf("Are you sure to cancel this order?","cancel_order",[])

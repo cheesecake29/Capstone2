@@ -115,8 +115,14 @@
     #main-header {
       position: relative;
       background: rgb(0, 0, 0) !important;
+<<<<<<< HEAD
       background: radial-gradient(circle, rgba(0, 0, 0, 0.48503151260504207) 22%, rgba(0, 0, 0, 0.39539565826330536) 49%, rgba(0, 212, 255, 0) 100%) !important;
       height: 70vh;
+=======
+      background: none !important;
+      height: 75vh;
+      /* Set the height of the header */
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
     }
 
     #main-header:before {
@@ -125,12 +131,22 @@
       top: 0;
       left: 0;
       width: 100%;
+<<<<<<< HEAD
       height: 100%;
       background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
       filter: drop-shadow(0px 7px 6px black);
+=======
+      height: 75vh;
+      background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
+      background-repeat: no-repeat;
+      background-position: relative;
+      background-size: cover;
+      filter: drop-shadow(0 0 49px 0 #879090);
+      /* Fix typo: 49px instead of 49x */
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
       z-index: -1;
     }
   </style>

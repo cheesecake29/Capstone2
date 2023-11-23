@@ -31,7 +31,11 @@
     }
 
     .Homepage {
+<<<<<<< HEAD
         background-image: url(bg12.png);
+=======
+
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
         background-size: cover;
         height: 200px;
         max-width: 100%;
@@ -123,6 +127,7 @@
         font-size: 14px;
     }
 
+<<<<<<< HEAD
     .home-container {
         display: flex;
         justify-content: center;
@@ -130,28 +135,40 @@
         flex-direction: column;
         margin: 7%;
         flex-grow: 1;
+=======
+    .home-container .text-white {
+        text-align: left;
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
     }
 
     .home-container h1 {
-        font-size: 60px;
+        font-size: 30px;
         color: #004399;
+        text-align: justify;
+        width: 65%;
     }
 
     .home-container p {
         margin-top: 15px;
         font-size: 16px;
         color: #427EA9;
+        width: 50%;
     }
 
     .shop-now {
         width: 10%;
         cursor: pointer;
         background-color: #004399;
+<<<<<<< HEAD
         border-radius: 20px;
         box-shadow: 0 3px 10px rgba(3, 3, 3, 0.6);
+=======
+        box-shadow: 0 3px 10px rgba(3, 3, 3, 0.3);
+        border: none;
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
         padding: 10px;
-        margin-top: 70px;
         text-align: center;
+        border-radius: 24px;
     }
 
     .shop-now a {
@@ -254,33 +271,79 @@
         border-width: 48px;
     }
 
+<<<<<<< HEAD
+=======
+
+    .name {
+        text-align: center;
+        white-space: nowrap;
+        /* Prevent text from wrapping */
+        overflow: hidden;
+        /* Hide overflowing text */
+        text-overflow: ellipsis;
+        /* Show ellipsis (...) when text overflows */
+        max-width: 100%;
+        /* Limit the maximum width to prevent container resizing */
+        font-size: 20px;
+        cursor: pointer;
+        /* Change cursor to pointer on hover */
+    }
+
+    .product-container {
+        margin: 3% 0;
+    }
+
+    h1.new-arrivals {
+        margin-top: 2%;
+        background-color: #427EA9;
+        color: white;
+        padding: 1%;
+        width: 40%;
+        border-radius: 40px;
+    }
+
+    .containerrr {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        flex-direction: column;
+    }
+
+
+
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
     /* END: NOTIFICATIONS */
 
     .cart-badge {
-    width: 30px;
-    height: 30px;
-    padding: 15.2px 7.8px;
-    font-size: 27px;
-    border-radius: 26px;
-    transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
-    transform-origin: top;
-    padding-right: 0;
-    padding-top: 0.2px;
-    padding-left: 0.2px;
-    text-align: center;
-    border-width: 48px;
-}
+        width: 30px;
+        height: 30px;
+        padding: 15.2px 7.8px;
+        font-size: 27px;
+        border-radius: 26px;
+        transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
+        transform-origin: top;
+        padding-right: 0;
+        padding-top: 0.2px;
+        padding-left: 0.2px;
+        text-align: center;
+        border-width: 48px;
+    }
 
-.hidden {
-    display: none;
-}
-
-
+    .hidden {
+        display: none;
+    }
 </style>
 
 <body>
+<<<<<<< HEAD
     <nav id="topNavBar">
         <div class="index-header-container">
+=======
+    <nav class="navbar navbar-expand-lg navbar-white" id="topNavBar">
+        <div class="container  ">
+
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
             <a class="navbar-brand" href="./">
                 <img src="<?php echo validate_image($_settings->info('logo')) ?>" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
                 <?php echo $_settings->info('sys_shortname') ?>
@@ -296,7 +359,11 @@
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'products' ? "active" : '' ?>" href="./?p=products">Products</a></li>
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'services' ? "active" : '' ?>" href="./?p=services">Services</a></li>
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'contactus' ? "active" : '' ?>" href="./?p=contactus">Contact us</a></li>
+<<<<<<< HEAD
                     <li><a class="nav-link nav-item <?= isset($page) && $page == 'about' ? "active" : '' ?>" href="./?p=about">About Us</a></li>
+=======
+
+>>>>>>> b2d14991f558d3afc4dde751c95d47911ea9b1fe
                 </ul>
 
                 <div class="search-cart">
@@ -392,9 +459,9 @@
                                 <a href="./?p=cart" class="nav-link">
                                     <i class="fas fa-shopping-cart"></i>
                                     <?php
-                                        $styleClass = ($cart_count !== 0) ? 'badge bg-danger cart-badge' : 'hidden';
+                                    $styleClass = ($cart_count !== 0) ? 'badge bg-danger cart-badge' : 'hidden';
 
-                                        echo ($cart_count !== 0) ? '<span id="cart_count" class="' . $styleClass . '">' . $cart_count . '</span>'
+                                    echo ($cart_count !== 0) ? '<span id="cart_count" class="' . $styleClass . '">' . $cart_count . '</span>'
                                         : '<span id="cart_count" class="' . $styleClass . '"></span>';
                                     ?>
 

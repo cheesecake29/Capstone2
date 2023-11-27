@@ -265,10 +265,24 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			});
 		}
 	}
+
+	function formatInputValue(element, value){
+		const inputValue = value + event.key; // Obtaining the input value with the new key
+		const numericRegex = /^\d*$/; // Validate numeric input with max 2 decimal places
+		
+		if (!numericRegex.test(inputValue) && event.key !== '.') {
+			event.preventDefault(); // Prevent entering non-numeric characters except for the dot
+		}
+	}
+
 	$(document).ready(function() {
 		$('input.CurrencyInput').on('blur', function() {
 			const value = this.value.replace(/,/g, '');
 			formatToCurrency(this, value);
+		});
+		$('input.CurrencyInput').on('keypress', function() {
+			const value = this.value.replace(/,/g, '');
+			formatInputValue(this, value);
 		});
 		$('.select2').select2({
 			width: '100%',
@@ -464,6 +478,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		variationPrice.onblur = function() {
 			formatToCurrency(this, this.value)
 		};
+
+		variationPrice.onkeypress = function(event) {
+			formatInputValue(this, this.value)
+		};
+
 		variationContainer.appendChild(variationPrice);
 		// Add variation stock input
 		var variationStock = document.createElement("input");

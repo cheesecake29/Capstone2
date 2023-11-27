@@ -263,9 +263,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 <div class="info">
                     <small> Brand: <strong><?= isset($brand) ? $brand : '' ?></strong></small>
                 </div>
-                <div class="mt-3 border-bottom">
-                    <h5>Variation: </h3>
-                </div>
                 <div class="info mt-3">
                     <h6>
                         Total Available Stocks:
@@ -304,7 +301,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
                                     <div class="d-flex justify-content-between">
                                         <div class="bd-highlights">
-                                            <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                        <input type="number" name="variations" id="variation_<?php echo $variation['id'] ?>" 
+                                            value="" min="0" max="100" step="1" 
+                                            onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                            <!-- <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" /> -->
                                             <span id='stock_<?php echo $variation['id'] ?>'>
                                                 <?php echo $variation['variation_name'] ?> -
                                                 <span class="text-price"> <?= number_format($variation['variation_price'], 2)  ?> php </span>

@@ -206,7 +206,7 @@
                 endwhile;
                 ?>
                 <div class="button_bottom_home">
-                    <a href="./?p=products/view_product&id=<?= $row['id'] ?>">Shop Now</a>
+                    <a href="./?p=products/">Shop Now</a>
                 </div>
             </div>
         </div>

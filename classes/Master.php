@@ -33,6 +33,88 @@ class Master extends DBConnection
 		}
 		echo $js_code;
 	}
+	
+	function save_proof_payment() {
+		extract($_POST);
+	
+		$ref_code = $_POST['ref_code'];
+		$order_id = $_POST['order_id'];
+		$user_name = $_POST['user_name'];
+	
+		if (!empty($_FILES['proof_file']['name'])) {
+			$targetDirectory = base_app . "uploads/payment-proof/";
+			$targetFile = $targetDirectory . basename($_FILES['proof_file']['name']);
+			$uploadOk = 1;
+			$imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+	
+			if (getimagesize($_FILES['proof_file']['tmp_name']) === false) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = "File is not an image.";
+				$uploadOk = 0;
+			}
+	
+			if (file_exists($targetFile)) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = "File already exists.";
+				$uploadOk = 0;
+			}
+	
+			if ($_FILES['proof_file']['size'] > 5000000) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = "File is too large.";
+				$uploadOk = 0;
+			}
+	
+			if (!in_array($imageFileType, array("jpg", "jpeg", "png", "gif"))) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = "Only JPG, JPEG, PNG, and GIF files are allowed.";
+				$uploadOk = 0;
+			}
+	
+			if ($uploadOk == 0) {
+				$resp['error'] = $this->conn->error;
+				return json_encode($resp);
+			} else {
+				if (move_uploaded_file($_FILES['proof_file']['tmp_name'], $targetFile)) {
+					$submitProof = $this->conn->query("INSERT INTO `proof_payments` (`customer_name`, `order_id`, `ref_code`, `status`, `file_url`) 
+						VALUES ('{$user_name}', '{$order_id}', '{$ref_code}', '1', '{$targetFile}')");
+	
+					if ($submitProof) {
+						$updateOrderStatus = $this->conn->query("UPDATE `order_list` SET `status` = '5' WHERE `ref_code` = '{$ref_code}'");
+	
+						if ($updateOrderStatus) {
+							$resp['status'] = 'success';
+							$resp['msg'] = "Your Proof of payment has been submitted, and order status updated.";
+						} else {
+							$resp['error'] = $this->conn->error;
+							$resp['status'] = 'failed';
+							$resp['msg'] = "Order status update failed. Please try again.";
+						}
+					} else {
+						$resp['error'] = $this->conn->error;
+						$resp['status'] = 'failed';
+						$resp['msg'] = "Please try again.";
+					}
+				} else {
+					$resp['error'] = "Sorry, there was an error uploading your file.";
+					$resp['status'] = 'failed';
+					$resp['msg'] = "Please try again.";
+				}
+			}
+		} else {
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Proof of payment file not found.";
+		}
+	
+		if ($resp['status'] == 'success') {
+			$this->settings->set_flashdata('success', $resp['msg']);
+		}
+	
+		return json_encode($resp);
+	}
+	
+
+
 	function save_category()
 	{
 		extract($_POST);
@@ -597,7 +679,7 @@ class Master extends DBConnection
 	function save_request()
 	{
 		if (empty($_POST['id']))
-			$_POST['client_id'] = $this->settings->userdata('id');
+		$_POST['client_id'] = $this->settings->userdata('id');
 		extract($_POST);
 		$data = "";
 		foreach ($_POST as $k => $v) {
@@ -1110,6 +1192,8 @@ switch ($action) {
 		echo $Master->submit_review();
 	case 'submit_return':
 		echo $Master->submit_return();
+	case 'save_proof_payment':
+		echo $Master->save_proof_payment();
 
 	default:
 		// echo $sysset->index();

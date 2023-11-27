@@ -300,23 +300,25 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 $variationTotalQuantity = $variationQuantity - $cartVarItemCount;
                             }
                         ?>
-                            <div class="d-block me-5">
-                                <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="bd-highlights">
-                                            <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
-                                            <span id='stock_<?php echo $variation['id'] ?>'>
-                                                <?php echo $variation['variation_name'] ?> -
-                                                <span class="text-price"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                            <?php if ($variationTotalQuantity > 0) : ?>
+                                <div class="d-block me-5">
+                                    <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="bd-highlights">
+                                                <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                <span id='stock_<?php echo $variation['id'] ?>'>
+                                                    <?php echo $variation['variation_name'] ?> -
+                                                    <span class="text-price me-3"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                                            </div>
+                                            <div class="bd-highlights">
+                                                <small>
+                                                    <i id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</i>
+                                                </small>
+                                            </div>
                                         </div>
-                                        <div class="bd-highlights">
-                                            <small>
-                                                <span id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</span>
-                                            </small>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
+                                    </label>
+                                </div>
+                            <?php endif; ?>
                         <?php
                         endwhile; ?>
                     </div>

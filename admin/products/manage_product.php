@@ -31,47 +31,50 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 	.bg-disabled {
 		background: #EEEE;
 	}
+
 	.gallery-image-container img {
 		/* width: 50%; */
 		height: 214px;
 		object-fit: cover;
 	}
+
 	.custom_gall {
 		border: 1px solid #d7d7d7;
 		padding: 5px;
 		border-radius: 5px;
 	}
+
 	.gallery-item {
-        margin: 10px;
-        cursor: pointer;
-    }
+		margin: 10px;
+		cursor: pointer;
+	}
 
-    #lightbox {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 99999;
-        background: rgba(0, 0, 0, 0.8);
-    }
+	#lightbox {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 99999;
+		background: rgba(0, 0, 0, 0.8);
+	}
 
-    #lightbox img {
-        display: block;
-        margin: 50px auto;
-        max-width: 90%;
-        max-height: 90%;
-    }
+	#lightbox img {
+		display: block;
+		margin: 50px auto;
+		max-width: 90%;
+		max-height: 90%;
+	}
 
-    #lightbox .close {
-        color: #fff;
-        font-size: 30px;
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        cursor: pointer;
-    }
+	#lightbox .close {
+		color: #fff;
+		font-size: 30px;
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		cursor: pointer;
+	}
 </style>
 <div class="card card-outline card-info rounded-0">
 	<div class="card-header">
@@ -154,7 +157,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
 								<label for="gallery_images" class="control-label">Product Image Gallery</label>
 								<input type="file" class="custom_gall form-control-file" id="gallery_images" name="gallery_images[]" multiple accept="image/*">
-								
+
 							</div>
 						</div>
 						<div class="variation-list form-group">
@@ -174,7 +177,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 										<input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="variation_id[]">
 										<input class="invisible w-0" id="variation-<?= $num ?>" value="<?= $row['delete_flag'] ?>" required type="hidden" name="variation_delete_flag[]">
 										<input placeholder="Variation name" class="mr-2 <?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 mr-1" value="<?= $row['variation_name'] ?>" type="text" name="variation_name[]" required>
-				
+
 										<input placeholder="Variation price" class="mr-2 CurrencyInput <?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 mr-1" value="<?= $row['variation_price'] ?>" type="text" name="variation_price[]" required>
 
 										<input placeholder="Stocks" class="<?php if ($row['delete_flag'] == 1) : ?> div-disabled bg-disabled <?php endif; ?> variations form-control rounded-0 w-25" value="<?= $row['variation_stock'] ?>" min="0" type="number" name="variation_stock[]" required>
@@ -188,7 +191,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 									<?php $num++; ?>
 							<?php endwhile;
 							endif; ?>
-							
+
 						</div>
 					</div>
 					<div class="col-md-4">
@@ -196,7 +199,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							<img src="<?php echo validate_image(isset($image_path) ? $image_path : "") ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
 						</div>
 						<div class="d-flex justify-content-center gallery">
-						<?php
+							<?php
 							// Display existing gallery images
 							if (!empty($id)) {
 								$gallery_images_query = $conn->query("SELECT image_url FROM `product_image_gallery` WHERE `product_id` = '{$id}'");
@@ -218,15 +221,15 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							}
 							?>
 							<div id="gallery-preview" style="overflow-x: auto; white-space: nowrap;">
-							
-						</div>
-						<div id="lightbox">
-							<span class="close">&times;</span>
-							<img id="lightbox-image" src="" alt="Lightbox Image">
+
+							</div>
+							<div id="lightbox">
+								<span class="close">&times;</span>
+								<img id="lightbox-image" src="" alt="Lightbox Image">
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
 
 		</form>
@@ -342,39 +345,39 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
 	//display uploaded images for gallery
 	function displayGalleryImages(input) {
-        var galleryPreview = $('#gallery-preview');
-        galleryPreview.empty(); // Clear previous preview
+		var galleryPreview = $('#gallery-preview');
+		galleryPreview.empty(); // Clear previous preview
 
-        if (input.files && input.files.length > 0) {
-            for (var i = 0; i < input.files.length; i++) {
-                var reader = new FileReader();
+		if (input.files && input.files.length > 0) {
+			for (var i = 0; i < input.files.length; i++) {
+				var reader = new FileReader();
 
-                reader.onload = function (e) {
-                    var image = $('<img>').attr('src', e.target.result).addClass('img-thumbnail').css('width', '27%').css('height', 'auto');
-                    galleryPreview.append(image);
-                };
+				reader.onload = function(e) {
+					var image = $('<img>').attr('src', e.target.result).addClass('img-thumbnail').css('width', '27%').css('height', 'auto');
+					galleryPreview.append(image);
+				};
 
-                reader.readAsDataURL(input.files[i]);
-            }
-        }
-    }
+				reader.readAsDataURL(input.files[i]);
+			}
+		}
+	}
 
-    $('#gallery_images').on('change', function () {
-        displayGalleryImages(this);
-    });
+	$('#gallery_images').on('change', function() {
+		displayGalleryImages(this);
+	});
 	//End
 
-	$(document).ready(function () {
-    // Open lightbox on image click
-    $('.gallery-item').on('click', function () {
-        var imagePath = $(this).data('image');
-        $('#lightbox-image').attr('src', imagePath);
-        $('#lightbox').fadeIn();
-    });
+	$(document).ready(function() {
+		// Open lightbox on image click
+		$('.gallery-item').on('click', function() {
+			var imagePath = $(this).data('image');
+			$('#lightbox-image').attr('src', imagePath);
+			$('#lightbox').fadeIn();
+		});
 
-    // Close lightbox on close button click or outside click
-    $('#lightbox, .close').on('click', function () {
-        $('#lightbox').fadeOut();
+		// Close lightbox on close button click or outside click
+		$('#lightbox, .close').on('click', function() {
+			$('#lightbox').fadeOut();
 		});
 	});
 

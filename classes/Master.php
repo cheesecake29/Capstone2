@@ -726,18 +726,18 @@ class Master extends DBConnection
 			if ($available < 1) {
 				$resp['status'] = 'failed';
 				$resp['msg'] = "{$stocks} - {$out} Product doesn't have stock available.";
-				$save = $this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
 			} elseif ($selectedQuantity < 1 && $available > 0) {
 				$resp['status'] = 'failed';
-				$save = $this->conn->query("UPDATE cart_list set quantity = '1' where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = '1' where id = '{$cart_id}'");
 				$resp['msg'] = " You are at the lowest quantity.";
 			} elseif ($selectedQuantity > $available) {
 				$resp['status'] = 'failed';
-				$save = $this->conn->query("UPDATE cart_list set quantity = '{$available}' where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = '{$available}' where id = '{$cart_id}'");
 				$resp['msg'] = " Product has only [{$available}] available stock";
 			} else {
 				$resp['status'] = 'success';
-				$save = $this->conn->query("UPDATE cart_list set quantity = quantity {$quantity} where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = quantity {$quantity} where id = '{$cart_id}'");
 			}
 			return json_encode($resp);
 		}

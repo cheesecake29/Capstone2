@@ -73,6 +73,20 @@ $where = "";
     .search-input:focus {
         box-shadow: none !important;
     }
+span.ribbon {
+    position: absolute;
+    top: 9px;
+    right: 8px;
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 5px 10px;
+    /* transform: rotate(45deg); */
+    z-index: 1;
+    border-radius: 32px;
+    font-size: 14px;
+    font-weight: 100;
+    letter-spacing: 1px;
+}
 </style>
 
 
@@ -170,6 +184,56 @@ $where = "";
                 </div>
 
                 <div class="row row-cols-sm-1 row-cols-md-2 row-cols-xl-3">
+                <?php
+                    $products = $conn->query("SELECT p.*, b.name AS brand, c.category, COUNT(o.product_id) AS order_count
+                        FROM product_list p
+                            INNER JOIN brand_list b ON p.brand_id = b.id
+                            INNER JOIN categories c ON p.category_id = c.id
+                            INNER JOIN order_items o ON o.product_id = p.id
+                        WHERE p.delete_flag = 0 
+                            AND p.status = 1 
+                            GROUP BY p.id
+                            ORDER BY order_count DESC
+                        LIMIT 1;");
+
+                while ($row = $products->fetch_assoc()) :
+                    $row['stocks'] = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$row['id']}'")->fetch_array()[0];
+                    $row['out'] = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$row['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
+        
+                    if (array_key_exists('out', $row)) {
+                        $row['available'] = $row['stocks'] - $row['out'];
+                    } else {
+                        $row['available'] = $row['stocks'];
+                    }
+                ?>
+                
+                    <!--Start Best Seller --->
+                    <a class="product-container " href="./?p=products/view_product&id=<?= $row['id'] ?>" style="width: 250px;">
+                        <div class="card ">
+                            <div class="product-img-holder overflow-hidden position-relative">
+                                <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-top" style="width: 100%; height: 250px; display: flex; justify-content: center; align-items: center;" />
+                                <span class="ribbon">Best seller</span>
+                                <span class="position-absolute price-tag rounded-pill bg-gradient-primary text-light px-3">
+                                    <i class="fa fa-tags"></i> <b><?= number_format($row['price'], 2) ?></b>
+                                </span>
+                            </div>
+                            <div class="card-body border-top">
+                                <div class="name card-title my-0">
+                                    <br>
+                                    <b><?= $row['name'] ?></b>
+
+                                </div>
+                                <p class="price">₱<?= strip_tags(html_entity_decode($row['price'])) ?>
+                                    <span class="fas fa-tag"></span>
+                                </p>
+                                
+                            </div>
+                        </div>
+                    </a>
+                    
+                        <!--End Best Seller--->
+                        <?php endwhile; ?>
+
                     <?php
                     $where = "";
                     if (is_array($brand_filter)) {
@@ -185,7 +249,10 @@ $where = "";
                         $where .= " and p.price >= $min_price and p.price <= $max_price";
                     }
 
-                    $products = $conn->query("SELECT p.*,b.name as brand, c.category FROM `product_list` p inner join brand_list b on p.brand_id = b.id inner join `categories` c on p.category_id = c.id where p.delete_flag = 0 and p.status = 1 {$where} order by RAND()");
+                    $products = $conn->query("SELECT p.*,b.name as brand, c.category FROM `product_list` p
+                        inner join brand_list b on p.brand_id = b.id
+                        inner join `categories` c on p.category_id = c.id
+                        where p.delete_flag = 0 and p.status = 1 {$where} order by RAND()");
 
                     while ($row = $products->fetch_assoc()) :
                         $row['stocks'] = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$row['id']}'")->fetch_array()[0];
@@ -199,6 +266,7 @@ $where = "";
                             $row['available'] = $row['stocks'];
                         }
                     ?>
+
                         <!--Start Product--->
                         <a class="product-container " href="./?p=products/view_product&id=<?= $row['id'] ?>" style="width: 250px;">
                             <div class="card ">

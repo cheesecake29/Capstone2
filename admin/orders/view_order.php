@@ -84,14 +84,14 @@ if ($order->num_rows > 0) {
                     <label for="" class="text-muted">Status</label>
                     <div class="ml-3">
                         <?php if (isset($status)) : ?>
-                            <?php if ($status == 0) : ?>
+                            <?php if ($status == 1) : ?>
                                 <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
 
-                            <?php elseif ($status == 1) : ?>
+                            <?php elseif ($status == 2) : ?>
                                 <span class="badge badge-primary px-3 rounded-pill">Confirm</span>
 
-                            <?php elseif ($status == 2) : ?>
-                                <span class="badge badge-primary px-3 rounded-pill">Packed</span>
+                            <!-- <?php elseif ($status == 2) : ?>
+                                <span class="badge badge-primary px-3 rounded-pill">Packed</span> -->
 
                             <?php elseif ($status == 3) : ?>
                                 <span class="badge badge-success px-3 rounded-pill">For Delivery</span>

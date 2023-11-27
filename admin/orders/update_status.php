@@ -17,9 +17,9 @@ if(isset($_GET['id'])){
         <div class="form-group">
             <label for="status" class="control-label">Status</label>
             <select name="status" id="status" class="custom-select form-control-sm">
-                <option value="0" <?= isset($status) && $status == 0 ? 'selected' : "" ?>>Pending</option>
-                <option value="1" <?= isset($status) && $status == 1 ? 'selected' : "" ?>>Confirm</option>
-                <option value="2" <?= isset($status) && $status == 2 ? 'selected' : "" ?>>Packed</option>
+                <option value="0" <?= isset($status) && $status == 1 ? 'selected' : "" ?>>Pending</option>
+                <option value="1" <?= isset($status) && $status == 2 ? 'selected' : "" ?>>Confirm</option>
+                <!-- <option value="2" <?= isset($status) && $status == 2 ? 'selected' : "" ?>>Packed</option> -->
               
                 <option value="3" <?= isset($status) && $status == 3 ? 'selected' : "" ?>>For Delivery</option>
                 <option value="4" <?= isset($status) && $status == 4 ? 'selected' : "" ?>>On the Way</option>

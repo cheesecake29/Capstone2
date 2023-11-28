@@ -534,6 +534,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             $('#warning-label').removeClass("invinsible");
         } else {
             $('#warning-label').addClass("invinsible");
+            $('#confirm').attr("disabled", false);
         }
     }
 

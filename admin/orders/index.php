@@ -38,13 +38,13 @@
                             <td><?= $row['fullname'] ?></td>
                             <td class="text-right"><?= number_format($row['total_amount'],2) ?></td>
                             <td class="text-center">
-                                <!-- 0=pending,1 = confirmed, 2 = packed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled	 -->
-                                <?php if ($row['status'] == 0) : ?>
+                                <!-- 1=pending,2 = confirmed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled	 -->
+                                <?php if ($row['status'] == 1) : ?>
                                     <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
-                                <?php elseif ($row['status'] == 1) : ?>
-                                    <span class="badge badge-primary px-3 rounded-pill">Confirmed</span>
                                 <?php elseif ($row['status'] == 2) : ?>
-                                    <span class="badge badge-primary px-3 rounded-pill">Packed</span>
+                                    <span class="badge badge-primary px-3 rounded-pill">Confirmed</span>
+                                <!-- <?php elseif ($row['status'] == 2) : ?>
+                                    <span class="badge badge-primary px-3 rounded-pill">Packed</span> -->
                                 <?php elseif ($row['status'] == 3) : ?>
                                     <span class="badge badge-success px-3 rounded-pill">For Delivery</span>
                                 <?php elseif ($row['status'] == 4) : ?>

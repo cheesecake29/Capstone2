@@ -1,7 +1,8 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
     $result = $conn->query("SELECT * from product_image_gallery where product_id = '" . $_GET['id'] . "' AND is_deleted = 0");
-
+    $product_order_config = $conn->query("SELECT * from order_config og where product_id = '" . $_GET['id'] . "' limit 1")->fetch_assoc();
+    $all_order_config = $conn->query("SELECT * from order_config where is_all = 1 limit 1")->fetch_assoc();
     $qry = $conn->query("SELECT p.*, b.name as brand, c.category from `product_list` p
         inner join brand_list b on p.brand_id = b.id
         inner join categories c on p.category_id = c.id
@@ -35,11 +36,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 }
 ?>
 
-
-<head>
-
-
-</head>
 <style>
     .product-img {
         max-width: 450px;
@@ -214,6 +210,23 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .img-thumbnail {
         box-shadow: 0 3px 10px rgba(3, 3, 3, 0.619);
     }
+
+    #cart_modal .modal-dialog-end {
+        display: flex;
+        align-items: end;
+        min-height: calc(100% - 3.5rem);
+    }
+
+    #cart_modal .cart-info .cart-product-img {
+        object-fit: cover;
+        max-width: 150px;
+        object-position: center center;
+        width: 100%;
+    }
+
+    .invinsible {
+        visibility: hidden;
+    }
 </style>
 
 <div class="content my-3">
@@ -232,6 +245,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                   </div>';
                         }
                         ?>
+                        <?php while ($row = $result->fetch_assoc()) : ?>
+                            Image: <?= $row ?>
+                            <img src="'<?= $row['image_url'] ?>'" alt="Gallery Image">
+                        <?php endwhile; ?>
                     </div>
                 </div>
                 <div id="lightbox">
@@ -262,6 +279,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 </div>
                 <div class="info">
                     <small> Brand: <strong><?= isset($brand) ? $brand : '' ?></strong></small>
+                </div>
+                <div class="mt-3 border-bottom">
+                    <h5>Variation: </h3>
                 </div>
                 <div class="info mt-3">
                     <h6>
@@ -297,31 +317,42 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 $variationTotalQuantity = $variationQuantity - $cartVarItemCount;
                             }
                         ?>
-                            <div class="d-block me-5">
-                                <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="bd-highlights">
-                                        <input type="number" name="variations" id="variation_<?php echo $variation['id'] ?>" 
-                                            value="" min="0" max="100" step="1" 
-                                            onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
-                                            <!-- <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" /> -->
-                                            <span id='stock_<?php echo $variation['id'] ?>'>
-                                                <?php echo $variation['variation_name'] ?> -
-                                                <span class="text-price"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                            <?php if ($variationTotalQuantity > 0) : ?>
+                                <div class="d-block me-5">
+                                    <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="bd-highlights">
+                                                <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $product_order_config ? $product_order_config['value'] : $all_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                <span id='stock_<?php echo $variation['id'] ?>'>
+                                                    <?php echo $variation['variation_name'] ?> -
+                                                    <span class="text-price me-3"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                                            </div>
+                                            <div class="bd-highlights">
+                                                <small>
+                                                    <i id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</i>
+                                                </small>
+                                            </div>
                                         </div>
-                                        <div class="bd-highlights">
-                                            <small>
-                                                <span id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</span>
-                                            </small>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
+                                    </label>
+                                </div>
+                            <?php endif; ?>
                         <?php
                         endwhile; ?>
                     </div>
                     <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
                 </div>
+
+                <!-- <div class="d-flex align-items-center w-100 mb-1">
+                    <div class="input-group " style="width:8em">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-sm btn-outline-secondary btn-minus" onclick="updateQuantity(false)"><i class="fa fa-minus"></i></button>
+                        </div>
+                        <input type="text" id="order-quantity" name="order_quantity" value="1" readonly class="form-control form-control-sm text-center">
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-outline-secondary btn-plus" onclick="updateQuantity(true)"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div> -->
                 <div class="d-block mt-3">
                     <div id="available">
                         <button id='add_to_cart' class='btn text-white' style="background: #004399" onclick='addToCart()' disabled>Add to Cart</button>
@@ -400,7 +431,50 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </div>
 </div>
 
-
+<div class="modal fade" id="cart_modal" role='dialog'>
+    <div class="modal-dialog modal-lg modal-dialog-end" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="cart-info">
+                    <div class="d-flex flex-row">
+                        <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="cart-product-img">
+                        <div class="flex-grow-1 mx-3">
+                            <div class="d-flex flex-column h-100">
+                                <h2 class="text-secondary">
+                                    <?= $name ?>
+                                    <span id="item-price" class="invisible"></span>
+                                    <span id="item-max-price" class="invisible"></span>
+                                </h2>
+                                <p class="flex-grow-1 mb-1">Variation: <span id="variation-id"></span></p>
+                                <div class="d-flex align-items-center w-100 mb-1">
+                                    <div class="input-group " style="width:8em">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-sm btn-outline-secondary btn-minus" onclick="updateQuantity(false)"><i class="fa fa-minus"></i></button>
+                                        </div>
+                                        <input type="text" id="order-quantity" name="order_quantity" value="1" readonly class="form-control form-control-sm text-center">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-sm btn-outline-secondary btn-plus" onclick="updateQuantity(true)"><i class="fa fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <span class="ms-3"> * ₱ <span id="variation-price"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column mx-1">
+                            <h4 class="flex-grow-1 text-secondary text-end">₱ <span id="variation-view-price"></span></h4>
+                            <h3 class="text-success mb-1 text-nowrap">Total: <span id="cart-total"></span> php</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span id="warning-label" class="text-danger invinsible"><small>You've reached the maximum order price for this product (<?= $product_order_config ? number_format($product_order_config['value']) : number_format($all_order_config['value']) ?>)</small></span>
+                <button type="button" class="btn text-white" style="background: #004399" id="confirm" onclick="saveToCart()">Add to Cart</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -415,12 +489,77 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             $('#add_to_cart').removeAttr("disabled");
             $('#default').hide("slow");
             $('#selectedVariation').html(`₱ ${variation_price}`);
+        }
+    }
 
+    function currencyToNumber(currency) {
+        if (currency) {
+            return Number(currency.toString().replace(/[$,]/g, ''));
+        }
+        return 0;
+    }
+
+    function updateQuantity(add) {
+        // const variationMaxQuantity = $("input[type='radio'][name='variations']:checked").data('max');
+        // $('#order-quantity').attr('max', variationMaxQuantity);
+        const orderQuantity = $('#order-quantity')
+        const priceVal = $('#item-price').html();
+        const maxPriceVal = $('#item-max-price').html();
+        const currentVal = parseInt(orderQuantity.val());
+        let total = 1;
+        if (add) {
+            const maxVal = parseInt(orderQuantity.attr('max'));
+            if (currentVal >= maxVal) {
+                return;
+            }
+            total = currentVal + 1;
+        } else {
+            if (currentVal <= 1) {
+                return;
+            }
+            total = currentVal - 1;
+        }
+        orderQuantity.val(total);
+        const computedTotal = parseInt(priceVal) * total;
+        const formattedTotal = parseFloat(computedTotal).toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+        $('#cart-total').html(formattedTotal);
+        const maxValue = currencyToNumber(maxPriceVal);
+        const totalValue = currencyToNumber(formattedTotal);
+        if (totalValue >= maxValue) {
+            $('#confirm').attr("disabled", true);
+            $('#warning-label').removeClass("invinsible");
+        } else {
+            $('#warning-label').addClass("invinsible");
         }
     }
 
     function addToCart() {
+        const variationName = $("input[type='radio'][name='variations']:checked").data('name');
+        const variationPrice = $("input[type='radio'][name='variations']:checked").data('price');
+        const variationMaxPrice = $("input[type='radio'][name='variations']:checked").data('maxprice');
+        const variationMaxQuantity = $("input[type='radio'][name='variations']:checked").data('max');
+        const formattedPrice = parseFloat(variationPrice).toLocaleString('en-US', {
+            style: 'decimal',
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+        $('#cart_modal').modal('show');
+        $('#variation-id').html(variationName);
+        $('#variation-view-price').html(formattedPrice);
+        $('#variation-price').html(formattedPrice);
+        $('#order-quantity').attr('max', variationMaxQuantity);
+        $('#item-price').html(variationPrice);
+        $('#item-max-price').html(variationMaxPrice);
+        $('#cart-total').html(formattedPrice);
+    }
+
+    function saveToCart() {
         const variationId = $("input[type='radio'][name='variations']:checked").val();
+        const orderQuantity = $('#order-quantity').val();
         if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
             availability--;
             let avail_stock = availability - cart_count;
@@ -436,7 +575,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     data: {
                         product_id: '<?= isset($id) ? $id : "" ?>',
                         variation_id: variationId,
-                        quantity: 1
+                        quantity: orderQuantity
                     },
                     dataType: 'json',
                     error: err => {
@@ -457,7 +596,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             } else {
                                 cartCountSpan.text('').removeClass('badge bg-danger cart-badge').addClass('hidden');
                             }
-
                         } else if (!!resp.msg) {
                             alert_toast(resp.msg, 'error');
                         } else {

@@ -33,44 +33,45 @@ class Master extends DBConnection
 		}
 		echo $js_code;
 	}
-	
-	function save_proof_payment() {
+
+	function save_proof_payment()
+	{
 		extract($_POST);
-	
+
 		$ref_code = $_POST['ref_code'];
 		$order_id = $_POST['order_id'];
 		$user_name = $_POST['user_name'];
-	
+
 		if (!empty($_FILES['proof_file']['name'])) {
 			$targetDirectory = base_app . "uploads/payment-proof/";
 			$targetFile = $targetDirectory . basename($_FILES['proof_file']['name']);
 			$uploadOk = 1;
 			$imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-	
+
 			if (getimagesize($_FILES['proof_file']['tmp_name']) === false) {
 				$resp['status'] = 'failed';
 				$resp['msg'] = "File is not an image.";
 				$uploadOk = 0;
 			}
-	
+
 			if (file_exists($targetFile)) {
 				$resp['status'] = 'failed';
 				$resp['msg'] = "File already exists.";
 				$uploadOk = 0;
 			}
-	
+
 			if ($_FILES['proof_file']['size'] > 5000000) {
 				$resp['status'] = 'failed';
 				$resp['msg'] = "File is too large.";
 				$uploadOk = 0;
 			}
-	
+
 			if (!in_array($imageFileType, array("jpg", "jpeg", "png", "gif"))) {
 				$resp['status'] = 'failed';
 				$resp['msg'] = "Only JPG, JPEG, PNG, and GIF files are allowed.";
 				$uploadOk = 0;
 			}
-	
+
 			if ($uploadOk == 0) {
 				$resp['error'] = $this->conn->error;
 				return json_encode($resp);
@@ -78,10 +79,10 @@ class Master extends DBConnection
 				if (move_uploaded_file($_FILES['proof_file']['tmp_name'], $targetFile)) {
 					$submitProof = $this->conn->query("INSERT INTO `proof_payments` (`customer_name`, `order_id`, `ref_code`, `status`, `file_url`) 
 						VALUES ('{$user_name}', '{$order_id}', '{$ref_code}', '1', '{$targetFile}')");
-	
+
 					if ($submitProof) {
 						$updateOrderStatus = $this->conn->query("UPDATE `order_list` SET `status` = '5' WHERE `ref_code` = '{$ref_code}'");
-	
+
 						if ($updateOrderStatus) {
 							$resp['status'] = 'success';
 							$resp['msg'] = "Your Proof of payment has been submitted, and order status updated.";
@@ -105,14 +106,14 @@ class Master extends DBConnection
 			$resp['status'] = 'failed';
 			$resp['msg'] = "Proof of payment file not found.";
 		}
-	
+
 		if ($resp['status'] == 'success') {
 			$this->settings->set_flashdata('success', $resp['msg']);
 		}
-	
+
 		return json_encode($resp);
 	}
-	
+
 
 
 	function save_category()
@@ -679,7 +680,7 @@ class Master extends DBConnection
 	function save_request()
 	{
 		if (empty($_POST['id']))
-		$_POST['client_id'] = $this->settings->userdata('id');
+			$_POST['client_id'] = $this->settings->userdata('id');
 		extract($_POST);
 		$data = "";
 		foreach ($_POST as $k => $v) {
@@ -808,18 +809,18 @@ class Master extends DBConnection
 			if ($available < 1) {
 				$resp['status'] = 'failed';
 				$resp['msg'] = "{$stocks} - {$out} Product doesn't have stock available.";
-				$save = $this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = '0' where id = '{$cart_id}'");
 			} elseif ($selectedQuantity < 1 && $available > 0) {
 				$resp['status'] = 'failed';
-				$save = $this->conn->query("UPDATE cart_list set quantity = '1' where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = '1' where id = '{$cart_id}'");
 				$resp['msg'] = " You are at the lowest quantity.";
 			} elseif ($selectedQuantity > $available) {
 				$resp['status'] = 'failed';
-				$save = $this->conn->query("UPDATE cart_list set quantity = '{$available}' where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = '{$available}' where id = '{$cart_id}'");
 				$resp['msg'] = " Product has only [{$available}] available stock";
 			} else {
 				$resp['status'] = 'success';
-				$save = $this->conn->query("UPDATE cart_list set quantity = quantity {$quantity} where id = '{$cart_id}'");
+				$this->conn->query("UPDATE cart_list set quantity = quantity {$quantity} where id = '{$cart_id}'");
 			}
 			return json_encode($resp);
 		}
@@ -1116,6 +1117,52 @@ class Master extends DBConnection
 			$this->settings->set_flashdata('success', $resp['msg']);
 		return json_encode($resp);
 	}
+
+	function find_order_config()
+	{
+		extract($_POST);
+		$productId = $_POST['productId'];
+		$seleted_order_config = $this->conn->query("SELECT * from order_config where product_id = '{$productId}'");
+		if ($seleted_order_config) {
+			$resp['status'] = 'success';
+			$resp['msg'] = "Successfully fetched order config";
+			$resp['data'] = $seleted_order_config->num_rows > 0 ? json_encode($seleted_order_config->fetch_assoc()) : [];
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		return json_encode($resp);
+	}
+	function save_order_config()
+	{
+		extract($_POST);
+		$configType = $_POST['configType'];
+		$configPrice = $_POST['configPrice'];
+		$configQuantity = $_POST['configQuantity'];
+		$isAll = false;
+		if ($configType === 'All') {
+			$configType = null;
+			$isAll = true;
+		}
+		$selectConfig = $this->conn->query("SELECT * from order_config where product_id = '{$configType}'");
+		if ($selectConfig) {
+			if ($selectConfig->num_rows > 0) {
+				$action = $this->conn->query("UPDATE `order_config` SET `value` = '{$configPrice}', `quantity` ='{$configQuantity}' where `product_id` = '{$configType}' ");
+			} else {
+				$action = $this->conn->query("INSERT into `order_config` (`product_id`, `value`, `quantity`, `is_all`) VALUES ('{$configType}', '{$configPrice}', '{$configQuantity}', '{$isAll}') ");
+			}
+			if ($action) {
+				$resp['status'] = 'success';
+				$resp['msg'] = `Order config succefully submitted`;
+			} else {
+				$resp['error'] = $this->conn->error;
+				$resp['status'] = 'failed';
+				$resp['msg'] = "Please try again.";
+			}
+			return json_encode($resp);
+		}
+	}
 }
 
 $Master = new Master();
@@ -1190,10 +1237,19 @@ switch ($action) {
 		break;
 	case 'submit_review':
 		echo $Master->submit_review();
+		break;
 	case 'submit_return':
 		echo $Master->submit_return();
+		break;
 	case 'save_proof_payment':
 		echo $Master->save_proof_payment();
+		break;
+	case 'find_order_config':
+		echo $Master->find_order_config();
+		break;
+	case 'save_order_config':
+		echo $Master->save_order_config();
+		break;
 
 	default:
 		// echo $sysset->index();

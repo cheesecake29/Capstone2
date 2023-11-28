@@ -23,6 +23,8 @@ if ($order->num_rows > 0) {
     $_settings->set_flashdata('error', 'Order ID provided is Unknown');
     redirect('admin/?page=orders');
 }
+
+
 ?>
 <style>
     .prod-cart-img {
@@ -56,13 +58,6 @@ if ($order->num_rows > 0) {
                 <label for="" class="text-muted">Client Name</label>
                 <div class="ml-3"><b><?php echo $fullname?></b></div>
             
-
-
-               
-
-
-
-
                 <div class="col-md-6">
                     <label for="" class="text-muted">Reference Code</label>
                     <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
@@ -83,6 +78,7 @@ if ($order->num_rows > 0) {
                 <div class="col-md-6">
                     <label for="" class="text-muted">Status</label>
                     <div class="ml-3">
+
                         <?php if (isset($status)) : ?>
                             <?php if ($status == 1) : ?>
                                 <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
@@ -191,7 +187,21 @@ if ($order->num_rows > 0) {
 
 
                     ?>
+                <label>Proof Of payment</label>
+                <?php
+                // Display the first gallery image
+                if (!empty($id)) {
+                    $gallery_images_query = $conn->query("SELECT file_url FROM `proof_payments` WHERE `ref_code` = '{$ref_code}'");
 
+                    if ($gallery_images_query->num_rows > 0) {
+                        // Display the first image
+                        $gallery_row = $gallery_images_query->fetch_assoc();
+                        echo '<div class="gallery-image-container gallery-item d-flex" data-image="' . $gallery_row['file_url'] . '" >';
+                        echo '<img src="' . $gallery_row['file_url'] . '" alt="Gallery Image" class="img-thumbnail gallery-image">';
+                        echo '</div>';
+                    }
+                }
+                ?>
                 </div>
               
             </div>

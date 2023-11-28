@@ -43,8 +43,10 @@ class Master extends DBConnection
 		$user_name = $_POST['user_name'];
 
 		if (!empty($_FILES['proof_file']['name'])) {
-			$targetDirectory = base_app . "uploads/payment-proof/";
+			
+			$targetDirectory = "../uploads/payment-proof/";
 			$targetFile = $targetDirectory . basename($_FILES['proof_file']['name']);
+
 			$uploadOk = 1;
 			$imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 

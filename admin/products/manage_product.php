@@ -283,6 +283,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			const value = this.value.replace(/,/g, '');
 			formatToCurrency(this, value);
 		});
+		$('input.CurrencyInput').on('keypress', function() {
+			const value = this.value.replace(/,/g, '');
+			formatInputValue(this, value);
+		});
 		$('.select2').select2({
 			width: '100%',
 			placeholder: "Please Select Here"

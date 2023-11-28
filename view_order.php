@@ -84,6 +84,12 @@ if ($order->num_rows > 0) {
             display: none !important;
         }
     }
+    .proof_payment_container input[type="file"] {
+        border: 1px solid #d5d5d5;
+        padding: 7px;
+        border-radius: 10px;
+        margin-bottom: 13px;
+    }
 </style>
 <div class="container-fluid" id="orderDetailsContainer">
 
@@ -95,6 +101,18 @@ if ($order->num_rows > 0) {
         <div class="col-md-6">
             <label for="" class="text-muted">Reference Code</label>
             <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
+            <div class="ml-3">
+                <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
+                    <div class="proof_payment_container">
+                        <label for="proof_payment" class="text-muted">Upload Proof of Payment</label>
+                        <input type="text" class="" id="ref_code" name="ref_code" value="<?= isset($ref_code) ? $ref_code : "N/A" ?>" hidden>
+                        <input type="text" class="" id="order_id" name="order_id" value="<?= isset($id) ? $id : "N/A" ?>" hidden>
+                        <input type="text" class="" id="user_name" name="user_name" value="<?= isset($fullname) ? $fullname : "N/A" ?>" hidden>
+                        <input type="file" class="custom_gall form-control-file" id="proof_file" name="proof_file" accept="image/*">
+                        <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
+                    </div>
+                <form>
+            </div>
         </div>
         <div class="col-md-6">
             <label for="" class="text-muted">Date Ordered</label>
@@ -118,8 +136,10 @@ if ($order->num_rows > 0) {
                         <span class="badge badge-secondary px-3 rounded-pill" style="color: black;">On the Way</span>
                     <?php elseif ($status == 5) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Delivered</span>
-                    <?php else : ?>
+                    <?php elseif ($status == 6) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Cancelled</span>
+                    <?php else : ?>
+                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
                     <?php endif; ?>
                 <?php else : ?>
                     N/A
@@ -159,6 +179,7 @@ if ($order->num_rows > 0) {
                     while ($row = $order_item->fetch_assoc()) :
                         $total += ($row['quantity'] * $row['price']);
                 ?>
+                    <div class="card mb-3">
                         <div class="d-flex flex-column">
                             <div class="d-flex align-items-center w-100 border cart-item px-3" data-id="<?= $row['id'] ?>">
                                 <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
@@ -225,6 +246,8 @@ if ($order->num_rows > 0) {
                                     </div>
                                 <?php endif; ?>
                         </div>
+                    </div>
+                        
                     <?php endwhile; ?>
                 <?php endif; ?>
                 <?php if (isset($order_item) && $order_item->num_rows <= 0) : ?>
@@ -240,6 +263,57 @@ if ($order->num_rows > 0) {
                     </h3>
                 </div>
             </div>
+            <?php 
+                if (isset($_GET['id']) && $_GET['id'] > 0) {
+                    $order_result = $conn->query("SELECT ol.id AS id, p.id AS product_id,
+                        p.name,
+                        cl.firstname,
+                        cl.lastname,
+                        cl.email
+                    FROM order_list ol
+                        INNER JOIN order_items oi ON oi.order_id = ol.id
+                        INNER JOIN product_list p ON oi.product_id = p.id
+                        inner join client_list cl on cl.id = ol.client_id
+                        WHERE ol.id = '{$_GET['id']}'");
+
+                    if ($row = $order_result->fetch_assoc()) {
+                ?>
+                        <!-- Start Return/Refund -->
+                        <?php if ($status == 5) : ?>
+                        <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
+                            <div class="card">
+                                <div class="card-header" id="returnContent">
+                                    <h2 class="mb-0">
+                                        <button class="btn btn-link btn-block text-danger text-left" type="button" data-toggle="collapse" data-target="#returnSection-<?= $row['id'] ?>" aria-expanded="false" aria-controls="reviewSection-<?= $row['id'] ?>">
+                                            Ask for Return/Refund
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="returnSection-<?= $row['id'] ?>" class="collapse" aria-labelledby="returnContent" data-parent="#accordionExample-<?= $row['id'] ?>">
+                                    <form id="submit-return-<?= $row['id'] ?>" action="">
+                                        <div class="card-body">
+                                            <input class="invisible w-0" value="<?= $row['product_id'] ?>" required type="hidden" name="product_id">
+                                            <input class="invisible w-0" value="<?= $row['name'] ?>" required type="hidden" name="product_name">
+                                            <input class="invisible w-0" value="<?= $row['lastname'], ', ', $row['firstname'] ?>" required type="hidden" name="author_name">
+                                            <input class="invisible w-0" value="<?= $row['email'] ?>" required type="hidden" name="author_email">
+                                            <input class="invisible w-0" value="<?= $row['id'] ?>" required type="hidden" name="order_id">
+                                            <div class="form-group">
+                                                <label for="exampleFormControlTextarea1">Reason For Return/Refund: </label>
+                                                <textarea class="form-control" name="author_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                            </div>
+                                            <button class="btn btn-flat btn-primary mt-3" onclick="submitReturn('submit-return', '<?=  $row['id'] ?>')" type="button">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <?php endif; ?>
+                <?php 
+                    }
+                }
+                ?>
+
         </div>
     </div>
     <div class="clear-fix my-2"></div>
@@ -324,6 +398,54 @@ if ($order->num_rows > 0) {
         })
     }
 
+    function submitReturn(form, formId) {
+        var elements = document.getElementById(`${form}-${formId}`).elements;
+        var obj = {};
+        for (var i = 0; i < elements.length; i++) {
+            var item = elements.item(i);
+            if (item.name) {
+                obj[item.name] = item.value;
+            }
+        }
+        const formData = new FormData();
+        for (var key in obj) {
+            formData.append(key, obj[key]);
+        }
+        // Log each key-value pair in the FormData object
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ', ' + pair[1]);
+        }
+
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=submit_return",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            method: 'POST',
+            type: 'POST',
+            dataType: 'json',
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'success') {
+                    $(`#returnSection-${formId}`).removeClass('show')
+                    $(`#accordionExample-${formId}`).css('display', 'none');
+                    alert_toast(resp.msg, 'success')
+                } else if (resp.status === 'failed') {
+                    console.log(resp.error)
+                    alert_toast(resp.msg, 'error')
+                } else {
+                    alert_toast('An error occurred.', 'error')
+                }
+            }
+        })
+    }
+
 
     function cancel_order() {
         start_loader();
@@ -351,4 +473,54 @@ if ($order->num_rows > 0) {
             }
         })
     }
+
+	$(document).ready(function() {
+		// Product submission
+		$('#proof_form').submit(function(e) {
+			e.preventDefault();
+			var _this = $(this)
+			$('.err-msg').remove();
+			const formData = new FormData($(this)[0]);
+			start_loader();
+			$.ajax({
+				url: _base_url_ + "classes/Master.php?f=save_proof_payment",
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false,
+				method: 'POST',
+				type: 'POST',
+				dataType: 'json',
+                error: function(jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error:");
+                console.log("Status: " + textStatus);
+                console.log("Error: " + errorThrown);
+                console.log("Response Text: " + jqXHR.responseText);
+                alert_toast("An error occurred. Check the console for details.", 'error');
+                end_loader();
+                },
+				success: function(resp) {
+					console.log(resp);
+					if (typeof resp == 'object' && resp.status == 'success') {
+						location.href = "./?page=products";
+					} else if (resp.status == 'failed' && !!resp.msg) {
+						var el = $('<div>')
+						el.addClass("alert alert-danger err-msg").text(resp.msg)
+						_this.prepend(el)
+						el.show('slow')
+						$("html, body").animate({
+							scrollTop: _this.closest('.card').offset().top
+						}, "fast");
+						end_loader()
+					} else {
+						alert_toast("An error occured", 'error');
+						end_loader();
+						console.log(resp)
+					}
+				}
+			})
+		})
+
+	})
+
 </script>

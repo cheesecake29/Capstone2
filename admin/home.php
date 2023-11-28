@@ -82,9 +82,9 @@
                 <span class="info-box-text">Registered Clients</span>
                 <span class="info-box-number">
                 <?php 
-                    $services = $conn->query("SELECT id FROM `client_list` where status = 1 and delete_flag = 0 ")->fetch_assoc()['id'];
-                    echo number_format($services);
-                  ?>
+                $services = $conn->query("SELECT COUNT(id) AS serviceCount FROM `client_list` WHERE status = 1 AND delete_flag = 0")->fetch_assoc()['serviceCount'];
+                echo number_format($services);
+                ?>
                 </span>
               </div>
               <!-- /.info-box-content -->
@@ -99,9 +99,9 @@
                 <span class="info-box-text">Pending Orders</span>
                 <span class="info-box-number">
                 <?php 
-                    $services = $conn->query("SELECT id FROM `order_list` where status = 0 ")->fetch_assoc()['id'];
-                    echo number_format($services);
-                  ?>
+                $services = $conn->query("SELECT COUNT(id) AS serviceCount FROM `order_list` WHERE status = 0")->fetch_assoc()['serviceCount'];
+                echo number_format($services);
+                ?>
                 </span>
               </div>
               <!-- /.info-box-content -->
@@ -167,7 +167,7 @@
                 <span class="info-box-text">Delivered Orders</span>
                 <span class="info-box-number">
                 <?php 
-                    $services = $conn->query("SELECT sum(id) as total FROM `order_list` where status = 4 ")->fetch_assoc()['total'];
+                    $services = $conn->query("SELECT sum(id) as total FROM `order_list` where status = 5 ")->fetch_assoc()['total'];
                     echo number_format($services);
                   ?>
                 </span>

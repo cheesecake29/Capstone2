@@ -6,6 +6,7 @@ $forDelivery = $conn->query("SELECT * FROM `order_list` where client_id = '{$_se
 $onTheWay = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 4 order by unix_timestamp(date_created) desc ");
 $delivered = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 5 order by unix_timestamp(date_created) desc ");
 $cancelled = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 6 order by unix_timestamp(date_created) desc ");
+$return = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 7 order by unix_timestamp(date_created) desc ");
 
 ?>
 
@@ -27,6 +28,7 @@ $cancelled = $conn->query("SELECT * FROM `order_list` where client_id = '{$_sett
                     <a class="nav-link" id="v-pills-on-the-way-tab" data-toggle="pill" href="#v-pills-on-the-way" role="tab" aria-controls="v-pills-on-the-way" aria-selected="false">On the way</a>
                     <a class="nav-link" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="false">Delivered</a>
                     <a class="nav-link" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="false">Cancelled</a>
+                    <a class="nav-link" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="false">For Return/Refund</a>
                 </div>
             </div>
             <div class="col-10">
@@ -331,6 +333,58 @@ $cancelled = $conn->query("SELECT * FROM `order_list` where client_id = '{$_sett
                                                     <td class="text-center"><?= number_format($row['total_amount'], 2) ?></td>
                                                     <td class="text-center">
                                                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Cancelled</span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button class="btn btn-flat btn-sm btn-default border view_data" type="button" data-id="<?= $row['id'] ?>"><i class="fa fa-eye"></i> View</button>
+                                                    </td>
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- For Return -->
+                    <div class="tab-pane fade" id="v-pills-return" role="tabpanel" aria-labelledby="v-pills-return">
+                        <div class="card card-outline card-dark shadow rounded-0">
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <table class="table table-stripped">
+                                        <colgroup>
+                                            <col width="5%">
+                                            <col width="20%">
+                                            <col width="25%">
+                                            <col width="20%">
+                                            <col width="15%">
+                                            <col width="15%">
+                                        </colgroup>
+                                        <thead>
+                                            <tr class="bg-gradient-dark text-light">
+                                                <th class="text-center">#</th>
+                                                <th class="text-center">Date Ordered</th>
+                                                <th class="text-center">Ref. Code</th>
+                                                <th class="text-center">Total Amount</th>
+                                                <th class="text-center">Status</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $i = 1;
+                                            while ($row = $return->fetch_assoc()) :
+                                            ?>
+                                                <tr>
+                                                    <td class="text-center"><?= $i++ ?></td>
+                                                    <td>
+                                                        <p class="m-0 text-center"><?= date("Y-m-d H:i", strtotime($row['date_created'])) ?></p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="m-0 text-center"><?= $row['ref_code'] ?></p>
+                                                    </td>
+                                                    <td class="text-center"><?= number_format($row['total_amount'], 2) ?></td>
+                                                    <td class="text-center">
+                                                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
                                                     </td>
                                                     <td class="text-center">
                                                         <button class="btn btn-flat btn-sm btn-default border view_data" type="button" data-id="<?= $row['id'] ?>"><i class="fa fa-eye"></i> View</button>

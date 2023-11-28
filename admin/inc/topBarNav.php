@@ -97,23 +97,28 @@
         <ul class="navbar-nav ml-auto align-items-center">
           <li class="notif dropdown">
           <?php
-                        echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
-                        echo '<i class="fas fa-bell"></i>';
+              echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
+              echo '<i class="fas fa-bell"></i>';
 
-                        $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 2";
-                        $result = $conn->query($countQuery);
+              $countQuery = "SELECT COUNT(id) AS order_list FROM notifications WHERE `type` = 2";
+              $result = $conn->query($countQuery);
 
-                        if ($result) {
-                            $row = $result->fetch_assoc();
-                            $notificationCount = $row['notificationCount'];
+              if ($result === false) {
+                  // Handle the case where the query failed
+                  echo '<span class="badge bg-danger notification-count">Error: ' . $conn->error . '</span>';
+              } else {
+                  $row = $result->fetch_assoc();
 
-                            echo '<span class="badge bg-danger notification-count">' . $notificationCount . '</span>';
-                        } else {
-                            // Handle the case where the query failed
-                            echo '<span class="badge bg-danger notification-count">Error</span>';
-                        }
+                  if ($row === null) {
+                      // Handle the case where no rows were found (if it's not an error in your logic)
+                      echo '<span class="badge bg-danger notification-count">No data found</span>';
+                  } else {
+                      $notificationCount = $row['order_list'];
+                      echo '<span class="badge bg-danger notification-count">' . $notificationCount . '</span>';
+                  }
+              }
 
-                        echo '</a>';
+              echo '</a>';
                         
                         $sql = "SELECT * FROM notifications WHERE `type` = 2 ORDER BY id DESC";
                         $result = $conn->query($sql);

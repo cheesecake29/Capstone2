@@ -99,8 +99,10 @@ if ($order->num_rows > 0) {
                                 <span class="badge badge-warning px-3 rounded-pill">On the Way</span>
                             <?php elseif ($status == 5) : ?>
                                 <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
-                            <?php else : ?>
+                            <?php elseif ($status == 6) : ?>
                                 <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
+                            <?php else : ?>
+                                <span class="badge badge-danger px-3 rounded-pill">For Return/Refund</span>
                             <?php endif; ?>
                         <?php else : ?>
                             N/A

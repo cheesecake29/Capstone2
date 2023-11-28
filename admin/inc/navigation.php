@@ -80,7 +80,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item menu-is-opening menu-open">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-boxes"></i>
                         <p>Stock Management</p>
@@ -88,6 +88,10 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-link nav-inventory">
+                                <i class="nav-icon fas fa-cog"></i>
+                                <p>Order Configuration</p>
+                            </a>
                             <a href="<?php echo base_url ?>admin/?page=inventory" class="nav-link nav-inventory">
                                 <i class="nav-icon fas fa-table"></i>
                                 <p>Inventory</p>
@@ -102,7 +106,7 @@
 
                     </ul>
                 </li>
-              
+
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-info-circle"></i>
@@ -122,21 +126,21 @@
                                 <p>Service Requests</p>
                             </a>
                         </li>
-                        
-             
+
+
                         <li class="nav-item">
-                            <a href="<?php echo base_url?>admin/?page=clients" class="nav-link nav-clients">
+                            <a href="<?php echo base_url ?>admin/?page=clients" class="nav-link nav-clients">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>Registered Clients</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                        <a href="<?php echo base_url?>admin/?page=clients/inquiries" class="nav-link nav-clients_inquiries">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Customer Inquiries</p>
-                        </a>
-                    </li>
+                            <a href="<?php echo base_url ?>admin/?page=clients/inquiries" class="nav-link nav-clients_inquiries">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Customer Inquiries</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </li>
@@ -147,7 +151,7 @@
                         <i class="right fas fa-angle-left"></i>
                     </a>
                     <ul class="nav nav-treeview">
-                        
+
                         <li class="nav-item">
                             <a href="<?php echo base_url ?>admin/?page=report/orders" class="nav-link nav-report_orders">
                                 <i class="fas fa-circle nav-icon"></i>

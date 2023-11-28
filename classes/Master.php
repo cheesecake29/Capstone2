@@ -1001,6 +1001,52 @@ class Master extends DBConnection
 			$this->settings->set_flashdata('success', $resp['msg']);
 		return json_encode($resp);
 	}
+
+	function find_order_config()
+	{
+		extract($_POST);
+		$productId = $_POST['productId'];
+		$seleted_order_config = $this->conn->query("SELECT * from order_config where product_id = '{$productId}'");
+		if ($seleted_order_config) {
+			$resp['status'] = 'success';
+			$resp['msg'] = "Successfully fetched order config";
+			$resp['data'] = $seleted_order_config->num_rows > 0 ? json_encode($seleted_order_config->fetch_assoc()) : [];
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		return json_encode($resp);
+	}
+	function save_order_config()
+	{
+		extract($_POST);
+		$configType = $_POST['configType'];
+		$configPrice = $_POST['configPrice'];
+		$configQuantity = $_POST['configQuantity'];
+		$isAll = false;
+		if ($configType === 'All') {
+			$configType = null;
+			$isAll = true;
+		}
+		$selectConfig = $this->conn->query("SELECT * from order_config where product_id = '{$configType}'");
+		if ($selectConfig) {
+			if ($selectConfig->num_rows > 0) {
+				$action = $this->conn->query("UPDATE `order_config` SET `value` = '{$configPrice}', `quantity` ='{$configQuantity}' where `product_id` = '{$configType}' ");
+			} else {
+				$action = $this->conn->query("INSERT into `order_config` (`product_id`, `value`, `quantity`, `is_all`) VALUES ('{$configType}', '{$configPrice}', '{$configQuantity}', '{$isAll}') ");
+			}
+			if ($action) {
+				$resp['status'] = 'success';
+				$resp['msg'] = `Order config succefully submitted`;
+			} else {
+				$resp['error'] = $this->conn->error;
+				$resp['status'] = 'failed';
+				$resp['msg'] = "Please try again.";
+			}
+			return json_encode($resp);
+		}
+	}
 }
 
 $Master = new Master();
@@ -1075,6 +1121,12 @@ switch ($action) {
 		break;
 	case 'submit_review':
 		echo $Master->submit_review();
+	case 'find_order_config':
+		echo $Master->find_order_config();
+		break;
+	case 'save_order_config':
+		echo $Master->save_order_config();
+		break;
 
 	default:
 		// echo $sysset->index();

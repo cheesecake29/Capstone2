@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2023 at 01:12 AM
+-- Generation Time: Nov 30, 2023 at 10:34 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -68,7 +68,10 @@ CREATE TABLE `cart_list` (
 --
 
 INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
-(77, 14, 46, 51, 3, '2023-11-28 17:57:58');
+(77, 14, 46, 51, 1, '2023-11-28 17:57:58'),
+(78, 14, 50, 52, 1, '2023-11-30 17:32:13'),
+(79, 14, 50, 53, 1, '2023-11-30 17:32:16'),
+(80, 14, 46, 49, 1, '2023-11-30 17:32:34');
 
 -- --------------------------------------------------------
 
@@ -128,7 +131,7 @@ INSERT INTO `client_list` (`id`, `firstname`, `lastname`, `contact`, `region`, `
 (10, 'jizzelle', 'salongcong', '097777777777', '', 'Select Province', 'Bangued', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'jewellsalongcong09@gmail.com', '363b122c528f54df4a0446b6bab05515', '', NULL, 1, 0, '2023-10-29 02:41:46', '2023-11-06 01:29:33'),
 (12, 'jewell', 'salongcong', '097777777777', 'visayas', 'aklan', 'makato', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'bellachingaling@gmail.com', '2db95e8e1a9267b7a1188556b2013b33', '', NULL, 1, 0, '2023-11-06 01:37:04', '2023-11-09 14:03:11'),
 (13, 'Test', 'Last', '', '', '', '', '', '', '', '', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', NULL),
-(14, 'test', 'test', '', '', '', '', '', '', '', '', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', '', NULL, 1, 0, '2023-11-16 17:52:20', NULL),
+(14, 'John', 'Doe', '+639123456789', '04', '0421', '042106', '', 'N/A', 'N/A', '4114', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', 'f404233e9cd3611370dbd02f6b8730b1', NULL, 2, 0, '2023-11-16 17:52:20', '2023-11-30 17:31:32'),
 (50, 'test', 'test', '', '', '', '', '', '', '', '', 'johnbastiandinglasan@gmail.com', '098f6bcd4621d373cade4e832627b4f6', '896661', NULL, 1, 0, '2023-11-22 05:13:08', NULL),
 (51, 'test', 'test', '', '', '', '', '', '', '', '', 'jbdinglasan@webfirmament.com', '098f6bcd4621d373cade4e832627b4f6', '455792', NULL, 1, 0, '2023-11-22 05:38:16', NULL);
 
@@ -234,7 +237,6 @@ CREATE TABLE `order_config` (
 --
 
 INSERT INTO `order_config` (`id`, `product_id`, `value`, `quantity`, `is_all`, `date_created`, `date_updated`) VALUES
-(17, 46, 10000, 0, 0, '2023-11-28 20:42:08', NULL),
 (19, 0, 5000, 0, 1, '2023-11-28 20:56:42', NULL);
 
 -- --------------------------------------------------------
@@ -721,7 +723,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `categories`

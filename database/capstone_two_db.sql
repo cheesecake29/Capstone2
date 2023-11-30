@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2023 at 02:33 PM
+-- Generation Time: Nov 29, 2023 at 01:12 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -63,6 +63,13 @@ CREATE TABLE `cart_list` (
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cart_list`
+--
+
+INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
+(77, 14, 46, 51, 3, '2023-11-28 17:57:58');
+
 -- --------------------------------------------------------
 
 --
@@ -121,7 +128,9 @@ INSERT INTO `client_list` (`id`, `firstname`, `lastname`, `contact`, `region`, `
 (10, 'jizzelle', 'salongcong', '097777777777', '', 'Select Province', 'Bangued', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'jewellsalongcong09@gmail.com', '363b122c528f54df4a0446b6bab05515', '', NULL, 1, 0, '2023-10-29 02:41:46', '2023-11-06 01:29:33'),
 (12, 'jewell', 'salongcong', '097777777777', 'visayas', 'aklan', 'makato', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'bellachingaling@gmail.com', '2db95e8e1a9267b7a1188556b2013b33', '', NULL, 1, 0, '2023-11-06 01:37:04', '2023-11-09 14:03:11'),
 (13, 'Test', 'Last', '', '', '', '', '', '', '', '', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', NULL),
-(14, 'test', 'test', '', '', '', '', '', '', '', '', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', '', NULL, 1, 0, '2023-11-16 17:52:20', NULL);
+(14, 'test', 'test', '', '', '', '', '', '', '', '', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', '', NULL, 1, 0, '2023-11-16 17:52:20', NULL),
+(50, 'test', 'test', '', '', '', '', '', '', '', '', 'johnbastiandinglasan@gmail.com', '098f6bcd4621d373cade4e832627b4f6', '896661', NULL, 1, 0, '2023-11-22 05:13:08', NULL),
+(51, 'test', 'test', '', '', '', '', '', '', '', '', 'jbdinglasan@webfirmament.com', '098f6bcd4621d373cade4e832627b4f6', '455792', NULL, 1, 0, '2023-11-22 05:38:16', NULL);
 
 -- --------------------------------------------------------
 
@@ -200,7 +209,33 @@ INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`,
 (7, 14, 'test test  has placed an order.', 0, 2, 32),
 (8, 14, 'test test  has placed an order.', 0, 2, 33),
 (9, 14, 'test test  has placed an order.', 0, 2, 34),
-(10, 14, 'test test  has placed an order.', 0, 2, 35);
+(10, 14, 'test test  has placed an order.', 0, 2, 35),
+(11, 14, 'Your order Test product was delivered.', 0, 1, 35),
+(12, 14, 'Your order Lorem ipum was delivered.', 0, 1, 34);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_config`
+--
+
+CREATE TABLE `order_config` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `value` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `is_all` tinyint(1) NOT NULL DEFAULT 0,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_config`
+--
+
+INSERT INTO `order_config` (`id`, `product_id`, `value`, `quantity`, `is_all`, `date_created`, `date_updated`) VALUES
+(17, 46, 10000, 0, 0, '2023-11-28 20:42:08', NULL),
+(19, 0, 5000, 0, 1, '2023-11-28 20:56:42', NULL);
 
 -- --------------------------------------------------------
 
@@ -214,19 +249,21 @@ CREATE TABLE `order_items` (
   `product_id` int(30) NOT NULL,
   `variation_id` int(11) NOT NULL,
   `quantity` float NOT NULL DEFAULT 0,
-  `date_added` datetime NOT NULL DEFAULT current_timestamp()
+  `rated` tinyint(1) NOT NULL,
+  `date_added` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `order_items`
 --
 
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
-(36, 33, 46, 51, 1, '2023-11-17 18:13:04'),
-(37, 34, 46, 50, 2, '2023-11-17 18:31:20'),
-(38, 34, 50, 53, 1, '2023-11-17 18:31:20'),
-(39, 35, 50, 52, 1, '2023-11-17 18:45:26'),
-(40, 35, 50, 53, 1, '2023-11-17 18:45:26');
+INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quantity`, `rated`, `date_added`, `date_updated`) VALUES
+(36, 33, 46, 51, 1, 0, '2023-11-17 18:13:04', NULL),
+(37, 34, 46, 50, 2, 1, '2023-11-17 18:31:20', '2023-11-23 18:19:45'),
+(38, 34, 50, 53, 1, 1, '2023-11-17 18:31:20', '2023-11-23 18:19:54'),
+(39, 35, 50, 52, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:18:36'),
+(40, 35, 50, 53, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:19:32');
 
 -- --------------------------------------------------------
 
@@ -247,7 +284,7 @@ CREATE TABLE `order_list` (
   `zipcode` varchar(10) NOT NULL,
   `order_type` tinyint(4) NOT NULL DEFAULT 1,
   `other_address` varchar(1000) NOT NULL COMMENT 'Pick up / Meet up',
-  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=pending,1 = packed, 2 = for delivery, 3 = on the way, 4 = delivered, 5=cancelled',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0=pending,1 = confirmed, 2 = packed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled',
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -258,8 +295,31 @@ CREATE TABLE `order_list` (
 
 INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
 (33, '202311-00001', 14, 1150, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:13:04', '2023-11-17 18:13:04'),
-(34, '202311-00002', 14, 2650, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:31:20', '2023-11-17 18:31:20'),
-(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:45:26', '2023-11-17 18:45:26');
+(34, '202311-00002', 14, 2650, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:31:20', '2023-11-22 17:59:38'),
+(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:45:26', '2023-11-22 14:42:40');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_image_gallery`
+--
+
+CREATE TABLE `product_image_gallery` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `image_url` varchar(255) NOT NULL,
+  `is_deleted` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_image_gallery`
+--
+
+INSERT INTO `product_image_gallery` (`id`, `product_id`, `image_url`, `is_deleted`) VALUES
+(1, 46, 'uploads/product_gallery/46_655dd6dce2abd.png', 0),
+(2, 46, 'uploads/product_gallery/46_655dd80aa4c1e.png', 0),
+(3, 46, 'uploads/product_gallery/46_655dd82f9824e.png', 0),
+(4, 46, 'uploads/product_gallery/46_655dd839bde06.png', 0);
 
 -- --------------------------------------------------------
 
@@ -294,6 +354,34 @@ INSERT INTO `product_list` (`id`, `brand_id`, `category_id`, `name`, `models`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `product_reviews`
+--
+
+CREATE TABLE `product_reviews` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `variation_id` int(11) NOT NULL,
+  `product_name` varchar(255) NOT NULL,
+  `author_name` varchar(255) NOT NULL,
+  `author_email` varchar(255) NOT NULL,
+  `author_rate` int(10) NOT NULL,
+  `author_comment` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `product_reviews`
+--
+
+INSERT INTO `product_reviews` (`id`, `product_id`, `variation_id`, `product_name`, `author_name`, `author_email`, `author_rate`, `author_comment`, `date_created`) VALUES
+(1, 50, 52, 'Test product', 'test, test', 'test@email.com', 4, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor i', '2023-11-23 18:18:36'),
+(2, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Vel turpis nunc eget lorem. Duis ut diam quam nulla porttitor massa id. Commodo sed egestas egestas fringilla phasellus faucibus. Augue eget arcu dictum varius duis at consectetur lorem. Sed enim ut sem viverra. Aliquam ultrices sagittis orci a scelerisqu', '2023-11-23 18:19:32'),
+(3, 46, 50, 'Lorem ipum', 'test, test', 'test@email.com', 3, 'Proin gravida hendrerit lectus a. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Id aliquet risus feugiat in ante. Rutrum tellus pellentesque eu tincidunt tortor aliquam. Turpis egestas integer eget aliquet nibh praesent tristique ma', '2023-11-23 18:19:45'),
+(4, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Tellus mauris a diam maecenas sed enim ut. Semper eget duis at tellus at. Pulvinar mattis nunc sed blandit libero volutpat sed cras ornare. A arcu cursus vitae congue. Magna fringilla urna porttitor rhoncus dolor purus. Id velit ut tortor pretium viverra ', '2023-11-23 18:19:54');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `product_variations`
 --
 
@@ -306,7 +394,7 @@ CREATE TABLE `product_variations` (
   `delete_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '0 = false, 1 = true',
   `default_flag` int(10) NOT NULL DEFAULT 0 COMMENT '0 - False / 1 - True',
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
-  `date_updated` datetime DEFAULT NULL
+  `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -439,9 +527,12 @@ CREATE TABLE `system_info` (
 INSERT INTO `system_info` (`id`, `meta_field`, `meta_value`) VALUES
 (11, 'logo', 'uploads/1698195720_LogoOfficial.png'),
 (13, 'user_avatar', 'uploads/user_avatar.jpg'),
-(14, 'cover', 'uploads/1643082720_bike-cover-2.jpg'),
+(14, 'cover', 'uploads/1700735640_rm309-adj-04.jpg'),
 (15, 'sysname', '                     Arnold TV Motoshop  \r\n                    '),
-(16, 'sys_shortname', '                     ATV Motoshop  \r\n                    ');
+(16, 'sys_shortname', '                     ATV Motoshop  \r\n                    '),
+(17, 'homename1', '                                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque habitant morbi tristique senectus et.                       \r\n                      \r\n                      \r\n                    '),
+(18, 'homedes1', '                                          Turpis massa sed elementum tempus egestas sed. Velit scelerisque in dictum non consectetur                       \r\n                      \r\n                      \r\n                    '),
+(19, 'link', 'www.testlink.com.ph');
 
 -- --------------------------------------------------------
 
@@ -521,6 +612,12 @@ ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `order_config`
+--
+ALTER TABLE `order_config`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `order_items`
 --
 ALTER TABLE `order_items`
@@ -537,12 +634,26 @@ ALTER TABLE `order_list`
   ADD KEY `client_id` (`client_id`);
 
 --
+-- Indexes for table `product_image_gallery`
+--
+ALTER TABLE `product_image_gallery`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `product_list`
 --
 ALTER TABLE `product_list`
   ADD PRIMARY KEY (`id`),
   ADD KEY `brand_id` (`brand_id`),
   ADD KEY `category_id` (`category_id`);
+
+--
+-- Indexes for table `product_reviews`
+--
+ALTER TABLE `product_reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_id` (`product_id`),
+  ADD KEY `variation_id` (`variation_id`);
 
 --
 -- Indexes for table `product_variations`
@@ -610,7 +721,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -622,7 +733,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `client_list`
 --
 ALTER TABLE `client_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `mechanics_list`
@@ -640,7 +751,13 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `order_config`
+--
+ALTER TABLE `order_config`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `order_items`
@@ -655,10 +772,22 @@ ALTER TABLE `order_list`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
+-- AUTO_INCREMENT for table `product_image_gallery`
+--
+ALTER TABLE `product_image_gallery`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `product_list`
 --
 ALTER TABLE `product_list`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
+--
+-- AUTO_INCREMENT for table `product_reviews`
+--
+ALTER TABLE `product_reviews`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `product_variations`
@@ -694,7 +823,7 @@ ALTER TABLE `stock_list`
 -- AUTO_INCREMENT for table `system_info`
 --
 ALTER TABLE `system_info`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `users`

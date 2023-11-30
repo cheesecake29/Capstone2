@@ -468,7 +468,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 </div>
             </div>
             <div class="modal-footer">
-                <span id="warning-label" class="text-danger invinsible"><small>You've reached the maximum order price for this product (<?= $product_order_config ? number_format($product_order_config['value']) : number_format($all_order_config['value']) ?>)</small></span>
+                <span id="warning-label" class="text-danger invinsible"><small>You've reached the maximum order limit (<?= $product_order_config ? number_format($product_order_config['value']) : number_format($all_order_config['value']) ?> php)</small></span>
                 <button type="button" class="btn text-white" style="background: #004399" id="confirm" onclick="saveToCart()">Add to Cart</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>

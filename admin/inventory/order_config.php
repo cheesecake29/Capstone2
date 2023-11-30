@@ -12,14 +12,14 @@ $order_config = $conn->query("SELECT *, pl.id as product_id from order_config og
                 <div class="mr-2">
                     <label for="max-price" class="control-label">Product</label>
                     <select name="type" id="type" class="custom-select select2" required>
-                        <option value="" disabled selected> Select product</option>
-                        <option value="All"> All</option>
-                        <?php
+                        <!-- <option value="" disabled selected> Select product</option> -->
+                        <option value="All" selected> All</option>
+                        <!-- <?php
                         $result = $conn->query("SELECT * from product_list where delete_flag = 0");
                         while ($row = $result->fetch_assoc()) :
-                        ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                        <?php endwhile; ?>
+                        ?> -->
+                            <!-- <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option> -->
+                        <!-- <?php endwhile; ?> -->
                     </select>
                 </div>
                 <div class="mr-2">

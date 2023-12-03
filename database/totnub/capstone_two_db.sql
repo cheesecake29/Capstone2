@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2023 at 10:34 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Dec 03, 2023 at 03:09 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,32 @@ SET time_zone = "+00:00";
 --
 -- Database: `capstone_two_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `appointment`
+--
+
+CREATE TABLE `appointment` (
+  `id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `dates` date NOT NULL,
+  `hours` varchar(1000) NOT NULL,
+  `status` int(11) NOT NULL COMMENT '0 - Pending, 1 - Confirmed, 2 - Cancelled, 3 - Rejected',
+  `datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `appointment`
+--
+
+INSERT INTO `appointment` (`id`, `client_id`, `order_id`, `dates`, `hours`, `status`, `datetime`) VALUES
+(142, 14, 39, '2023-12-08', '9am - 10am', 1, '2023-12-03 06:23:19'),
+(143, 14, 40, '2023-12-08', '10am - 11am', 1, '2023-12-03 06:23:17'),
+(144, 14, 41, '2023-12-14', '10am - 11am', 1, '2023-12-03 06:20:00'),
+(145, 14, 42, '2023-12-22', '9am - 10am', 0, '2023-12-03 14:08:02');
 
 -- --------------------------------------------------------
 
@@ -62,16 +88,6 @@ CREATE TABLE `cart_list` (
   `quantity` float NOT NULL,
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `cart_list`
---
-
-INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
-(77, 14, 46, 51, 1, '2023-11-28 17:57:58'),
-(78, 14, 50, 52, 1, '2023-11-30 17:32:13'),
-(79, 14, 50, 53, 1, '2023-11-30 17:32:16'),
-(80, 14, 46, 49, 1, '2023-11-30 17:32:34');
 
 -- --------------------------------------------------------
 
@@ -131,9 +147,20 @@ INSERT INTO `client_list` (`id`, `firstname`, `lastname`, `contact`, `region`, `
 (10, 'jizzelle', 'salongcong', '097777777777', '', 'Select Province', 'Bangued', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'jewellsalongcong09@gmail.com', '363b122c528f54df4a0446b6bab05515', '', NULL, 1, 0, '2023-10-29 02:41:46', '2023-11-06 01:29:33'),
 (12, 'jewell', 'salongcong', '097777777777', 'visayas', 'aklan', 'makato', '', 'FIRST MARITIME PLACE', '7458 BAGTIKAN ST SAN ANTONIO VILLAGE', '1203', 'bellachingaling@gmail.com', '2db95e8e1a9267b7a1188556b2013b33', '', NULL, 1, 0, '2023-11-06 01:37:04', '2023-11-09 14:03:11'),
 (13, 'Test', 'Last', '', '', '', '', '', '', '', '', 'capstoner2@yopmail.com', '7815696ecbf1c96e6894b779456d330e', '', NULL, 1, 0, '2023-11-09 17:37:47', NULL),
-(14, 'John', 'Doe', '+639123456789', '04', '0421', '042106', '', 'N/A', 'N/A', '4114', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', 'f404233e9cd3611370dbd02f6b8730b1', NULL, 2, 0, '2023-11-16 17:52:20', '2023-11-30 17:31:32'),
+(14, 'John', 'Doe', '+639123456789', '04', '0421', '042106', '', 'N/A', 'N/A', '4114', 'test@email.com', '827ccb0eea8a706c4c34a16891f84e7b', 'f404233e9cd3611370dbd02f6b8730b1', NULL, 1, 0, '2023-11-16 17:52:20', '2023-12-02 12:08:14'),
 (50, 'test', 'test', '', '', '', '', '', '', '', '', 'johnbastiandinglasan@gmail.com', '098f6bcd4621d373cade4e832627b4f6', '896661', NULL, 1, 0, '2023-11-22 05:13:08', NULL),
 (51, 'test', 'test', '', '', '', '', '', '', '', '', 'jbdinglasan@webfirmament.com', '098f6bcd4621d373cade4e832627b4f6', '455792', NULL, 1, 0, '2023-11-22 05:38:16', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `holidays`
+--
+
+CREATE TABLE `holidays` (
+  `id` int(11) NOT NULL,
+  `dates` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -214,7 +241,14 @@ INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`,
 (9, 14, 'test test  has placed an order.', 0, 2, 34),
 (10, 14, 'test test  has placed an order.', 0, 2, 35),
 (11, 14, 'Your order Test product was delivered.', 0, 1, 35),
-(12, 14, 'Your order Lorem ipum was delivered.', 0, 1, 34);
+(12, 14, 'Your order Lorem ipum was delivered.', 0, 1, 34),
+(13, 14, 'John Doe  has placed an order.', 0, 2, 36),
+(14, 14, 'John Doe  has placed an order.', 0, 2, 37),
+(15, 14, 'John Doe  has placed an order.', 0, 2, 38),
+(16, 14, 'John Doe  has placed an order.', 0, 2, 39),
+(17, 14, 'John Doe  has placed an order.', 0, 2, 40),
+(18, 14, 'John Doe  has placed an order.', 0, 2, 41),
+(19, 14, 'John Doe  has placed an order.', 0, 2, 42);
 
 -- --------------------------------------------------------
 
@@ -231,13 +265,6 @@ CREATE TABLE `order_config` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `order_config`
---
-
-INSERT INTO `order_config` (`id`, `product_id`, `value`, `quantity`, `is_all`, `date_created`, `date_updated`) VALUES
-(19, 0, 5000, 0, 1, '2023-11-28 20:56:42', NULL);
 
 -- --------------------------------------------------------
 
@@ -265,7 +292,15 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quan
 (37, 34, 46, 50, 2, 1, '2023-11-17 18:31:20', '2023-11-23 18:19:45'),
 (38, 34, 50, 53, 1, 1, '2023-11-17 18:31:20', '2023-11-23 18:19:54'),
 (39, 35, 50, 52, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:18:36'),
-(40, 35, 50, 53, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:19:32');
+(40, 35, 50, 53, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:19:32'),
+(41, 36, 50, 52, 1, 0, '2023-12-02 13:11:22', NULL),
+(42, 36, 46, 49, 1, 0, '2023-12-02 13:11:22', NULL),
+(43, 37, 50, 53, 1, 0, '2023-12-02 15:22:36', NULL),
+(44, 38, 46, 50, 1, 0, '2023-12-02 15:23:48', NULL),
+(45, 39, 46, 49, 1, 0, '2023-12-02 15:26:13', NULL),
+(46, 40, 50, 53, 1, 0, '2023-12-02 15:29:11', NULL),
+(47, 41, 50, 53, 1, 0, '2023-12-02 20:33:40', NULL),
+(48, 42, 46, 49, 3, 0, '2023-12-03 22:08:02', NULL);
 
 -- --------------------------------------------------------
 
@@ -298,7 +333,14 @@ CREATE TABLE `order_list` (
 INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
 (33, '202311-00001', 14, 1150, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:13:04', '2023-11-17 18:13:04'),
 (34, '202311-00002', 14, 2650, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:31:20', '2023-11-22 17:59:38'),
-(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:45:26', '2023-11-22 14:42:40');
+(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:45:26', '2023-11-22 14:42:40'),
+(36, '202312-00001', 14, 1600, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 13:11:22', '2023-12-02 13:11:22'),
+(37, '202312-00002', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 15:22:36', '2023-12-02 15:22:36'),
+(38, '202312-00003', 14, 1250, '', '0421', '042106', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-02 15:23:48', '2023-12-02 15:23:48'),
+(39, '202312-00004', 14, 1500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 15:26:13', '2023-12-02 15:26:13'),
+(40, '202312-00005', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 15:29:11', '2023-12-02 15:29:11'),
+(41, '202312-00006', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 20:33:40', '2023-12-02 20:33:40'),
+(42, '202312-00007', 14, 4500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-03 22:08:02', '2023-12-03 22:08:02');
 
 -- --------------------------------------------------------
 
@@ -351,7 +393,8 @@ CREATE TABLE `product_list` (
 
 INSERT INTO `product_list` (`id`, `brand_id`, `category_id`, `name`, `models`, `description`, `price`, `weight`, `status`, `image_path`, `delete_flag`, `date_created`, `date_updated`) VALUES
 (46, 10, 11, 'Lorem ipum', 'All model', '&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;Open Sans&amp;quot;, Arial, sans-serif; font-size: 14px; text-align: justify;&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel semper libero. Vestibulum eu urna bibendum, tempus sapien eu, elementum tellus. Nullam congue, est vel semper porta, libero justo varius massa, vestibulum faucibus arcu augue a nisi. Morbi nec rutrum nunc. Phasellus congue consectetur lectus ac aliquam. Integer nec tellus faucibus, lobortis tortor ullamcorper, laoreet massa. Vivamus a odio sem. Donec at rhoncus urna. Nulla aliquet justo vel pulvinar accumsan. Phasellus at augue commodo, volutpat est sit amet, tristique justo.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;', 1500, '500g and below', 1, 'uploads/products/46.jpg?v=1700211715', 0, '2023-11-15 18:31:10', '2023-11-17 17:22:02'),
-(50, 9, 11, 'Test product', 'All', '&lt;p&gt;test only&lt;/p&gt;', 150, '500g and below', 1, 'uploads/products/50.png?v=1700217018', 0, '2023-11-17 18:30:18', '2023-11-17 18:30:18');
+(50, 9, 11, 'Test product', 'All', '&lt;p&gt;test only&lt;/p&gt;', 150, '500g and below', 1, 'uploads/products/50.png?v=1700217018', 0, '2023-11-17 18:30:18', '2023-11-17 18:30:18'),
+(51, 9, 11, 'test', 'test', '&lt;p&gt;test&lt;/p&gt;', 100, 'select', 1, '', 1, '2023-11-30 19:07:54', '2023-11-30 19:08:01');
 
 -- --------------------------------------------------------
 
@@ -408,7 +451,8 @@ INSERT INTO `product_variations` (`id`, `product_id`, `variation_name`, `variati
 (50, 46, 'Red', 1250, 87, 0, 0, '2023-11-17 17:01:55', NULL),
 (51, 46, 'White', 1150, 93, 0, 0, '2023-11-17 17:01:55', NULL),
 (52, 50, 'Small', 100, 10, 0, 0, '2023-11-17 18:30:18', NULL),
-(53, 50, 'Large', 150, 20, 0, 0, '2023-11-17 18:30:18', NULL);
+(53, 50, 'Large', 150, 20, 0, 0, '2023-11-17 18:30:18', NULL),
+(54, 51, 'Default', 100, 1, 1, 0, '2023-11-30 19:07:54', '2023-11-30 19:08:01');
 
 -- --------------------------------------------------------
 
@@ -508,7 +552,8 @@ CREATE TABLE `stock_list` (
 
 INSERT INTO `stock_list` (`id`, `product_id`, `quantity`, `type`, `date_created`) VALUES
 (33, 46, 280, 1, '2023-11-15 18:31:10'),
-(40, 50, 30, 1, '2023-11-17 18:30:18');
+(40, 50, 30, 1, '2023-11-17 18:30:18'),
+(41, 51, 1, 1, '2023-11-30 19:07:54');
 
 -- --------------------------------------------------------
 
@@ -535,6 +580,26 @@ INSERT INTO `system_info` (`id`, `meta_field`, `meta_value`) VALUES
 (17, 'homename1', '                                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque habitant morbi tristique senectus et.                       \r\n                      \r\n                      \r\n                    '),
 (18, 'homedes1', '                                          Turpis massa sed elementum tempus egestas sed. Velit scelerisque in dictum non consectetur                       \r\n                      \r\n                      \r\n                    '),
 (19, 'link', 'www.testlink.com.ph');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `time_availability`
+--
+
+CREATE TABLE `time_availability` (
+  `id` int(11) NOT NULL,
+  `value` varchar(1000) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `time_availability`
+--
+
+INSERT INTO `time_availability` (`id`, `value`, `status`) VALUES
+(1, '9am - 10am', 0),
+(2, '10am - 11am', 0);
 
 -- --------------------------------------------------------
 
@@ -566,6 +631,14 @@ INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `password`, `ava
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `appointment`
+--
+ALTER TABLE `appointment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `clientId` (`client_id`),
+  ADD KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `brand_list`
@@ -704,6 +777,12 @@ ALTER TABLE `system_info`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `time_availability`
+--
+ALTER TABLE `time_availability`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -712,6 +791,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `appointment`
+--
+ALTER TABLE `appointment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT for table `brand_list`
@@ -723,7 +808,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -753,25 +838,25 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `order_config`
 --
 ALTER TABLE `order_config`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `product_image_gallery`
@@ -783,7 +868,7 @@ ALTER TABLE `product_image_gallery`
 -- AUTO_INCREMENT for table `product_list`
 --
 ALTER TABLE `product_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `product_reviews`
@@ -795,7 +880,7 @@ ALTER TABLE `product_reviews`
 -- AUTO_INCREMENT for table `product_variations`
 --
 ALTER TABLE `product_variations`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc', AUTO_INCREMENT=54;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc', AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `service_list`
@@ -819,13 +904,19 @@ ALTER TABLE `shipping_fee`
 -- AUTO_INCREMENT for table `stock_list`
 --
 ALTER TABLE `stock_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `system_info`
 --
 ALTER TABLE `system_info`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `time_availability`
+--
+ALTER TABLE `time_availability`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -167,10 +167,11 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 
 
     .ui-datepicker {
-        background: white;
         min-width: 300px;
-        border: solid 2px #609AC4;
-        padding: 8px;
+    }
+
+    .ui-datepicker .ui-datepicker-calendar {
+        background: #fff;
     }
 
     .ui-datepicker>table {
@@ -180,12 +181,12 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 
     .ui-datepicker>table td,
     th {
-        border: 1px solid #609AC4;
+        border: 1px solid #1A547E;
         padding: 5px;
     }
 
     .ui-datepicker>table .ui-datepicker-unselectable {
-        background-color: #609AC4;
+        background-color: #1A547E;
         color: white;
     }
 
@@ -217,7 +218,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .ui-datepicker-header {
         display: flex;
         align-items: center;
-        background: #609AC4;
+        background: #1A547E;
         min-height: 35px;
         color: white;
     }
@@ -557,9 +558,6 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 </div>
 
 <script>
-    function showAvailability() {
-        $('#calendar_modal').modal('show');
-    }
     $("#meetup_datepicker").datepicker({
         todayHighlight: true,
         minDate: 3,
@@ -572,7 +570,10 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         }
     });
     $(function() {
-        console.log("INNNNNNNNNN")
+
+        function showAvailability() {
+            $('#calendar_modal').modal('show');
+        }
         let addressTypeVal = 1;
         $('.pick-up-holder').hide('slow');
         $('.meet-up-holder').hide('slow');

@@ -33,7 +33,7 @@ body {
   max-height: 100%;
 }
 
-.left-signin h1 {
+.left-signin marquee {
   display: flex;
   justify-content: center;
   margin: 3%;

@@ -8,11 +8,54 @@ $delivered = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list`
 $cancelled = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 6 order by unix_timestamp(ol.date_created) desc ");
 $return = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 7 order by unix_timestamp(ol.date_created) desc ");
 
+
+$currentStatus = "pending"; // Default status is pending
+
+// Check the current status and update the variable accordingly
+if (isset($_GET['confirmed'])) {
+    $currentStatus = "confirmed";
+} elseif (isset($_GET['for_delivery'])) {
+    $currentStatus = "for-delivery";
+} elseif (isset($_GET['on_the_way'])) {
+    $currentStatus = "on-the-way";
+} elseif (isset($_GET['delivered'])) {
+    $currentStatus = "delivered";
+} elseif (isset($_GET['cancelled'])) {
+    $currentStatus = "cancelled";
+} elseif (isset($_GET['return_refund'])) {
+    $currentStatus = "return-refund";
+}
 ?>
+
+
 
 <style>
     .text-center {
         color: #004399;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .navy .nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        background-color: white;
+
+    }
+
+
+
+    .nav-link.active {
+        background-color: #0062CC;
+        /* Set your desired background color */
+        color: white !important;
+        /* Set the text color */
+        padding: 1% 3%;
     }
 </style>
 <div class="content py-5 mt-3">
@@ -20,18 +63,19 @@ $return = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol
         <h3><b>My Orders</b></h3>
         <hr>
         <div class="row">
-            <div class="col-2">
-                <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="true">Pending</a>
-                    <a class="nav-link" id="v-pills-confirmed-tab" data-toggle="pill" href="#v-pills-confirmed" role="tab" aria-controls="v-pills-confirmed" aria-selected="false">Confirmed</a>
-                    <a class="nav-link" id="v-pills-for-delivery-tab" data-toggle="pill" href="#v-pills-for-delivery" role="tab" aria-controls="v-pills-for-delivery" aria-selected="false">For Delivery</a>
-                    <a class="nav-link" id="v-pills-on-the-way-tab" data-toggle="pill" href="#v-pills-on-the-way" role="tab" aria-controls="v-pills-on-the-way" aria-selected="false">On the way</a>
-                    <a class="nav-link" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="false">Delivered</a>
-                    <a class="nav-link" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="false">Cancelled</a>
-                    <a class="nav-link" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="false">For Return/Refund</a>
+            <div class="navy">
+                <div class="nav flex-row " id="v-pills-tab" role="tablist" aria-orientation="horizontal">
+                    <a class="nav-link <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
+                    <a class="nav-link <?= ($currentStatus === 'confirmed') ? 'active' : ''; ?>" id="v-pills-confirmed-tab" data-toggle="pill" href="#v-pills-confirmed" role="tab" aria-controls="v-pills-confirmed" aria-selected="<?= ($currentStatus === 'confirmed') ? 'true' : 'false'; ?>">Confirmed</a>
+
+                    <a class="nav-link <?= ($currentStatus === 'for-delivery') ? 'active' : ''; ?>" id="v-pills-for-delivery-tab" data-toggle="pill" href="#v-pills-for-delivery" role="tab" aria-controls="v-pills-for-delivery" aria-selected="<?= ($currentStatus === 'for-delivery') ? 'true' : 'false'; ?>">For Delivery</a>
+                    <a class="nav-link <?= ($currentStatus === 'on-the-way') ? 'active' : ''; ?>" id="v-pills-on-the-way-tab" data-toggle="pill" href="#v-pills-on-the-way" role="tab" aria-controls="v-pills-on-the-way" aria-selected="<?= ($currentStatus === 'on-the-way') ? 'true' : 'false'; ?>">On the Way</a>
+                    <a class="nav-link <?= ($currentStatus === 'delivered') ? 'active' : ''; ?>" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="<?= ($currentStatus === 'delivered') ? 'true' : 'false'; ?>">Delivered</a>
+                    <a class="nav-link <?= ($currentStatus === 'cancelled') ? 'active' : ''; ?>" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="<?= ($currentStatus === 'cancelled') ? 'true' : 'false'; ?>">Cancelled</a>
+                    <a class="nav-link <?= ($currentStatus === 'return-refund') ? 'active' : ''; ?>" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="<?= ($currentStatus === 'return-refund') ? 'true' : 'false'; ?>">For Return/Refund</a>
                 </div>
             </div>
-            <div class="col-10">
+            <div class="order-container">
                 <div class="tab-content" id="v-pills-tabContent">
                     <!-- Pending -->
                     <div class="tab-pane fade show active" id="v-pills-pending" role="tabpanel" aria-labelledby="v-pills-pending-tab">

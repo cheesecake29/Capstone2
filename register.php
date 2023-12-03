@@ -19,7 +19,7 @@
   <div class="signin-container">
 
     <div class="left-signin ">
-    <h1>FIND YOUR PERFECT FIT</h1>
+    <marquee>FIND YOUR PERFECT FIT</marquee>
       
             <form id="register-frm" action="" method="POST">
             <div class="signin-textfield-container">
@@ -28,14 +28,14 @@
             <div class="text-field-sign">
           <div class="input-area">
             <label class="label" for="firstname">First Name</label>
-            <input type="text" name="firstname" id="firstname" placeholder="Enter First Name" autofocus required>
+            <input type="text" name="firstname" id="firstname" placeholder="Enter First Name" onkeydown="return allowOnlyLetters(event)" autofocus required>
           </div>
         </div>
 
         <div class="text-field-sign">
           <div class="input-area">
             <label class="label" for="lastname">Last Name</label>
-            <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" required>
+            <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" onkeydown="return allowOnlyLetters(event)" required>
           </div>
         </div>
 
@@ -98,7 +98,17 @@
 <!-- <script src="<?= base_url ?>dist/js/adminlte.min.js"></script> -->
 
 <script>
+      function allowOnlyLetters(event) {
+        // Check if the key pressed is a letter
+        if (event.key.match(/[A-Za-z]/)) {
+            return true;  // Allow the key press
+        } else {
+            return false; // Prevent the key press
+        }
+    }
   $(document).ready(function(){
+
+ 
     end_loader();
     $('.pass_type').click(function(){
       var type = $(this).attr('data-type')

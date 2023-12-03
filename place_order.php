@@ -558,6 +558,9 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 </div>
 
 <script>
+    function showAvailability() {
+        $('#calendar_modal').modal('show');
+    }
     $("#meetup_datepicker").datepicker({
         todayHighlight: true,
         minDate: 3,
@@ -571,9 +574,6 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     });
     $(function() {
 
-        function showAvailability() {
-            $('#calendar_modal').modal('show');
-        }
         let addressTypeVal = 1;
         $('.pick-up-holder').hide('slow');
         $('.meet-up-holder').hide('slow');

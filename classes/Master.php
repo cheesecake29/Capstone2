@@ -501,20 +501,26 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 	function delete_product()
-	{
-		extract($_POST);
-		$datenow = date("Y-m-d H:i:s");
-		$del = $this->conn->query("UPDATE `product_list` set `delete_flag` = 1  where id = '{$id}'");
-		$this->conn->query("UPDATE `product_variations` set `delete_flag` = 1, `date_updated` = '{$datenow}'  where product_id = '{$id}'");
-		if ($del) {
-			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success', "Product successfully deleted.");
-		} else {
-			$resp['status'] = 'failed';
-			$resp['error'] = $this->conn->error;
-		}
-		return json_encode($resp);
-	}
+{
+    extract($_POST);
+    $datenow = date("Y-m-d H:i:s");
+
+    // Use DELETE statement to remove records from product_variations
+    $this->conn->query("DELETE FROM `product_variations` WHERE product_id = '{$id}'");
+
+    // Use DELETE statement to remove the product from product_list
+    $del = $this->conn->query("DELETE FROM `product_list` WHERE id = '{$id}'");
+
+    if ($del) {
+        $resp['status'] = 'success';
+        $this->settings->set_flashdata('success', "Product successfully deleted.");
+    } else {
+        $resp['status'] = 'failed';
+        $resp['error'] = $this->conn->error;
+    }
+
+    return json_encode($resp);
+}
 
 	function save_service()
 	{
@@ -1119,6 +1125,32 @@ class Master extends DBConnection
 			$this->settings->set_flashdata('success', $resp['msg']);
 		return json_encode($resp);
 	}
+
+	function delete_config()
+{
+    // Check if the request is for deleting an order configuration
+    if ($_GET['f'] == 'delete_config') {
+        // Extract the POST data
+        extract($_POST);
+        $productId = $_POST['productId'];
+
+        // Add your code to delete the record with the specified productId from the database
+        $deleteQuery = "DELETE FROM order_config WHERE product_id = '{$productId}'";
+        $deleteResult = $this->conn->query($deleteQuery);
+
+        if ($deleteResult) {
+            // Record successfully deleted
+            $response = array('status' => 'success');
+        } else {
+            // Error occurred during deletion
+            $response = array('status' => 'error', 'message' => $this->conn->error);
+        }
+
+        // Send the response as JSON
+        echo json_encode($response);
+        exit;
+    }
+}
 
 	function find_order_config()
 	{

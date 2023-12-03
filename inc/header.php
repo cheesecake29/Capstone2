@@ -142,19 +142,23 @@
   <script src="<?php echo base_url ?>dist/js/script.js"></script>
   <script src="<?php echo base_url ?>assets/js/scripts.js"></script>
   <style>
-    html,
+     html
     body {
       height: 100%;
       width: 100%;
       font-family: 'Poppins', sans-serif;
       text-decoration: none;
+      background-color: #F4F5FA;
+      overflow-x: hidden;
+      margin: 0;
+      font-weight: 600;
     }
 
     #main-header {
       position: relative;
       background: rgb(0, 0, 0) !important;
       background: none !important;
-      height: 75vh;
+      height: 60vh;
       /* Set the height of the header */
     }
 
@@ -164,7 +168,7 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 75vh;
+      height: 60vh;
       background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
       background-repeat: no-repeat;
       background-position: relative;

@@ -84,7 +84,7 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d") ;
                         <td><?php echo $row['owner_name'] ?></td>
                         <td><?php echo $row['vehicle_name'] ?></td>
                         <td><?php echo $row['vehicle_registration_number'] ?></td>
-                        <td><?php echo !empty($row['mechanic_id']) && isset($mech_arr[$row['mechanic_id']]) ? $mech_arr[$row['mechanic_id']] : "N/A" ?></td>
+                     
                         <td><?php echo $srow['service'] ?></td>
                         <td class='text-center'>
                             <?php if($row['status'] == 1): ?>

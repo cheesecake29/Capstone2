@@ -324,8 +324,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                             <div class="bd-highlights">
                                                 <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $product_order_config ? $product_order_config['value'] : $all_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
                                                 <span id='stock_<?php echo $variation['id'] ?>'>
-                                                    <?php echo $variation['variation_name'] ?> -
-                                                    <span class="text-price me-3"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                                                    <?php echo $variation['variation_name'] ?> 
                                             </div>
                                             <div class="bd-highlights">
                                                 <small>
@@ -358,7 +357,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <button id='add_to_cart' class='btn text-white' style="background: #004399" onclick='addToCart()' disabled>Add to Cart</button>
                     </div>
                     <div class="out-of-stock" id="unavailable">
-                        <button class="btn btn-danger">Out of Stock</button>
+                        <button class="btn btn-danger">Add to cart</button>
                     </div>
                 </div>
             </div>

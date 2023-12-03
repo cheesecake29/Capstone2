@@ -16,18 +16,54 @@ $where = "";
 
 ?>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
 <style>
+
+@media only screen and (max-width: 1000px) {
+    .filters-container {
+        display: none; /* Hide the filters by default on small screens */
+    }
+
+    .filter-toggle {
+        display: block; /* Show the filter toggle button on small screens */
+        margin-top: 10px; /* Add some top margin for better spacing */
+        background-color: #007bff; /* Add a background color for better visibility */
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column; /* Stack the columns in a vertical layout on smaller screens */
+        align-items: center; /* Center align content on smaller screens */
+    }
+
+    .filters-container.show {
+        display: flex; /* Show the filters when the show class is applied */
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Adjust styling for other elements as needed */
+    .search-input {
+        width: 100%; /* Make the search input full width on smaller screens */
+    }
+
     .product-container {
+        width: 100%; /* Make product containers full width on smaller screens */
+        margin: 1% 0; /* Adjust the margin for better spacing */
+    }
+
+    .filter-toggle{
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 250px;
-        /* Set a fixed width */
-        overflow: hidden;
-        /* Hide overflow content */
-        margin: 0.2%;
     }
-
+}
     .name {
         text-align: center;
         white-space: nowrap;
@@ -57,6 +93,13 @@ $where = "";
     .product-img-holder {
         margin: 2%;
     }
+
+    .product-img-holder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintain aspect ratio */
+}
+
 
     .card {
         border: none;
@@ -93,11 +136,16 @@ span.ribbon {
 <div class="content py-5 mt-3">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+
+        <div class="col-md-4 d-md-none">
+                <button class="btn btn-primary filter-toggle">Toggle Filters</button>
+            </div>
+
+            <div class="col-md-4 filters-container">
                 <h3 class="text-muted">Filters</h3>
                 <hr>
                 <div class="card card-outline shadow card-primary rounded-0">
-                    <div class="card-header">
+                    <div class="card-header" style="background-color:#0062CC; color:white;">
                         <h3 class="card-title"><b>Brands</b></h3>
                     </div>
                     <div class="card-body">
@@ -123,7 +171,7 @@ span.ribbon {
                     </div>
                 </div>
                 <div class="card card-outline shadow card-primary rounded-0">
-                    <div class="card-header">
+                <div class="card-header" style="background-color:#0062CC; color:white;">
                         <h3 class="card-title"><b>Categories</b></h3>
                     </div>
                     <div class="card-body">
@@ -150,7 +198,7 @@ span.ribbon {
                 </div>
                 <!-- Start price range -->
                 <div class="card card-outline shadow card-primary rounded-0">
-                    <div class="card-header">
+                <div class="card-header" style="background-color:#0062CC; color:white;">
                         <h3 class="card-title"><b>Price Range</b></h3>
                     </div>
                     <div class="card-body">
@@ -174,9 +222,10 @@ span.ribbon {
                     <div class="col-md-12">
                         <form action="" id="search_prod">
                             <div class="input-group">
-                                <input type="search" name="search" value="<?= $search ?>" class="search-input form-control" placeholder="Search Product...">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary"><i class="fa fa-search"></i></button>
+                            <input type="search" name="search" value="<?= $search ?>" class="search-input form-control" placeholder="Search Product...">
+
+                                <div class="input-group-append" style="background-color:#0062CC;">
+                                    <button class="btn btn-outline-secondary"><i class="fa fa-search" style="color:white;"></i></button>
                                 </div>
                             </div>
                         </form>
@@ -303,7 +352,21 @@ span.ribbon {
     </div>
 </div>
 <script>
-    $(function() {
+$(function() {
+    function toggleFilters() {
+        $('.filters-container').slideToggle();
+    }
+
+    // Attach a click event handler to the filter toggle button
+    $('.filter-toggle').click(function(e) {
+        e.stopPropagation(); // Prevent the click from closing the filter section
+        toggleFilters();
+    });
+
+    // Attach a click event handler to the document to close the filter section when clicking outside of it
+
+
+   
         function validateAndEnableButton() {
             const min_price = parseFloat($("#min_price").val());
             const max_price = parseFloat($("#max_price").val());
@@ -392,6 +455,8 @@ span.ribbon {
             window.location.search = searchParams.toString();
         });
 
+        
+
 
 
         $('.brand_filter').change(function() {
@@ -423,4 +488,6 @@ span.ribbon {
             location.href = "./?p=products" + (category_ids.length > 0 ? "&category_filter=" + category_ids : "") + "<?= isset($_GET['brand_filter']) ? "&brand_filter=" . $_GET['brand_filter'] : "" ?><?= isset($_GET['search']) ? "&search=" . $_GET['search'] : "" ?>";
         })
     })
+
+   
 </script>

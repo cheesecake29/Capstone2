@@ -163,6 +163,57 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .min-vh-35 {
         min-height: 35vh;
     }
+
+    .left {
+        padding: 1%;
+    }
+
+    @media (max-width: 950px) {
+        .info-summer-form {
+            flex-direction: column;
+        }
+
+        .left,
+        .right {
+            width: 100%;
+            margin: 0;
+        }
+
+        .pick-up-holder,
+        .meet-up-holder,
+        .other-meet-up,
+        .diff-add {
+            display: none;
+        }
+
+        /* Additional responsive styles for smaller screens */
+        .input-form-name {
+            flex-direction: column;
+        }
+
+        .fname,
+        .lname,
+        .zip {
+            width: 100%;
+            margin: 0 0 1% 0;
+        }
+
+        .order-type,
+        .billing-address,
+        .pick-up-holder,
+        .meet-up-holder,
+        .other-meet-up {
+            margin: 4% 0;
+        }
+
+        .product-sum {
+            margin: 2% 0;
+        }
+
+        .sum-info {
+            margin: 0 2%;
+        }
+    }
 </style>
 <div class="content ">
     <div class="container">
@@ -432,15 +483,101 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </select>
                                 </div>
 
-                                <!-- this will show when user select "Meet up" -->
-                                <div class="meet-up-holder" style="display: none;">
-                                    <h1 class="label-info mt-2"><strong>Meet Up Address</strong></h1>
-                                    <div class="dropdown-divider my-3"></div>
-                                    <select name="meetup" id="muAddressDropdown" class="form-control mb-1">
+                            </div>
+                    </div>
+
+                    <div class="pick-up-holder">
+                        <h1 class="label-info"><strong>Pick-Up Address</strong></h1>
+                        <select name="pickup" id="puAddressDropdown" class="form-control">
+                            <option value="BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE">BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE</option>
+                            <option value="EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY">EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY</option>
+                        </select>
+                    </div>
+
+                    <div class="meet-up-holder">
+                        <h1 class="label-info"><strong>Meet Up Address</strong></h1>
+                        <select name="meetup" id="muAddressDropdown" class="form-control">
+                            <?php
+                            $getMeetupAddresses = $conn->query("SELECT * FROM `meet_up_address` where active = 1");
+                            while ($rowAdd = $getMeetupAddresses->fetch_assoc()) :
+                            ?>
+                                <option value="<?= $rowAdd['text'] ?>" id="meetUpAddress-<?= $rowAdd['id'] ?>"><?= $rowAdd['text'] ?></option>
+                            <?php endwhile; ?>
+                            <option value="mu_other">OTHER</option>
+                        </select>
+                    </div>
+
+                    <div class="other-meet-up">
+                        <input type="text" class="form-control" placeholder="Enter Meeting Point" name="othermu" />
+                    </div>
+
+                    <div class="place-order form-group text-right">
+                        <button class="btn btn-flat btn-primary" type="submit" name="submit">Place Order</button>
+                    </div>
+
+                    <!-- TODO: saving of meet up address -->
+
+                </div>
+
+                <div class="right mx-3">
+                    <div class="product-sum h-100">
+                        <?php
+                        $total = 0;
+                        $cart = $conn->query("SELECT c.*, p.name, p.image_path, p.weight, b.name as brand, cc.category, v.*, v.variation_price as price FROM `cart_list` c
+                                    INNER JOIN product_list p ON c.product_id = p.id
+                                    INNER JOIN brand_list b ON p.brand_id = b.id
+                                    INNER JOIN categories cc ON p.category_id = cc.id
+                                    INNER JOIN product_variations v ON c.variation_id = v.id
+                                    WHERE c.client_id = '{$_settings->userdata('id')}' ORDER BY p.name ASC");
+                        ?>
+                        <div class="mx-3 py-3">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%" class="text-center">Image</th>
+                                        <th>Product Name</th>
+                                        <th>Variation</th>
+                                      
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    $shipping = 0;
+                                    $totalItem = 0;
+                                    while ($row = $cart->fetch_assoc()) : ?>
+                                        <tr>
+                                            <td width="25%" class="text-center">
+                                                <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-sum">
+                                            </td>
+                                            <td>
+                                                <span><?= $row['name'] ?></span>
+                                            </td>
+                                            <td>
+                                                <span><?= $row['variation_name'] ?></span>
+                                            </td>
+                                           
+                                            <td>
+                                                <span><?= $row['quantity'] ?></span>
+                                            </td>
+                                            <td>
+                                                <span><?= number_format($row['price'], 2) ?></span>
+                                            </td>
+                                        </tr>
                                         <?php
                                         $getMeetupAddresses = $conn->query("SELECT * FROM `meet_up_address` where active = 1");
                                         while ($rowAdd = $getMeetupAddresses->fetch_assoc()) :
                                         ?>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="">
+                            <input name="shipping_amount" value="<?= $shipping ?>" type="hidden" />
+                            <h5 id="sf">Shipping Fee: <?= number_format($shipping, 2) ?> </h5>
+                            <h2 id="totalWithSf" class="righth2">Total Price: <?= number_format($total, 2) ?> </h2>
+                            <h2 id="totalWithoutSf" class="righth2">Total Price: <?= number_format($totalItem, 2) ?> </h2>
                                             <option value="<?= $rowAdd['text'] ?>" id="meetUpAddress-<?= $rowAdd['id'] ?>"><?= $rowAdd['text'] ?></option>
                                         <?php endwhile; ?>
                                         <option value="mu_other">OTHER</option>

@@ -98,22 +98,7 @@ if ($order->num_rows > 0) {
             <label for="" class="text-muted">Name</label>
             <div class="ml-3"><b><?= isset($fullname) ? $fullname : "N/A" ?></b></div>
         </div>
-        <div class="col-md-6">
-            <label for="" class="text-muted">Reference Code</label>
-            <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
-            <div class="ml-3">
-                <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
-                    <div class="proof_payment_container">
-                        <label for="proof_payment" class="text-muted">Upload Proof of Payment</label>
-                        <input type="text" class="" id="ref_code" name="ref_code" value="<?= isset($ref_code) ? $ref_code : "N/A" ?>" hidden>
-                        <input type="text" class="" id="order_id" name="order_id" value="<?= isset($id) ? $id : "N/A" ?>" hidden>
-                        <input type="text" class="" id="user_name" name="user_name" value="<?= isset($fullname) ? $fullname : "N/A" ?>" hidden>
-                        <input type="file" class="custom_gall form-control-file" id="proof_file" name="proof_file" accept="image/*">
-                        <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
-                    </div>
-                <form>
-            </div>
-        </div>
+       
         <div class="col-md-6">
             <label for="" class="text-muted">Date Ordered</label>
             <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></div>
@@ -474,53 +459,5 @@ if ($order->num_rows > 0) {
         })
     }
 
-	$(document).ready(function() {
-		// Product submission
-		$('#proof_form').submit(function(e) {
-			e.preventDefault();
-			var _this = $(this)
-			$('.err-msg').remove();
-			const formData = new FormData($(this)[0]);
-			start_loader();
-			$.ajax({
-				url: _base_url_ + "classes/Master.php?f=save_proof_payment",
-				data: formData,
-				cache: false,
-				contentType: false,
-				processData: false,
-				method: 'POST',
-				type: 'POST',
-				dataType: 'json',
-                error: function(jqXHR, textStatus, errorThrown) {
-                console.log("AJAX Error:");
-                console.log("Status: " + textStatus);
-                console.log("Error: " + errorThrown);
-                console.log("Response Text: " + jqXHR.responseText);
-                alert_toast("An error occurred. Check the console for details.", 'error');
-                end_loader();
-                },
-				success: function(resp) {
-					console.log(resp);
-					if (typeof resp == 'object' && resp.status == 'success') {
-						location.href = "./?page=products";
-					} else if (resp.status == 'failed' && !!resp.msg) {
-						var el = $('<div>')
-						el.addClass("alert alert-danger err-msg").text(resp.msg)
-						_this.prepend(el)
-						el.show('slow')
-						$("html, body").animate({
-							scrollTop: _this.closest('.card').offset().top
-						}, "fast");
-						end_loader()
-					} else {
-						alert_toast("An error occured", 'error');
-						end_loader();
-						console.log(resp)
-					}
-				}
-			})
-		})
-
-	})
 
 </script>

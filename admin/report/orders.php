@@ -35,7 +35,7 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d");
         <div id="printable">
             <div>
                 <h4 class="text-center m-0"><?php echo $_settings->info('name') ?></h4>
-                <h3 class="text-center m-0"><b>Order Report</b></h3>
+                <h3 class="text-center m-0"><b>Sales Report</b></h3>
                 <p class="text-center m-0">Date Between <?php echo $date_start ?> and <?php echo $date_end ?></p>
                 <hr>
             </div>
@@ -75,19 +75,17 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d");
                             <td><?php echo $row['fullname'] ?></td>
                             <td class="text-right"><?= number_format($row['total_amount'], 2) ?></td>
                             <td class='text-center'>
-                                <?php if ($row['status'] == 0) : ?>
-                                    <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
-                                <?php elseif ($row['status'] == 1) : ?>
-                                    <span class="badge badge-primary px-3 rounded-pill">Packed</span>
-                                <?php elseif ($row['status'] == 2) : ?>
-                                    <span class="badge badge-success px-3 rounded-pill">For Delivery</span>
-                                <?php elseif ($row['status'] == 3) : ?>
-                                    <span class="badge badge-warning px-3 rounded-pill">On the Way</span>
-                                <?php elseif ($row['status'] == 4) : ?>
-                                    <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
-                                <?php else : ?>
-                                    <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
-                                <?php endif; ?>
+                            <?php if($row['status'] == 1): ?>
+                                <span class="badge badge-primary">Confirmed</span>
+                            <?php elseif($row['status'] == 2): ?>
+                                <span class="badge badge-warning">On-progress</span>
+                                <?php elseif($row['status'] == 4): ?>
+                               <span class="badge badge-success">Done</span>
+                            <?php elseif($row['status'] == 5): ?>
+                                <span class="badge badge-danger">Cancelled</span>
+                            <?php else: ?>
+                                <span class="badge badge-secondary">Pending</span>
+                            <?php endif; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -148,5 +146,14 @@ $date_end = isset($_GET['date_end']) ? $_GET['date_end'] :  date("Y-m-d");
                 end_loader()
             }, 500)
         })
+    })
+
+    $(function() {
+        $('.view_data').click(function() {
+            uni_modal("Sales Report", "orders.php?id=" + $(this).attr('data-id'), "large")
+        })
+        $('.table th, .table td').addClass("align-middle px-2 py-1")
+        $('.table').dataTable();
+        $('.table').dataTable();
     })
 </script>

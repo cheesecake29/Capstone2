@@ -107,7 +107,7 @@
         <div class="banner_fw">
             <div class="banner_fw_container container d-flex align-items-center">
                 <div class="banner_content">
-                    <span>Welcome to</span>
+                   
                     <h1><?php echo $_settings->info('homename1') ?></h1>
                     <p><?php echo $_settings->info('homedes1')  ?> </p>
                     <button class="shop-now-fw"><a href="./?p=products">Shop now</a></button>
@@ -148,7 +148,7 @@
                         <div class="header_product_home_ctn">
                             <span>Best Seller</span>
                             <h2><?= $row['name'] ?></h2>
-                            <p><?= $row['description'] ?></p>
+                            <p> <?= isset($description) ? html_entity_decode($description) : '' ?></p>
                             <div class="product_tn_home">
                                 <a href="./?p=products/view_product&id=<?= $row['id'] ?>">View Product</a>
                             </div>

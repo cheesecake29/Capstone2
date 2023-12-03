@@ -56,12 +56,59 @@ $order_config = $conn->query("SELECT *, pl.id as product_id from order_config og
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
-            </table>
+                <?php
+                while ($row = $order_config->fetch_assoc()) :
+                ?>
+                    <tr>
+                        <th scope="row"><?= isset($row['product_id']) ? $row['product_id'] : 'All' ?></th>
+                        <th><?= isset($row['name']) ? $row['name'] : 'All' ?></th>
+                        <td><?= number_format($row['value']) ?></td>
+                        <td>
+                            <button class="btn btn-danger delete-row" data-product-id="<?= $row['product_id'] ?>">Delete</button>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+                            </table>
+            
         </div>
     </div>
 </div>
 
 <script>
+
+$(document).ready(function () {
+    // ... your existing code ...
+
+    // Delete button click event
+    $('.delete-row').on('click', function () {
+    const productId = $(this).data('product-id');
+    const currentRow = $(this); // Store the reference to this element
+
+    // Confirm deletion
+    if (confirm('Are you sure you want to delete this record?')) {
+        // Send AJAX request to delete the record
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=delete_config",
+            data: { productId },
+            method: 'POST',
+            type: 'POST',
+            dataType: 'json',
+            success: function (resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    // Remove the row from the table
+                    currentRow.closest('tr').remove();
+                    alert_toast('Order config successfully deleted', 'success');
+                } else {
+                    alert_toast("An error occurred", 'error');
+                    console.log(resp);
+                }
+            }
+        });
+    }
+});
+
+    // ... your existing code ...
+});
     function formatToCurrencyOnly(value) {
         return parseFloat(value).toLocaleString('en-US', {
             style: 'decimal',

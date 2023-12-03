@@ -150,7 +150,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     background-color: #FFFFFF;
-    padding: 2%; /* Add padding for better spacing */
+   
 }
 
 .input-form-add1,
@@ -237,6 +237,69 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 .ad{
     color: #004399;
 }
+
+
+@media only screen and (max-width: 900px) {
+        .name {
+            margin: 5% 0; /* Adjusted margin for better spacing on smaller screens */
+        }
+
+        .left,
+        .right {
+            width: 100%;
+            margin: 2%;
+            padding: 2%; /* Adjusted padding for better spacing on smaller screens */
+        }
+
+        .fname-lname-holder,
+        .contact-email-holder {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .input-form,
+        .input-form-fname,
+        .input-form-lname,
+        .input-form-email,
+        .input-form-contact,
+        .input-form-add1,
+        .input-form-add2,
+        .input-form-zip,
+        .input-form-province,
+        .input-form-city,
+        .input-form-region {
+            width: 100%;
+            margin: 2% 0; /* Adjusted margin for better spacing on smaller screens */
+        }
+
+        .address-holder,
+        .password-container {
+            width: 100%;
+        }
+
+        .input-form input,
+        .input-form-fname input,
+        .input-form-lname input,
+        .input-form-email input,
+        .input-form-contact input,
+        .input-form-add1 input,
+        .input-form-add2 input,
+        .input-form-zip input,
+        .input-form-province select,
+        .input-form-city select,
+        .input-form-region select {
+            width: 100%;
+            padding: 2%;
+            margin: 1% 0; /* Adjusted margin for better spacing on smaller screens */
+        }
+
+        .update-info button {
+            margin: 2% 0;
+        }
+    }
   
 
 
@@ -264,13 +327,13 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                             <!-- First Name input -->
                             <div class ="input-form-fname">
                                 <small class="label">First Name:</small>
-                                <input type="text" name="firstname" id="firstname" placeholder="Enter First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" required>
+                                <input type="text" name="firstname" id="firstname" placeholder="Enter First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" onkeydown="return allowOnlyLetters(event)" required>
                             </div>
 
                             <!-- Last Name input -->
                             <div class ="input-form-lname">
                                 <small class="label">Last Name:</small>
-                                <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>">
+                                <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>" onkeydown="return allowOnlyLetters(event)" required>
                             </div>
                         </div>
 
@@ -285,7 +348,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                             <!-- Contact input -->
                             <div class="input-form-contact">
                                 <small class="label">Contact:</small>
-                                <input type="text" name="contact" id="contact" placeholder="Contact Number" value="<?= isset($contact) ? $contact : "" ?>" required>
+                                <input type="text" name="contact" id="contact" placeholder="Contact Number" value="<?= isset($contact) ? $contact : "" ?>" onkeydown="return allowOnlyNumbers(event)" required>
                             </div>
                         </div>
                         <br>
@@ -428,7 +491,7 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
                         <div class="input-form-zip">
                             <small>Zip Code</small>
-                            <input type="varchar" name="zipcode" id="zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>" required>
+                            <input type="varchar" name="zipcode" id="zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>" onkeydown="return allowOnlyNumbers(event)" required>
                         </div>
                            
                         
@@ -486,6 +549,24 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
 
 
 <script>
+    function allowOnlyLetters(event) {
+        // Check if the key pressed is a letter
+        if (event.key.match(/[A-Za-z]/)) {
+            return true;  // Allow the key press
+        } else {
+            return false; // Prevent the key press
+        }
+    }
+
+
+    function allowOnlyNumbers(event) {
+    // Check if the key pressed is a number or the backspace key
+    if (event.key.match(/[0-9]/) || event.keyCode === 8 /* Backspace */) {
+        return true;  // Allow the key press
+    } else {
+        return false; // Prevent the key press
+    }
+}
 $(function(){
     $('#edit_address').click(function(){
         uni_modal("Edit Address", "edit_address.php","mid-large");

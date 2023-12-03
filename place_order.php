@@ -50,7 +50,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .right {
         position: sticky;
         top: 0;
-        background-color: rgba(96, 154, 196, 0.7);
+        background-color: #FFFFFF;
         /* Set a height for the sticky container */
     }
 
@@ -153,6 +153,57 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 
     .ordertype {
         margin: 2% 0;
+    }
+
+    .left {
+        padding: 1%;
+    }
+
+    @media (max-width: 950px) {
+        .info-summer-form {
+            flex-direction: column;
+        }
+
+        .left,
+        .right {
+            width: 100%;
+            margin: 0;
+        }
+
+        .pick-up-holder,
+        .meet-up-holder,
+        .other-meet-up,
+        .diff-add {
+            display: none;
+        }
+
+        /* Additional responsive styles for smaller screens */
+        .input-form-name {
+            flex-direction: column;
+        }
+
+        .fname,
+        .lname,
+        .zip {
+            width: 100%;
+            margin: 0 0 1% 0;
+        }
+
+        .order-type,
+        .billing-address,
+        .pick-up-holder,
+        .meet-up-holder,
+        .other-meet-up {
+            margin: 4% 0;
+        }
+
+        .product-sum {
+            margin: 2% 0;
+        }
+
+        .sum-info {
+            margin: 0 2%;
+        }
     }
 </style>
 
@@ -374,7 +425,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                         <th width="25%" class="text-center">Image</th>
                                         <th>Product Name</th>
                                         <th>Variation</th>
-                                        <th>Weight</th>
+                                      
                                         <th>Quantity</th>
                                         <th>Price</th>
                                     </tr>
@@ -394,9 +445,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             <td>
                                                 <span><?= $row['variation_name'] ?></span>
                                             </td>
-                                            <td>
-                                                <span><?= $row['weight'] ?></span>
-                                            </td>
+                                           
                                             <td>
                                                 <span><?= $row['quantity'] ?></span>
                                             </td>
@@ -436,7 +485,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                 </tbody>
                             </table>
                         </div>
-                        <div class="mt-auto mx-3 text-end">
+                        <div class="">
                             <input name="shipping_amount" value="<?= $shipping ?>" type="hidden" />
                             <h5 id="sf">Shipping Fee: <?= number_format($shipping, 2) ?> </h5>
                             <h2 id="totalWithSf" class="righth2">Total Price: <?= number_format($total, 2) ?> </h2>

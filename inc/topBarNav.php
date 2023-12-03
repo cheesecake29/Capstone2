@@ -373,6 +373,7 @@
 
                                 $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}' ORDER BY id DESC";
                                 $result = $conn->query($sql);
+                               
 
                                 if ($result->num_rows > 0) {
                                     echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
@@ -383,6 +384,7 @@
                                     while ($row = $result->fetch_assoc()) {
                                         echo '<a class="content" href="./?p=my_orders">';
                                         echo '<div class="notification-item">';
+                                        echo '<h6>Hello, ' .$_settings->userdata('firstname') . '</h6>';
                                         echo '<h4 class="item-title">' . $row['description'] . '</h4>';
                                         // echo '<p class="item-info">' . $row['description'] . '</p>';
                                         echo '</div>';
@@ -444,7 +446,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" href="./?p=my_orders">My Orders</a>
-                                    <a class="dropdown-item" href="./?p=my_services">My Service Requests</a>
+                                   
                                     <a class="dropdown-item" href="./?p=manage_account">Manage Account</a>
                                     <a class="dropdown-item" href="./classes/Login.php?f=logout_client">Logout</a>
                                 </div>

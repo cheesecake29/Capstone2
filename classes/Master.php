@@ -860,6 +860,7 @@ class Master extends DBConnection
 		$ref_code = $pref . $code;
 		$other_address = '';
 		$withShippingFee = false;
+		$withAppointment = false;
 		switch ((int)$order_type) {
 			case 1: // JRS
 				$withShippingFee = true;
@@ -872,13 +873,30 @@ class Master extends DBConnection
 			case 3: // Pick Up
 				$withShippingFee = false;
 				$other_address = $pickup;
+				$withAppointment = true;
 				break;
 			case 4: // Meet Up
 				$withShippingFee = false;
 				$other_address = $othermu;
+				$withAppointment = true;
 				break;
 		}
 		$save = '';
+		if ($withAppointment) {
+			$checkAvailabilityDatesTime = $this->conn->query("SELECT * FROM appointment where hours = '{$meetup_time}' AND dates = '{$meetup_date}'")->num_rows;
+			$checkAvailabilityDates = $this->conn->query("SELECT * FROM appointment where dates = '{$meetup_date}'")->num_rows;
+			if ($checkAvailabilityDatesTime > 0) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = " Order has failed to place. please check other dates/time";
+				$resp['error'] = $this->conn->error;
+				return json_encode($resp);
+			} else if ($checkAvailabilityDates >= 5) {
+				$resp['status'] = 'failed';
+				$resp['msg'] = " Order has failed to place. please check other dates/time";
+				$resp['error'] = $this->conn->error;
+				return json_encode($resp);
+			}
+		}
 		if ($address_type == 1) {
 			$sql1 = "INSERT INTO `order_list` (`ref_code`,`client_id`,`addressline1`,`addressline2`, `province`, `city`, `zipcode`, `order_type`, `other_address`)
 			VALUES ('{$ref_code}','{$client_id}','{$addressline1}','{$addressline2}','{$province}','{$city}','{$zipcode}','{$order_type}', '{$other_address}')";
@@ -895,6 +913,9 @@ class Master extends DBConnection
 			$total_amount = 0;
 			if ($withShippingFee) {
 				$this->conn->query("INSERT INTO `shipping_fee` (`order_id`, `amount`) VALUES ('{$oid}', '{$shipping_amount}')");
+			}
+			if ($withAppointment) {
+				$this->conn->query("INSERT INTO `appointment` (`client_id`, `order_id`, `dates`, `hours`, `status`) VALUES ('{$client_id}', '{$oid}', '{$meetup_date}', '{$meetup_time}', 0)");
 			}
 			$cart = $this->conn->query(
 				"SELECT 
@@ -1180,6 +1201,23 @@ class Master extends DBConnection
 		}
 		return json_encode($resp);
 	}
+
+	function update_appt_status()
+	{
+		extract($_POST);
+		$status = $_POST['status'];
+		$appointmentId = $_POST['appointmentId'];
+		$action = $this->conn->query("UPDATE `appointment` SET `status` = '{$status}' where `id` = '{$appointmentId}' ");
+		if ($action) {
+			$resp['status'] = 'success';
+			$resp['msg'] = `Appointment successfully updated`;
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		return json_encode($resp);
+	}
 }
 
 $Master = new Master();
@@ -1269,6 +1307,9 @@ switch ($action) {
 		break;
 	case 'delete_order_config':
 		echo $Master->delete_order_config();
+		break;
+	case 'update_appt_status':
+		echo $Master->update_appt_status();
 		break;
 
 	default:

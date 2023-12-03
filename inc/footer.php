@@ -74,7 +74,7 @@
 
   footer {
     width: 100%;
-  /*  background-color: #004399;*/
+    /*  background-color: #004399;*/
     text-align: center;
     color: #fff;
     padding: 10px;

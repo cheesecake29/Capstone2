@@ -19,7 +19,6 @@
     }
 
     body {
-        width: ;
         font-family: 'Montserrat', sans-serif;
         font-weight: 450;
         line-height: 1.6;

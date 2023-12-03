@@ -322,7 +322,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                     <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
                                         <div class="d-flex justify-content-between">
                                             <div class="bd-highlights">
-                                                <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $product_order_config ? $product_order_config['value'] : $all_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                <?php if (isset($product_order_config)) : ?>
+                                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                <?php elseif (isset($all_order_config)) : ?>
+                                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                <?php else : ?>
+                                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                <?php endif; ?>
                                                 <span id='stock_<?php echo $variation['id'] ?>'>
                                                     <?php echo $variation['variation_name'] ?> -
                                                     <span class="text-price me-3"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
@@ -342,17 +348,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
                 </div>
 
-                <!-- <div class="d-flex align-items-center w-100 mb-1">
-                    <div class="input-group " style="width:8em">
-                        <div class="input-group-prepend">
-                            <button class="btn btn-sm btn-outline-secondary btn-minus" onclick="updateQuantity(false)"><i class="fa fa-minus"></i></button>
-                        </div>
-                        <input type="text" id="order-quantity" name="order_quantity" value="1" readonly class="form-control form-control-sm text-center">
-                        <div class="input-group-append">
-                            <button class="btn btn-sm btn-outline-secondary btn-plus" onclick="updateQuantity(true)"><i class="fa fa-plus"></i></button>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="d-block mt-3">
                     <div id="available">
                         <button id='add_to_cart' class='btn text-white' style="background: #004399" onclick='addToCart()' disabled>Add to Cart</button>
@@ -468,7 +463,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 </div>
             </div>
             <div class="modal-footer">
-                <span id="warning-label" class="text-danger invinsible"><small>You've reached the maximum order limit (<?= $product_order_config ? number_format($product_order_config['value']) : number_format($all_order_config['value']) ?> php)</small></span>
+                <?php if (isset($product_order_config)) : ?>
+                    <span id="warning-label" class="text-danger invinsible"><small>You've reached the maximum order limit (<?= number_format($product_order_config['value']) ?> php)</small></span>
+                <?php elseif (isset($all_order_config)) : ?>
+                    <span id="warning-label" class="text-danger invinsible"><small>You've reached the maximum order limit (<?= number_format($all_order_config['value']) ?> php)</small></span>
+                <?php endif; ?>
                 <button type="button" class="btn text-white" style="background: #004399" id="confirm" onclick="saveToCart()">Add to Cart</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
@@ -527,21 +526,23 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             minimumFractionDigits: 2
         });
         $('#cart-total').html(formattedTotal);
-        const maxValue = currencyToNumber(maxPriceVal);
+        const maxValue = maxPriceVal ? currencyToNumber(maxPriceVal) : null;
         const totalValue = currencyToNumber(formattedTotal);
-        if (totalValue >= maxValue) {
-            $('#confirm').attr("disabled", true);
-            $('#warning-label').removeClass("invinsible");
-        } else {
-            $('#warning-label').addClass("invinsible");
-            $('#confirm').attr("disabled", false);
+        if (maxValue) {
+            if (totalValue >= maxValue) {
+                $('#confirm').attr("disabled", true);
+                $('#warning-label').removeClass("invinsible");
+            } else {
+                $('#warning-label').addClass("invinsible");
+                $('#confirm').attr("disabled", false);
+            }
         }
     }
 
     function addToCart() {
         const variationName = $("input[type='radio'][name='variations']:checked").data('name');
         const variationPrice = $("input[type='radio'][name='variations']:checked").data('price');
-        const variationMaxPrice = $("input[type='radio'][name='variations']:checked").data('maxprice');
+        const variationMaxPrice = $("input[type='radio'][name='variations']:checked").data('maxprice') || '';
         const variationMaxQuantity = $("input[type='radio'][name='variations']:checked").data('max');
         const formattedPrice = parseFloat(variationPrice).toLocaleString('en-US', {
             style: 'decimal',

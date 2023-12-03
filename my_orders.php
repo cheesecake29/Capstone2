@@ -1,12 +1,12 @@
 <?php
 // 0=pending,1 = confirmed, 2 = packed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled
-$pending = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 0 order by unix_timestamp(date_created) desc ");
-$confirmed = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status in (1,2)  order by unix_timestamp(date_created) desc ");
-$forDelivery = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 3 order by unix_timestamp(date_created) desc ");
-$onTheWay = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 4 order by unix_timestamp(date_created) desc ");
-$delivered = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 5 order by unix_timestamp(date_created) desc ");
-$cancelled = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 6 order by unix_timestamp(date_created) desc ");
-$return = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 7 order by unix_timestamp(date_created) desc ");
+$pending = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 0 order by unix_timestamp(ol.date_created) desc ");
+$confirmed = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status  in (1,2)  order by unix_timestamp(ol.date_created) desc ");
+$forDelivery = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 3 order by unix_timestamp(ol.date_created) desc ");
+$onTheWay = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 4 order by unix_timestamp(ol.date_created) desc ");
+$delivered = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 5 order by unix_timestamp(ol.date_created) desc ");
+$cancelled = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 6 order by unix_timestamp(ol.date_created) desc ");
+$return = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 7 order by unix_timestamp(ol.date_created) desc ");
 
 ?>
 

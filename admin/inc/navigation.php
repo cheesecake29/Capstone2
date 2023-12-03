@@ -115,6 +115,12 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=shop_calendar" class="nav-link nav-orders">
+                                <i class="nav-icon fas fa-calendar"></i>
+                                <p>Calendar</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="<?php echo base_url ?>admin/?page=orders" class="nav-link nav-orders">
                                 <i class="nav-icon fas fa-tasks"></i>
                                 <p>Orders</p>

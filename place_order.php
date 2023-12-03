@@ -152,6 +152,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     }
 
     input,
+    button,
     select:focus {
         box-shadow: unset !important;
     }
@@ -163,11 +164,76 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .min-vh-35 {
         min-height: 35vh;
     }
+
+
+    .ui-datepicker {
+        background: white;
+        min-width: 300px;
+        border: solid 2px #609AC4;
+        padding: 8px;
+    }
+
+    .ui-datepicker>table {
+        width: 100%;
+    }
+
+
+    .ui-datepicker>table td,
+    th {
+        border: 1px solid #609AC4;
+        padding: 5px;
+    }
+
+    .ui-datepicker>table .ui-datepicker-unselectable {
+        background-color: #609AC4;
+        color: white;
+    }
+
+    .ui-datepicker>table .ui-datepicker-unselectable .ui-state-default {
+        border: unset;
+    }
+
+    .ui-datepicker-header .ui-datepicker-prev {
+        position: absolute;
+        padding: 5px;
+        color: white;
+        left: 8px;
+        cursor: pointer;
+    }
+
+    .ui-datepicker-header .ui-datepicker-title {
+        width: 100%;
+        text-align: center;
+    }
+
+    .ui-datepicker-header .ui-datepicker-next {
+        position: absolute;
+        padding: 5px;
+        color: white;
+        right: 8px;
+        cursor: pointer;
+    }
+
+    .ui-datepicker-header {
+        display: flex;
+        align-items: center;
+        background: #609AC4;
+        min-height: 35px;
+        color: white;
+    }
+
+
+    .ui-state-default,
+    .ui-widget-content .ui-state-default,
+    .ui-widget-header .ui-state-default {
+        border: solid #FFF;
+        border-width: 1px 0 0 1px;
+    }
 </style>
 <div class="content ">
     <div class="container">
         <div class="card-body">
-            <form action="" id="place_order" class="info-summer-form">
+            <form action="" id="place_order" class="info-summer-form d-flex flex-column">
                 <div class="d-flex flex-column w-100">
                     <div class="mx-1">
                         <div class="product-sum h-100">
@@ -261,7 +327,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                         <div class="dropdown-divider my-3"></div>
                         <div class="form-group">
                             <input class="form-control mb-2" type="email" name="email" id="email" placeholder="yourmail@gmail.com" required value="<?= isset($email) ? $email : "" ?>">
-                            <input class="form-control mb-2" type="number" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>"></input required>
+                            <input class="form-control mb-2" type="text" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>"></input required>
                         </div>
                         <h1 class="label-info mt-3"><strong>Delivery</strong></h1>
                         <div class="dropdown-divider my-3"></div>
@@ -298,8 +364,10 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </div>
                                 </div>
                                 <div class="place-order form-group text-right">
-                                    <?php if ((int)$total > (int)$all_order_config['value']) : ?>
-                                        <h1 id="warning-label" class="text-danger invinsible">Sorry! You've reached the order limit (<?= number_format($all_order_config['value']) ?> php)</h1>
+                                    <?php if (isset($all_order_config)) : ?>
+                                        <?php if ((int)$total > (int)$all_order_config['value']) : ?>
+                                            <h1 id="warning-label" class="text-danger invinsible">Sorry! You've reached the order limit (<?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?> php)</h1>
+                                        <?php endif; ?>
                                     <?php else : ?>
                                         <button class="btn btn-flat btn-primary" type="submit" name="submit">
                                             Place Order
@@ -426,7 +494,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                 <div class="pick-up-holder" style="display: none;">
                                     <h1 class="label-info mt-2"><strong>Pick-Up Address</strong></h1>
                                     <div class="dropdown-divider my-3"></div>
-                                    <select name="pickup" id="puAddressDropdown" class="form-control">
+                                    <select name="pickup" id="puAddressDropdown" class="form-control mb-1">
                                         <option value="BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE">BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE</option>
                                         <option value="EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY">EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY</option>
                                     </select>
@@ -447,183 +515,230 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </select>
                                     <!-- this will show when user select "Meet up -> Others" -->
                                     <div class="other-meet-up">
-                                        <input type="text" class="form-control" placeholder="Enter Meeting Point" name="othermu" />
+                                        <input type="text" class="form-control mb-1" placeholder="Enter Meeting Point" name="othermu" />
                                     </div>
+                                </div>
+                                <div class="date_picker" style="display: none;">
+                                    <div class="d-flex">
+                                        <input name="meetup_date" id="meetup_datepicker" class="form-control mb-1" placeholder="Select a date">
+                                        <select name="meetup_time" class="form-control mb-1">
+                                            <?php
+                                            $times = $conn->query("SELECT * FROM `time_availability`");
+                                            while ($time = $times->fetch_assoc()) :
+                                            ?>
+                                                <option value="<?= $time['value'] ?>" id="time-<?= $time['id'] ?>"><?= $time['value'] ?></option>
+                                            <?php endwhile; ?>
+                                        </select>
+                                    </div>
+                                    <button type="button" onclick="showAvailability()" class="btn btn-link text-decoration-none px-0 text-primary">Check Calendar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
             </form>
-
         </div>
     </div>
-    <script>
-        $(function() {
-            let addressTypeVal = 1;
-            $('.pick-up-holder').hide('slow');
-            $('.meet-up-holder').hide('slow');
-            $('.other-meet-up').hide('slow');
-            $('.diff-add').hide('slow');
-            $('#totalWithoutSf').hide('slow');
-            $('.billing-address').show('slow');
-            // fetchCities();
-            setOtherMeetup();
 
-            function fetchCities() {
-                document.getElementById('provinces2').addEventListener('change', function() {
-                    let dropdown = this;
-                    var selectedProvinceCode = this.value;
-                    selectedProvince = dropdown.options[dropdown.selectedIndex].text;
-                    console.log(selectedProvince);
+    <div class="modal fade" id="calendar_modal" role='dialog'>
+        <div class="modal-dialog modal-lg modal-dialog-end" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="calendar_div">
+                        <?php
+                        include_once('./calendar.php');
+                        echo getCalendar();
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    // Fetch provinces based on the selected region
-                    start_loader();
-                    fetch('https://ph-locations-api.buonzz.com/v1/cities')
-                        .then(response => response.json())
-                        .then(data => {
-                            var citiesDropdown = document.getElementById('cities2');
-                            citiesDropdown.innerHTML = ''; // Clear previous options
-                            citiesDropdown.removeAttribute('disabled');
+<script>
+    function showAvailability() {
+        $('#calendar_modal').modal('show');
+    }
+    $("#meetup_datepicker").datepicker({
+        todayHighlight: true,
+        minDate: 3,
+        dateFormat: 'yy-mm-dd',
+        beforeShowDay: function(date) {
 
-                            let filteredCities = data['data'].filter(city => city.province_code === selectedProvinceCode);
-                            console.log(filteredCities);
+            var day = date.getDay();
+            return [(day != -1), ''];
 
-                            if (filteredCities && Array.isArray(filteredCities)) {
-                                filteredCities.forEach(function(city) {
-                                    var option = document.createElement('option');
-                                    option.value = city['id'];
-                                    option.text = city['name'];
-                                    citiesDropdown.appendChild(option);
-                                    //fetchSelectedCity();
-                                });
-                            } else {
-                                var option = document.createElement('option');
-                                option.text = 'No cities found';
-                                citiesDropdown.appendChild(option);
-                            }
-                            end_loader();
-                        })
-                        .catch(error => {
-                            console.error('Error fetching cities:', error);
-                        });
-                });
-            }
+        }
+    });
+    $(function() {
+        console.log("INNNNNNNNNN")
+        let addressTypeVal = 1;
+        $('.pick-up-holder').hide('slow');
+        $('.meet-up-holder').hide('slow');
+        $('.date_picker').hide('slow');
+        $('.other-meet-up').hide('slow');
+        $('.diff-add').hide('slow');
+        $('#totalWithoutSf').hide('slow');
+        $('.billing-address').show('slow');
+        // fetchCities();
+        setOtherMeetup();
 
-            function setOtherMeetup() {
-                document.getElementById('muAddressDropdown').addEventListener('change', function() {
-                    let selectedValue = this.value;
-                    console.log(selectedValue);
+        function fetchCities() {
+            document.getElementById('provinces2').addEventListener('change', function() {
+                let dropdown = this;
+                var selectedProvinceCode = this.value;
+                selectedProvince = dropdown.options[dropdown.selectedIndex].text;
+                console.log(selectedProvince);
 
-                    if (selectedValue === 'mu_other') {
-                        $('.other-meet-up').show('slow');
-                    } else {
-                        $('.other-meet-up').hide('slow');
-                    }
-                });
-            }
-            $('[name="order_type"]').change(function() {
-                if ($(this).val() == 1) {
-                    $('.jnt-holder').show('slow');
-                    $('.pick-up-holder').hide('slow');
-                    $('.meet-up-holder').hide('slow');
-                    $('#totalWithSf').show('slow');
-                    $('#totalWithoutSf').hide('slow');
-                    $('#sf').show('slow');
-                    $('.billing-address').show('slow');
-                } else if ($(this).val() == 2) {
-                    $('.jnt-holder').hide('slow');
-                    $('.pick-up-holder').hide('slow');
-                    $('.meet-up-holder').hide('slow');
-                    $('#totalWithSf').hide('slow');
-                    $('#totalWithoutSf').show('slow');
-                    $('.billing-address').hide('slow');
-                    $('#sf').hide('slow');
-                } else if ($(this).val() == 3) {
-                    $('.jnt-holder').hide('slow');
-                    $('.pick-up-holder').show('slow');
-                    $('.meet-up-holder').hide('slow');
-                    $('.other-up-holder').hide('slow');
-                    $('#totalWithSf').hide('slow');
-                    $('#totalWithoutSf').show('slow');
-                    $('#sf').hide('slow');
-                    $('.billing-address').hide('slow');
-                } else if ($(this).val() == 4) {
-                    $('.jnt-holder').hide('slow');
-                    $('.pick-up-holder').hide('slow');
-                    $('.meet-up-holder').show('slow');
-                    $('#totalWithSf').hide('slow');
-                    $('#totalWithoutSf').show('slow');
-                    $('#sf').hide('slow');
-                    $('.billing-address').hide('slow');
-                } else {
-                    $('.jnt-holder').show('slow');
-                    $('.pick-up-holder').hide('slow');
-                    $('.meet-up-holder').hide('slow');
-                    $('#totalWithSf').hide('slow');
-                    $('#totalWithoutSf').show('slow');
-                    $('#sf').hide('slow');
-                    $('.billing-address').show('slow');
-                }
-            });
-
-            $('[name="address_type"]').change(function() {
-                if ($(this).val() == 1) {
-                    addressTypeVal = 1;
-                    $('.default-add').show('slow');
-                    $('.diff-add').hide('slow');
-                } else {
-                    addressTypeVal = 2;
-                    $('.default-add').hide('slow');
-                    $('.diff-add').show('slow');
-                }
-
-            });
-
-            $('#place_order').submit(function(e) {
-                e.preventDefault();
-                var _this = $(this);
-                var formData = new FormData($(this)[0]);
-
-                formData.append('address_type', addressTypeVal);
-                $('.err-msg').remove();
+                // Fetch provinces based on the selected region
                 start_loader();
-                $.ajax({
-                    url: _base_url_ + "classes/Master.php?f=place_order",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    method: 'POST',
-                    type: 'POST',
-                    dataType: 'json',
-                    error: err => {
-                        console.log(err)
+                fetch('https://ph-locations-api.buonzz.com/v1/cities')
+                    .then(response => response.json())
+                    .then(data => {
+                        var citiesDropdown = document.getElementById('cities2');
+                        citiesDropdown.innerHTML = ''; // Clear previous options
+                        citiesDropdown.removeAttribute('disabled');
+
+                        let filteredCities = data['data'].filter(city => city.province_code === selectedProvinceCode);
+                        console.log(filteredCities);
+
+                        if (filteredCities && Array.isArray(filteredCities)) {
+                            filteredCities.forEach(function(city) {
+                                var option = document.createElement('option');
+                                option.value = city['id'];
+                                option.text = city['name'];
+                                citiesDropdown.appendChild(option);
+                                //fetchSelectedCity();
+                            });
+                        } else {
+                            var option = document.createElement('option');
+                            option.text = 'No cities found';
+                            citiesDropdown.appendChild(option);
+                        }
+                        end_loader();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching cities:', error);
+                    });
+            });
+        }
+
+        function setOtherMeetup() {
+            document.getElementById('muAddressDropdown').addEventListener('change', function() {
+                let selectedValue = this.value;
+                if (selectedValue === 'mu_other') {
+                    $('.other-meet-up').show('slow');
+                } else {
+                    $('.other-meet-up').hide('slow');
+                }
+            });
+        }
+        $('[name="order_type"]').change(function() {
+            console.log("in")
+            if ($(this).val() == 1) {
+                $('.jnt-holder').show('slow');
+                $('.pick-up-holder').hide('slow');
+                $('.meet-up-holder').hide('slow');
+                $('.date_picker').hide('slow');
+                $('#totalWithSf').show('slow');
+                $('#totalWithoutSf').hide('slow');
+                $('#sf').show('slow');
+                $('.billing-address').show('slow');
+            } else if ($(this).val() == 2) {
+                $('.jnt-holder').hide('slow');
+                $('.pick-up-holder').hide('slow');
+                $('.meet-up-holder').hide('slow');
+                $('.date_picker').hide('slow');
+                $('#totalWithSf').hide('slow');
+                $('#totalWithoutSf').show('slow');
+                $('.billing-address').hide('slow');
+                $('#sf').hide('slow');
+            } else if ($(this).val() == 3) {
+                $('.jnt-holder').hide('slow');
+                $('.pick-up-holder').show('slow');
+                $('.date_picker').show('slow');
+                $('.meet-up-holder').hide('slow');
+                $('.other-up-holder').hide('slow');
+                $('#totalWithSf').hide('slow');
+                $('#totalWithoutSf').show('slow');
+                $('#sf').hide('slow');
+                $('.billing-address').hide('slow');
+            } else if ($(this).val() == 4) {
+                $('.jnt-holder').hide('slow');
+                $('.pick-up-holder').hide('slow');
+                $('.meet-up-holder').show('slow');
+                $('.date_picker').show('slow');
+                $('#totalWithSf').hide('slow');
+                $('#totalWithoutSf').show('slow');
+                $('#sf').hide('slow');
+                $('.billing-address').hide('slow');
+            } else {
+                $('.jnt-holder').show('slow');
+                $('.pick-up-holder').hide('slow');
+                $('.meet-up-holder').hide('slow');
+                $('.date_picker').hide('slow');
+                $('#totalWithSf').hide('slow');
+                $('#totalWithoutSf').show('slow');
+                $('#sf').hide('slow');
+                $('.billing-address').show('slow');
+            }
+        });
+
+        $('[name="address_type"]').change(function() {
+            if ($(this).val() == 1) {
+                addressTypeVal = 1;
+                $('.default-add').show('slow');
+                $('.diff-add').hide('slow');
+            } else {
+                addressTypeVal = 2;
+                $('.default-add').hide('slow');
+                $('.diff-add').show('slow');
+            }
+        });
+
+        $('#place_order').submit(function(e) {
+            e.preventDefault();
+            var _this = $(this);
+            var formData = new FormData($(this)[0]);
+
+            formData.append('address_type', addressTypeVal);
+            $('.err-msg').remove();
+            start_loader();
+            $.ajax({
+                url: _base_url_ + "classes/Master.php?f=place_order",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST',
+                dataType: 'json',
+                error: err => {
+                    console.log(err)
+                    alert_toast("An error occured", 'error');
+                    end_loader();
+                },
+                success: function(resp) {
+                    if (typeof resp == 'object' && resp.status == 'success') {
+                        location.replace('./?p=my_orders');
+                    } else if (resp.status == 'failed' && !!resp.msg) {
+                        var el = $('<div>')
+                        el.addClass("alert alert-danger err-msg").text(resp.msg)
+                        _this.prepend(el)
+                        el.show('slow')
+                        $("html, body").animate({
+                            scrollTop: _this.closest('.card').offset().top
+                        }, "fast");
+                        end_loader()
+                    } else {
                         alert_toast("An error occured", 'error');
                         end_loader();
-                    },
-                    success: function(resp) {
-                        if (typeof resp == 'object' && resp.status == 'success') {
-                            location.replace('./?p=my_orders');
-                        } else if (resp.status == 'failed' && !!resp.msg) {
-                            var el = $('<div>')
-                            el.addClass("alert alert-danger err-msg").text(resp.msg)
-                            _this.prepend(el)
-                            el.show('slow')
-                            $("html, body").animate({
-                                scrollTop: _this.closest('.card').offset().top
-                            }, "fast");
-                            end_loader()
-                        } else {
-                            alert_toast("An error occured", 'error');
-                            end_loader();
-                            console.log(resp)
-                        }
-
+                        console.log(resp)
                     }
-                })
+
+                }
             })
         })
-    </script>
+    })
+</script>

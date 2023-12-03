@@ -43,7 +43,7 @@ class Master extends DBConnection
 		$user_name = $_POST['user_name'];
 
 		if (!empty($_FILES['proof_file']['name'])) {
-			
+
 			$targetDirectory = "../uploads/payment-proof/";
 			$targetFile = $targetDirectory . basename($_FILES['proof_file']['name']);
 
@@ -1188,7 +1188,7 @@ class Master extends DBConnection
 			}
 			if ($action) {
 				$resp['status'] = 'success';
-				$resp['msg'] = `Order config succefully submitted`;
+				$resp['msg'] = `Order config successfully submitted`;
 			} else {
 				$resp['error'] = $this->conn->error;
 				$resp['status'] = 'failed';
@@ -1196,6 +1196,21 @@ class Master extends DBConnection
 			}
 			return json_encode($resp);
 		}
+	}
+	function delete_order_config()
+	{
+		extract($_POST);
+		$configId = $_POST['configId'];
+		$deleteConfig = $this->conn->query("DELETE from order_config where id = '{$configId}'");
+		if ($deleteConfig) {
+			$resp['status'] = 'success';
+			$resp['msg'] = `Order config successfully deleted`;
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		return json_encode($resp);
 	}
 }
 
@@ -1283,6 +1298,9 @@ switch ($action) {
 		break;
 	case 'save_order_config':
 		echo $Master->save_order_config();
+		break;
+	case 'delete_order_config':
+		echo $Master->delete_order_config();
 		break;
 
 	default:

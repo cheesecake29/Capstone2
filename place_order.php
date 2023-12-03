@@ -1,7 +1,12 @@
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <?php
 include 'sendemailporder.php';
-
+$total = 0;
+$api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
+$response1 = file_get_contents($api_url_province);
+$api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
+$response2 = file_get_contents($api_url_city);
+$all_order_config = $conn->query("SELECT * from order_config where is_all = 1 limit 1")->fetch_assoc();
 if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     $qry = $conn->query("SELECT * FROM `client_list` where id = '{$_settings->userdata('id')}'");
     if ($qry->num_rows > 0) {
@@ -41,7 +46,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         margin: 0;
     }
 
-    .left,
+    /* .left,
     .right {
         width: 50%;
         background-color: #FFFFFF;
@@ -50,9 +55,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .right {
         position: sticky;
         top: 0;
-        background-color: #FFFFFF;
-        /* Set a height for the sticky container */
-    }
+        background-color: rgba(96, 154, 196, 0.7);
+    } */
 
     .place-order {
         margin: 4% 0;
@@ -110,6 +114,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 
     .righth2 {
         font-size: 25px;
+        margin: unset !important;
     }
 
     .product-sum {
@@ -146,13 +151,17 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         /* Adjust the margin as needed */
     }
 
-    .order-type {
-        margin: 5% 0;
-
+    input,
+    select:focus {
+        box-shadow: unset !important;
     }
 
-    .ordertype {
-        margin: 2% 0;
+    .min-vh-5 {
+        min-height: 5vh;
+    }
+
+    .min-vh-35 {
+        min-height: 35vh;
     }
 
     .left {
@@ -206,169 +215,272 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         }
     }
 </style>
-
-
 <div class="content ">
     <div class="container">
         <div class="card-body">
             <form action="" id="place_order" class="info-summer-form">
-                <div class="left mx-3">
-                    <h1 class="label-info"><strong>Contact</strong></h1>
-                    <div class="form-group">
-                        <input class="input" type="email" name="email" id="email" placeholder="yourmail@gmail.com" required value="<?= isset($email) ? $email : "" ?>">
-                        <input class="input" type="number" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>"></input required>
-                    </div>
-                    <h1 class="label-info"><strong>Delivery</strong></h1>
-                    <div class="form-group">
-                        <div class="input-form-name">
-                            <div class="fname">
-                                <input class="input" type="text" name="firstname" id="firstname" placeholder="First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" required>
+                <div class="d-flex flex-column w-100">
+                    <div class="mx-1">
+                        <div class="product-sum h-100">
+                            <?php
+                            $cart = $conn->query("SELECT c.*, p.name, p.image_path, p.weight, b.name as brand, cc.category, v.*, v.variation_price as price FROM `cart_list` c
+                                INNER JOIN product_list p ON c.product_id = p.id
+                                INNER JOIN brand_list b ON p.brand_id = b.id
+                                INNER JOIN categories cc ON p.category_id = cc.id
+                                INNER JOIN product_variations v ON c.variation_id = v.id
+                                WHERE c.client_id = '{$_settings->userdata('id')}' ORDER BY p.name ASC");
+                            ?>
+                            <div class="mx-3 py-3">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th width="25%" class="text-center">Image</th>
+                                            <th>Product Name</th>
+                                            <th>Variation</th>
+                                            <th>Weight</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $shipping = 0;
+                                        $totalItem = 0;
+                                        while ($row = $cart->fetch_assoc()) : ?>
+                                            <tr>
+                                                <td width="25%" class="text-center">
+                                                    <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-sum">
+                                                </td>
+                                                <td>
+                                                    <span><?= $row['name'] ?></span>
+                                                </td>
+                                                <td>
+                                                    <span><?= $row['variation_name'] ?></span>
+                                                </td>
+                                                <td>
+                                                    <span><?= $row['weight'] ?></span>
+                                                </td>
+                                                <td>
+                                                    <span><?= $row['quantity'] ?></span>
+                                                </td>
+                                                <td>
+                                                    <span><?= number_format($row['price'], 2) ?></span>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                            $totalItem += ($row['quantity'] * $row['price']);
+                                            switch ($row['weight']) {
+                                                case "500g and below":
+                                                    $shipping += 117;
+                                                    break;
+                                                case "500g – 1kg":
+                                                    $shipping += 200;
+                                                    break;
+                                                case "1kg – 3kg":
+                                                    $shipping += 300;
+                                                    break;
+                                                case "3kg – 4kg":
+                                                    $shipping += 400;
+                                                    break;
+                                                case "4kg – 5kg":
+                                                    $shipping += 500;
+                                                    break;
+                                                case "5kg – 6kg":
+                                                    $shipping += 600;
+                                                    break;
+                                                default:
+                                                    $shipping += 0;
+                                                    break;
+                                            }
+
+                                            $total = $totalItem + $shipping;
+                                            ?>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="lname">
-                                <input class="input" type="text" name="lastname" id="lastname" placeholder="Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>">
+                            <div class="mt-auto mx-3 text-end min-vh-5">
+                                <input name="shipping_amount" value="<?= $shipping ?>" type="hidden" />
+                                <h5 id="sf">Shipping Fee: <?= number_format($shipping, 2) ?> </h5>
+                                <h2 id="totalWithSf" class="righth2">Total Price: <?= number_format($total, 2) ?> </h2>
+                                <h2 id="totalWithoutSf" class="righth2" style="display: none;">Total Price: <?= number_format($totalItem, 2) ?> </h2>
                             </div>
                         </div>
                     </div>
-                    <div class="order-type">
-                        <h1 class="label-info"><strong>Order Type</strong></h1>
-                        <div class="ordertype">
-                            <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio1" name="order_type" value="1" checked>
-                            <label for="customRadio1" class="custom-label">JRS </label><br>
+                    <div class="mx-1">
+                        <h1 class="label-info mt-3"><strong>Contact</strong></h1>
+                        <div class="dropdown-divider my-3"></div>
+                        <div class="form-group">
+                            <input class="form-control mb-2" type="email" name="email" id="email" placeholder="yourmail@gmail.com" required value="<?= isset($email) ? $email : "" ?>">
+                            <input class="form-control mb-2" type="number" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>"></input required>
                         </div>
-                        <div class="ordertype">
-                            <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio2" name="order_type" value="2">
-                            <label for="customRadio2" class="custom-label">Lalamove (Shipping fee care of buyer)</label><br>
-                        </div>
-                        <div class="ordertype">
-                            <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio3" name="order_type" value="3">
-                            <label for="customRadio3" class="custom-label">Pick up (No shipping fee)</label><br>
-                        </div>
-                        <div class="ordertype">
-                            <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio4" name="order_type" value="4">
-                            <label for="customRadio4" class="custom-label">Meet up (Shipping fee care of buyer)</label><br>
-                        </div>
-                    </div>
-
-                    <div class="billing-address">
-                        <h1 class="label-info"><strong>Billing Address</strong></h1>
-                        <div class="custom-control custom-radio addresstype">
-                            <input class="custom-control-input" type="radio" id="default" name="address_type" value="1" checked>
-                            <label class="custom-control-label" for="default"><strong>Same as shipping address</strong></label>
-                        </div>
-                        <div class="custom-control custom-radio addresstype">
-                            <input class="custom-control-input" type="radio" id="diff" name="address_type" value="2">
-                            <label class="custom-control-label" for="diff"><strong>Use a different billing address</strong></label>
-                        </div>
-                            <div class="default-add">
-                                <div class="province jnt-holder">
-                                    <span class="custom-control-input custom-control-input-primary">Province</span>
-                                    <!-- <select  id="province" name="province" placeholder="Please select your province"class="option select2" required>
-
-                                    <option type="varchar" value="bataan" <?= (isset($province) && $province === 'bataan') ? 'selected' : '' ?>>Bataan</option>
-                                    </select> -->
-                                    <?php
-                                    $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
-                                    $response1 = file_get_contents($api_url_province);
-
-                                    // Handle JSON data
-                                    $provinces = json_decode($response1, true);
-                                    $selectedProvinceId = $province;
-
-                                    if ($provinces['data'] && is_array($provinces['data'])) {
-                                        echo '<select name="province" id="provinces" class="form-control">';
-                                        foreach ($provinces['data'] as $option) {
-                                            $optionId = $option['id'];
-                                            $optionName = $option['name'];
-
-                                            $selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
-                                            echo '<option value="' . $optionId . '" ' . $selected1 . '>' . $optionName . '</option>';
-                                        }
-                                        echo '</select>';
-                                    } else {
-                                        echo 'Failed to fetch or decode data.';
-                                    }
-                                    /*** */
-                                    $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
-                                    $response2 = file_get_contents($api_url_city);
-                                    // Handle JSON data
-                                    $cities = json_decode($response2, true);
-                                    $selectedCityId = $city;
-
-                                    if ($cities['data'] && is_array($cities['data'])) {
-                                        echo '<select name="city" id="cities" class="form-control">';
-                                        foreach ($cities['data'] as $option) {
-                                            $optionId = $option['id'];
-                                            $optionName = $option['name'];
-
-                                            $selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
-                                            echo '<option value="' . $optionId . '" ' . $selected2 . '>' . $optionName . '</option>';
-                                        }
-                                        echo '</select>';
-                                    } else {
-                                        echo 'Failed to fetch or decode data.';
-                                    }
-                                    ?>
-                                    <input name="addressline1" id="addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input>
-                                    <input name="addressline2" id="addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
-                                    <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>"></input>
-
-                                </div> 
+                        <h1 class="label-info mt-3"><strong>Delivery</strong></h1>
+                        <div class="dropdown-divider my-3"></div>
+                        <div class="form-group">
+                            <div class="input-form-name">
+                                <div class="fname">
+                                    <input class="form-control" type="text" name="firstname" id="firstname" placeholder="First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" required>
+                                </div>
+                                <div class="lname">
+                                    <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>">
+                                </div>
                             </div>
+                        </div>
+                        <div class="d-flex w-100 min-vh-35 mt-3">
+                            <div class="w-50 order-type-container">
+                                <h1 class="label-info mt-2"><strong>Order Type</strong></h1>
+                                <div class="dropdown-divider my-3"></div>
+                                <div class="order-type">
+                                    <div class="my-1">
+                                        <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio1" name="order_type" value="1" checked>
+                                        <label for="customRadio1" class="custom-label">JRS </label><br>
+                                    </div>
+                                    <div class="my-1">
+                                        <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio2" name="order_type" value="2">
+                                        <label for="customRadio2" class="custom-label">Lalamove (Shipping fee care of buyer)</label><br>
+                                    </div>
+                                    <div class="my-1">
+                                        <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio3" name="order_type" value="3">
+                                        <label for="customRadio3" class="custom-label">Pick up (No shipping fee)</label><br>
+                                    </div>
+                                    <div class="my-1">
+                                        <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio4" name="order_type" value="4">
+                                        <label for="customRadio4" class="custom-label">Meet up (Shipping fee care of buyer)</label><br>
+                                    </div>
+                                </div>
+                                <div class="place-order form-group text-right">
+                                    <?php if ((int)$total > (int)$all_order_config['value']) : ?>
+                                        <h1 id="warning-label" class="text-danger invinsible">Sorry! You've reached the order limit (<?= number_format($all_order_config['value']) ?> php)</h1>
+                                    <?php else : ?>
+                                        <button class="btn btn-flat btn-primary" type="submit" name="submit">
+                                            Place Order
+                                        </button>
+                                    <?php endif; ?>
 
-                            <div class="diff-add">
-                                <div class="province jnt-holder">
-                                    <span class="custom-control-input custom-control-input-primary">Province</span>
+                                </div>
+                            </div>
+                            <div class="w-50 billing-address-container">
+                                <div class="billing-address">
+                                    <h1 class="label-info mt-2"><strong>Billing Address</strong></h1>
+                                    <div class="dropdown-divider my-3"></div>
+                                    <div class="custom-control custom-radio addresstype">
+                                        <input class="custom-control-input" type="radio" id="default" name="address_type" value="1" checked>
+                                        <label class="custom-control-label" for="default"><strong>Same as shipping address</strong></label>
+                                    </div>
+                                    <div class="custom-control custom-radio addresstype">
+                                        <input class="custom-control-input" type="radio" id="diff" name="address_type" value="2">
+                                        <label class="custom-control-label" for="diff"><strong>Use a different billing address</strong></label>
+                                    </div>
+                                    <!-- this will show bu default -->
+                                    <div class="default-add">
+                                        <div class="province jnt-holder">
+                                            <span class="custom-control-input custom-control-input-primary">Province</span>
+                                            <?php
 
-                                    <?php
-                                    $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
-                                    $response1 = file_get_contents($api_url_province);
+                                            // Handle JSON data
+                                            $provinces = json_decode($response1, true);
+                                            $selectedProvinceId = $province;
 
-                                    // Handle JSON data
-                                    $provinces = json_decode($response1, true);
-                                    //$selectedProvinceId = $province;
+                                            if ($provinces['data'] && is_array($provinces['data'])) {
+                                                echo '<select name="province" id="provinces" class="form-control mb-1">';
+                                                foreach ($provinces['data'] as $option) {
+                                                    $optionId = $option['id'];
+                                                    $optionName = $option['name'];
 
-                                    if ($provinces['data'] && is_array($provinces['data'])) {
-                                        echo '<select name="province2" id="provinces2" class="form-control">';
-                                        echo '<option value="0">-- Select Province --</option>';
-                                        foreach ($provinces['data'] as $option) {
-                                            $optionId = $option['id'];
-                                            $optionName = $option['name'];
+                                                    $selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
+                                                    echo '<option value="' . $optionId . '" ' . $selected1 . '>' . $optionName . '</option>';
+                                                }
+                                                echo '</select>';
+                                            } else {
+                                                echo 'Failed to fetch or decode data.';
+                                            }
+                                            // Handle JSON data
+                                            $cities = json_decode($response2, true);
+                                            $selectedCityId = $city;
 
-                                            //$selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
-                                            echo '<option value="' . $optionId . '">' . $optionName . '</option>';
-                                        }
-                                        echo '</select>';
-                                    } else {
-                                        echo 'Failed to fetch or decode data.';
-                                    }
-                                    ?>
+                                            if ($cities['data'] && is_array($cities['data'])) {
+                                                echo '<select name="city" id="cities" class="form-control mb-1">';
+                                                foreach ($cities['data'] as $option) {
+                                                    $optionId = $option['id'];
+                                                    $optionName = $option['name'];
 
-                                    <?php
-                                    $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
-                                    $response2 = file_get_contents($api_url_city);
-                                    // Handle JSON data
-                                    $cities = json_decode($response2, true);
-                                    //$selectedCityId = $city;
+                                                    $selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
+                                                    echo '<option value="' . $optionId . '" ' . $selected2 . '>' . $optionName . '</option>';
+                                                }
+                                                echo '</select>';
+                                            } else {
+                                                echo 'Failed to fetch or decode data.';
+                                            }
+                                            ?>
+                                            <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input>
+                                            <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
+                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>"></input>
 
-                                    if ($cities['data'] && is_array($cities['data'])) {
-                                        echo '<select name="city2" id="cities2" class="form-control" disabled>';
-                                        echo '<option value="0">-- Select City --</option>';
-                                        foreach ($cities['data'] as $option) {
-                                            $optionId = $option['id'];
-                                            $optionName = $option['name'];
+                                        </div>
+                                    </div>
 
-                                            //$selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
-                                            echo '<option value="' . $optionId . '">' . $optionName . '</option>';
-                                        }
-                                        echo '</select>';
-                                    } else {
-                                        echo 'Failed to fetch or decode data.';
-                                    }
-                                    ?>
+                                    <!-- this will show when user select "Use a different billing address" -->
+                                    <div class="diff-add" style="display: none;">
+                                        <div class="province jnt-holder">
+                                            <span class="custom-control-input custom-control-input-primary">Province</span>
 
-                                    <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
-                                    <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
-                                    <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+                                            <?php
+                                            // Handle JSON data
+                                            $provinces = json_decode($response1, true);
+                                            //$selectedProvinceId = $province;
+
+                                            if ($provinces['data'] && is_array($provinces['data'])) {
+                                                echo '<select name="province2" id="provinces2" class="form-control">';
+                                                echo '<option value="0">-- Select Province --</option>';
+                                                foreach ($provinces['data'] as $option) {
+                                                    $optionId = $option['id'];
+                                                    $optionName = $option['name'];
+
+                                                    //$selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
+                                                    echo '<option value="' . $optionId . '">' . $optionName . '</option>';
+                                                }
+                                                echo '</select>';
+                                            } else {
+                                                echo 'Failed to fetch or decode data.';
+                                            }
+                                            ?>
+
+                                            <?php
+                                            // Handle JSON data
+                                            $cities = json_decode($response2, true);
+                                            //$selectedCityId = $city;
+
+                                            if ($cities['data'] && is_array($cities['data'])) {
+                                                echo '<select name="city2" id="cities2" class="form-control" disabled>';
+                                                echo '<option value="0">-- Select City --</option>';
+                                                foreach ($cities['data'] as $option) {
+                                                    $optionId = $option['id'];
+                                                    $optionName = $option['name'];
+
+                                                    //$selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
+                                                    echo '<option value="' . $optionId . '">' . $optionName . '</option>';
+                                                }
+                                                echo '</select>';
+                                            } else {
+                                                echo 'Failed to fetch or decode data.';
+                                            }
+                                            ?>
+
+                                            <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
+                                            <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
+                                            <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!-- this will show when user select "Pick up" -->
+                                <div class="pick-up-holder" style="display: none;">
+                                    <h1 class="label-info mt-2"><strong>Pick-Up Address</strong></h1>
+                                    <div class="dropdown-divider my-3"></div>
+                                    <select name="pickup" id="puAddressDropdown" class="form-control">
+                                        <option value="BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE">BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE</option>
+                                        <option value="EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY">EVANGELISTA ST. COR ARGUELLES PETRON STATION MAKATI CITY</option>
+                                    </select>
                                 </div>
 
                             </div>
@@ -454,32 +566,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             </td>
                                         </tr>
                                         <?php
-                                        $totalItem += ($row['quantity'] * $row['price']);
-                                        switch ($row['weight']) {
-                                            case "500g and below":
-                                                $shipping += 117;
-                                                break;
-                                            case "500g – 1kg":
-                                                $shipping += 200;
-                                                break;
-                                            case "1kg – 3kg":
-                                                $shipping += 300;
-                                                break;
-                                            case "3kg – 4kg":
-                                                $shipping += 400;
-                                                break;
-                                            case "4kg – 5kg":
-                                                $shipping += 500;
-                                                break;
-                                            case "5kg – 6kg":
-                                                $shipping += 600;
-                                                break;
-                                            default:
-                                                $shipping += 0;
-                                                break;
-                                        }
-
-                                        $total = $totalItem + $shipping;
+                                        $getMeetupAddresses = $conn->query("SELECT * FROM `meet_up_address` where active = 1");
+                                        while ($rowAdd = $getMeetupAddresses->fetch_assoc()) :
                                         ?>
                                     <?php endwhile; ?>
                                 </tbody>
@@ -490,8 +578,19 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                             <h5 id="sf">Shipping Fee: <?= number_format($shipping, 2) ?> </h5>
                             <h2 id="totalWithSf" class="righth2">Total Price: <?= number_format($total, 2) ?> </h2>
                             <h2 id="totalWithoutSf" class="righth2">Total Price: <?= number_format($totalItem, 2) ?> </h2>
+                                            <option value="<?= $rowAdd['text'] ?>" id="meetUpAddress-<?= $rowAdd['id'] ?>"><?= $rowAdd['text'] ?></option>
+                                        <?php endwhile; ?>
+                                        <option value="mu_other">OTHER</option>
+                                    </select>
+                                    <!-- this will show when user select "Meet up -> Others" -->
+                                    <div class="other-meet-up">
+                                        <input type="text" class="form-control" placeholder="Enter Meeting Point" name="othermu" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
 
             </form>
@@ -507,7 +606,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
             $('.diff-add').hide('slow');
             $('#totalWithoutSf').hide('slow');
             $('.billing-address').show('slow');
-            fetchCities();
+            // fetchCities();
             setOtherMeetup();
 
             function fetchCities() {
@@ -612,7 +711,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                     addressTypeVal = 1;
                     $('.default-add').show('slow');
                     $('.diff-add').hide('slow');
-                }else{
+                } else {
                     addressTypeVal = 2;
                     $('.default-add').hide('slow');
                     $('.diff-add').show('slow');
@@ -659,7 +758,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                             end_loader();
                             console.log(resp)
                         }
-                        
+
                     }
                 })
             })

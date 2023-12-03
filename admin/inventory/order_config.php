@@ -1,5 +1,5 @@
 <?php
-$order_config = $conn->query("SELECT *, pl.id as product_id from order_config og left join product_list pl on pl.id = og.product_id order by og.product_id;");
+$order_config = $conn->query("SELECT og.*, pl.id as product_id from order_config og left join product_list pl on pl.id = og.product_id order by og.product_id;");
 ?>
 <div class="order-configuration">
     <div class="config-header">
@@ -12,14 +12,14 @@ $order_config = $conn->query("SELECT *, pl.id as product_id from order_config og
                 <div class="mr-2">
                     <label for="max-price" class="control-label">Product</label>
                     <select name="type" id="type" class="custom-select select2" required>
-                        <option value="" disabled selected> Select product</option>
-                        <option value="All"> All</option>
-                        <?php
-                        $result = $conn->query("SELECT * from product_list where delete_flag = 0");
-                        while ($row = $result->fetch_assoc()) :
-                        ?>
-                            <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option>
-                        <?php endwhile; ?>
+                        <!-- <option value="" disabled selected> Select product</option> -->
+                        <option value="All" disabled selected> All</option>
+                        <!-- <?php
+                                $result = $conn->query("SELECT * from product_list where delete_flag = 0");
+                                while ($row = $result->fetch_assoc()) :
+                                ?> -->
+                        <!-- <option value="<?= $row['id'] ?>"><?= $row['name'] ?></option> -->
+                        <!-- <?php endwhile; ?> -->
                     </select>
                 </div>
                 <div class="mr-2">
@@ -42,6 +42,7 @@ $order_config = $conn->query("SELECT *, pl.id as product_id from order_config og
                         <th scope="col">Product ID</th>
                         <th scope="col">Product Name</th>
                         <th scope="col">Max Price</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +54,7 @@ $order_config = $conn->query("SELECT *, pl.id as product_id from order_config og
                             <th scope="row"><?= isset($row['product_id']) ? $row['product_id'] : 'All' ?></th>
                             <th><?= isset($row['name']) ? $row['name']  : 'All' ?></th>
                             <td><?= number_format($row['value']) ?></td>
+                            <td><button class="btn btn-link text-danger delete_config" data-id="<?php echo $row['id'] ?>"><i class="fas fa-trash"></i></button></td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -131,7 +133,15 @@ $(document).ready(function () {
             event.preventDefault(); // Prevent entering non-numeric characters except for the dot
         }
     }
+
+    function removeOrderConfigConf(id) {
+        _conf("Are you sure to delete this permanently?", "removeOrderConfig", [])
+    }
+
     $(document).ready(function() {
+        $('.delete_config').click(function() {
+            _conf("Are you sure to delete this product permanently?", "removeOrderConfig", [$(this).attr('data-id')])
+        })
         const currenctInput = document.getElementsByClassName('CurrencyInput');
         for (let i = 0; i < currenctInput.length; i++) {
             formatToCurrency(currenctInput[i], currenctInput[i].value);
@@ -172,7 +182,7 @@ $(document).ready(function () {
                 success: function(resp) {
                     console.log(resp)
                     if (typeof resp == 'object' && resp.status == 'success') {
-                        alert_toast('Order config successfully submitted', 'success');
+                        location.href = './?page=inventory/order_config';
                     } else {
                         alert_toast("An error occured", 'error');
                         console.log(resp)
@@ -180,6 +190,7 @@ $(document).ready(function () {
                 }
             })
         })
+
         $('select').on('change', function() {
             $.ajax({
                 url: _base_url_ + "classes/Master.php?f=find_order_config",
@@ -209,4 +220,25 @@ $(document).ready(function () {
             })
         });
     })
+
+    function removeOrderConfig(id) {
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=delete_order_config",
+            data: {
+                configId: id
+            },
+            method: 'POST',
+            type: 'POST',
+            dataType: 'json',
+            success: function(resp) {
+                console.log(resp)
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.href = './?page=inventory/order_config';
+                } else {
+                    alert_toast("An error occured", 'error');
+                    console.log(resp)
+                }
+            }
+        })
+    }
 </script>

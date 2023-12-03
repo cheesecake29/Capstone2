@@ -1,28 +1,26 @@
 <style>
-
-.navs
-{
-   padding: 3%;
-   background-color: #0062CC;
-   width: 100%;
-   overflow-y: auto;
-}
-
-a.nav-links{
-    padding: 3%;
-}
-
- .nav-item a.nav-links { 
-    color:#ffff!important; 
-    background-color: #0062CC;
-    padding: 3%;
-  
+    .navs {
+        padding: 3%;
+        background-color: #0062CC;
+        width: 100%;
+        overflow-y: auto;
     }
 
-    .nav{
+    a.nav-links {
+        padding: 3%;
+    }
+
+    .nav-item a.nav-links {
+        color: #ffff !important;
+        background-color: #0062CC;
+        padding: 3%;
+
+    }
+
+    .nav {
         width: 100%;
         margin-bottom: 5%;
-      
+
     }
 
 
@@ -34,7 +32,7 @@ a.nav-links{
 
     .nav-item a.nav-links:hover {
         background-color: #FFFF;
-        color: #0062CC !important; 
+        color: #0062CC !important;
         border-radius: 0 10px 10px 0;
         padding: 3%;
     }
@@ -53,7 +51,7 @@ a.nav-links{
         <!-- ... (other sidebar elements) -->
 
         <!-- Sidebar Menu -->
-       
+
         <nav class="nav mt-4">
             <ul class="nav nav-pills nav-sidebar flex-column text-sm nav-compact nav-flat nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
 
@@ -75,43 +73,43 @@ a.nav-links{
 
 
                     <ul class="nav nav-treeview">
-                        
-                           
 
-                                <li class="navs nav-item">
-                                    <a href="<?php echo base_url ?>admin/?page=content_management/home" class="nav-links nav-link nav-content_management_home">
-                                        <i class="nav-icon fas fa-home"></i>
-                                        <p>Home</p>
-                                    </a>
-                                </li>
 
-                                <li class="navs nav-item">
-                                    <a href="<?php echo base_url ?>admin/?page=content_management/services" class=" nav-links nav-link nav-content_management_services">
-                                        <i class="nav-icon fas fa-handshake"></i>
-                                        <p>Services</p>
-                                    </a>
-                                </li>
-                                <li class="navs nav-item">
-                                    <a href="<?php echo base_url ?>admin/?page=content_management/contactus" class=" nav-links nav-link nav-content_management_contactus">
-                                        <i class="nav-icon fas fa-envelope"></i>
-                                        <p>Contact Us</p>
-                                    </a>
-                                </li>
-                                <li class="navs nav-item">
-                                    <a href="<?php echo base_url ?>admin/?page=content_management/aboutus" class=" nav-links nav-link nav-content_management_aboutus">
-                                        <i class="nav-icon fas fa-info-circle"></i>
-                                        <p>About Us</p>
-                                    </a>
-                                </li>
 
-                                <li class="navs nav-item">
-                                    <a href="<?php echo base_url ?>admin/?page=content_management/logo" class=" nav-links nav-link nav-content_management_logo">
-                                        <i class="nav-icon fas fa-envelope"></i>
-                                        <p>Logo</p>
-                                    </a>
-                                
-                            
-                      
+                        <li class="navs nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=content_management/home" class="nav-links nav-link nav-content_management_home">
+                                <i class="nav-icon fas fa-home"></i>
+                                <p>Home</p>
+                            </a>
+                        </li>
+
+                        <li class="navs nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=content_management/services" class=" nav-links nav-link nav-content_management_services">
+                                <i class="nav-icon fas fa-handshake"></i>
+                                <p>Services</p>
+                            </a>
+                        </li>
+                        <li class="navs nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=content_management/contactus" class=" nav-links nav-link nav-content_management_contactus">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <p>Contact Us</p>
+                            </a>
+                        </li>
+                        <li class="navs nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=content_management/aboutus" class=" nav-links nav-link nav-content_management_aboutus">
+                                <i class="nav-icon fas fa-info-circle"></i>
+                                <p>About Us</p>
+                            </a>
+                        </li>
+
+                        <li class="navs nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=content_management/logo" class=" nav-links nav-link nav-content_management_logo">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <p>Logo</p>
+                            </a>
+
+
+
                     </ul>
                 </li>
                 <li class="navs nav-item">
@@ -122,15 +120,15 @@ a.nav-links{
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="navs nav-item">
-                        <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-links nav-link nav-inventory">
+                            <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-links nav-link nav-inventory">
                                 <i class="nav-icon fas fa-cog"></i>
                                 <p>Order Configuration</p>
                             </a>
-                            
-                          
+
+
                         </li>
                         <li class="navs nav-item">
-                       
+
                             <a href="<?php echo base_url ?>admin/?page=inventory" class=" nav-links nav-link nav-inventory">
                                 <i class="nav-icon fas fa-table"></i>
                                 <p>Inventory</p>
@@ -145,7 +143,7 @@ a.nav-links{
 
                     </ul>
                 </li>
-              
+
                 <li class="navs nav-item">
                     <a href="#" class="nav-links nav-link">
                         <i class="nav-icon fas fa-info-circle"></i>
@@ -154,27 +152,33 @@ a.nav-links{
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="navs nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=orders" class=" nav-links nav-link nav-orders">
+                            <a href="<?php echo base_url ?>admin/?page=shop_calendar" class="nav-links nav-link nav-clients">
+                                <i class="nav-icon fas fa-calendar"></i>
+                                <p>Calendar</p>
+                            </a>
+                        </li>
+                        <li class="navs nav-item">
+                            <a href="<?php echo base_url ?>admin/?page=orders" class="nav-links nav-link nav-clients">
                                 <i class="nav-icon fas fa-tasks"></i>
                                 <p>Orders</p>
                             </a>
                         </li>
-                       
-                        
-             
+
+
+
                         <li class="navs nav-item">
-                            <a href="<?php echo base_url?>admin/?page=clients" class="nav-links nav-link nav-clients">
+                            <a href="<?php echo base_url ?>admin/?page=clients" class="nav-links nav-link nav-clients">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>Registered Clients</p>
                             </a>
                         </li>
 
                         <li class="navs nav-item">
-                        <a href="<?php echo base_url?>admin/?page=clients/inquiries" class="nav-links nav-link nav-clients_inquiries">
-                            <i class="nav-icon fas fa-users"></i>
-                            <p>Customer Inquiries</p>
-                        </a>
-                    </li>
+                            <a href="<?php echo base_url ?>admin/?page=clients/inquiries" class="nav-links nav-link nav-clients_inquiries">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Customer Inquiries</p>
+                            </a>
+                        </li>
 
                     </ul>
                 </li>
@@ -185,7 +189,7 @@ a.nav-links{
                         <i class="right fas fa-angle-left"></i>
                     </a>
                     <ul class="nav nav-treeview">
-                        
+
                         <li class="navs nav-item">
                             <a href="<?php echo base_url ?>admin/?page=report/orders" class="nav-links nav-link nav-report_orders">
                                 <i class="fas fa-circle nav-icon"></i>
@@ -237,14 +241,14 @@ a.nav-links{
                                     <p>User List</p>
                                 </a>
                             </li>
-                          
+
 
                         </ul>
                     </li>
                 <?php endif; ?>
             </ul>
         </nav>
-       
+
 
         <!-- /.sidebar-menu -->
         <!-- Sidebar Scrollbar -->
@@ -260,12 +264,13 @@ a.nav-links{
         </div>
         <div class="os-scrollbar-corner"></div>
     </div>
-   
+
     <!-- /.sidebar -->
 </aside>
 <!-- JavaScript for Sidebar Behavior -->
 <script>
-    $(document).ready(function() 
+    $(document).ready(function() {
+
         // Function to store the menu state in local storage
         function storeMenuState() {
             var menuState = {};
@@ -286,20 +291,20 @@ a.nav-links{
             for (var menuId in menuState) {
                 if (menuState[menuId]) {
                     $(menuId).addClass('menu-open');
-                
+
+                }
             }
+
+            // Restore menu state when the page loads
+            restoreMenuState();
+
+            // Handle submenu clicks to store their state
+            $('.nav-item.has-treeview > a').on('click', function(e) {
+                e.preventDefault();
+                var menuId = $(this).attr('href');
+                $(menuId).toggleClass('menu-open');
+                storeMenuState();
+            });
         }
-
-        // Restore menu state when the page loads
-        restoreMenuState();
-
-        // Handle submenu clicks to store their state
-        $('.nav-item.has-treeview > a').on('click', function(e) {
-            e.preventDefault();
-            var menuId = $(this).attr('href');
-            $(menuId).toggleClass('menu-open');
-            storeMenuState();
-        });
-    });
-
+    })
 </script>

@@ -14,7 +14,7 @@ if (!isset($_GET['id'])) {
     $_settings->set_flashdata('error', 'No order ID Provided.');
     redirect('admin/?page=orders');
 }
-$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as fullname FROM `order_list` o inner join client_list c on c.id = o.client_id where o.id = '{$_GET['id']}' ");
+$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as fullname, a.status as appointment_status, a.dates, a.hours FROM `order_list` o inner join client_list c on c.id = o.client_id left join `appointment` a on a.order_id = o.id where o.id = '{$_GET['id']}' ");
 if ($order->num_rows > 0) {
     foreach ($order->fetch_assoc() as $k => $v) {
         $$k = $v;
@@ -54,6 +54,35 @@ if ($order->num_rows > 0) {
     <div class="card-body">
         <div class="container-fluid">
             <div class="row">
+                <?php if (isset($appointment_status)) : ?>
+                    <div class="col-md-6">
+                        <label for="" class="text-muted">Appointment</label>
+                        <div class="ml-3">
+                            <?php switch (strval($appointment_status)):
+                                case 0: ?>
+                                    <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending </span>
+                                    <b><?= $dates . ' ' . strtoupper($hours) ?></b>
+                                <?php break;
+                                case 1: ?>
+                                    <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Confirmed </span>
+                                    <b><?= $dates . ' ' . strtoupper($hours) ?></b>
+                                <?php break;
+                                case 2: ?>
+                                    <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Cancelled </span>
+                                    <b><?= $dates . ' ' . strtoupper($hours) ?></b>
+                                <?php break;
+                                case 3: ?>
+                                    <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Rejected </span>
+                                    <b><?= $dates . ' ' . strtoupper($hours) ?></b>
+                                <?php break;
+                                default: ?>
+                                    <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending </span>
+                                    <b><?= $dates . ' ' . strtoupper($hours) ?></b>
+                                    <?php break; ?>
+                            <?php endswitch; ?>
+                        </div>
+                    </div>
+                <?php endif;  ?>
                 <div class="info1 col-md-6">
                     <label for="" class="text-muted">Client Name</label>
                     <div class="ml-3"><b><?php echo $fullname ?></b></div>
@@ -65,14 +94,8 @@ if ($order->num_rows > 0) {
                     <div class="col-md-6">
                         <label for="" class="text-muted">Date Ordered</label>
                         <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></ </div>
-
-
-
-
-
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6">
                             <label for="" class="text-muted">Status</label>
@@ -165,8 +188,6 @@ if ($order->num_rows > 0) {
                                 }
                             }
 
-
-
                             echo '<label for="" class="text-muted">Client Address</label>';
                             echo '<div class="ml-3" id="prov"> ', '<b>' . $cityName . ', ' . $provinceName . '</b>', '</div>';
 
@@ -183,8 +204,6 @@ if ($order->num_rows > 0) {
 
                                 echo '<div class="ml-3" id="adr2">' . $addressline2 . '</div>';
                             }
-
-
                             ?>
                             <label>Proof Of payment</label>
                             <?php
@@ -202,7 +221,6 @@ if ($order->num_rows > 0) {
                             }
                             ?>
                         </div>
-
                     </div>
                     <div class="clear-fix my-2"></div>
                     <div class="row">
@@ -307,44 +325,48 @@ if ($order->num_rows > 0) {
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <script>
-                    $(function() {
-                        $('#update_status').click(function() {
-                            uni_modal("Update Order Status", "orders/update_status.php?id=<?= isset($id) ? $id : '' ?>?client_id=<?= isset($client_id) ? $client_id : '' ?>")
-                        })
-                        $('#btn-cancel').click(function() {
-                            _conf("Are you sure to cancel this order?", "cancel_order", [])
-                        })
-                        $('#delete_order').click(function() {
-                            _conf("Are you sure to delete this order permanently?", "delete_order", [])
-                        })
-                    })
+<script>
+    $(function() {
+        $('#update_status').click(function() {
+            uni_modal("Update Order Status", "orders/update_status.php?id=<?= isset($id) ? $id : '' ?>?client_id=<?= isset($client_id) ? $client_id : '' ?>")
+        })
+        $('#btn-cancel').click(function() {
+            _conf("Are you sure to cancel this order?", "cancel_order", [])
+        })
+        $('#delete_order').click(function() {
+            _conf("Are you sure to delete this order permanently?", "delete_order", [])
+        })
+    })
 
-                    function delete_order() {
-                        start_loader();
-                        $.ajax({
-                            url: _base_url_ + 'classes/master.php?f=delete_order',
-                            data: {
-                                id: "<?= isset($id) ? $id : '' ?>"
-                            },
-                            method: 'POST',
-                            dataType: 'json',
-                            error: err => {
-                                console.error(err)
-                                alert_toast('An error occurred.', 'error')
-                                end_loader()
-                            },
-                            success: function(resp) {
-                                if (resp.status == 'success') {
-                                    location.replace('./?page=orders')
-                                } else if (!!resp.msg) {
-                                    alert_toast(resp.msg, 'error')
-                                } else {
-                                    alert_toast('An error occurred.', 'error')
-                                }
-                                end_loader();
-                            }
-                        })
-                    }
-                </script>
+    function delete_order() {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + 'classes/master.php?f=delete_order',
+            data: {
+                id: "<?= isset($id) ? $id : '' ?>"
+            },
+            method: 'POST',
+            dataType: 'json',
+            error: err => {
+                console.error(err)
+                alert_toast('An error occurred.', 'error')
+                end_loader()
+            },
+            success: function(resp) {
+                if (resp.status == 'success') {
+                    location.replace('./?page=orders')
+                } else if (!!resp.msg) {
+                    alert_toast(resp.msg, 'error')
+                } else {
+                    alert_toast('An error occurred.', 'error')
+                }
+                end_loader();
+            }
+        })
+    }
+</script>

@@ -15,7 +15,7 @@ if (!isset($_GET['id'])) {
     $_settings->set_flashdata('error', 'No order ID Provided.');
     redirect('admin/?page=orders');
 }
-$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as fullname FROM `order_list` o inner join client_list c on c.id = o.client_id where o.id = '{$_GET['id']}' ");
+$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as fullname, a.id as appointment_id, a.dates, a.hours, a.status as appointment_status FROM `order_list` o inner join client_list c on c.id = o.client_id left join appointment a on a.order_id = o.id where o.id = '{$_GET['id']}' ");
 if ($order->num_rows > 0) {
     foreach ($order->fetch_assoc() as $k => $v) {
         $$k = $v;
@@ -84,6 +84,7 @@ if ($order->num_rows > 0) {
             display: none !important;
         }
     }
+
     .proof_payment_container input[type="file"] {
         border: 1px solid #d5d5d5;
         padding: 7px;
@@ -97,8 +98,47 @@ if ($order->num_rows > 0) {
         <div class="col-md-6">
             <label for="" class="text-muted">Name</label>
             <div class="ml-3"><b><?= isset($fullname) ? $fullname : "N/A" ?></b></div>
+            <label for="" class="text-muted">Appointment Date</label>
+            <div class="ml-3"><b><?= isset($dates) && isset($hours) ? $dates . ' ' . $hours : "-- --" ?></b></div>
+            <?php if (isset($appointment_status)) : ?>
+                <label for="" class="text-muted">Appointment Status</label>
+                <div class="ml-3">
+                    <?php switch (strval($appointment_status)):
+                        case 0: ?>
+                            <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
+                        <?php break;
+                        case 1: ?>
+                            <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Confirmed</span>
+                        <?php break;
+                        case 2: ?>
+                            <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Cancelled</span>
+                        <?php break;
+                        case 3: ?>
+                            <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Rejected</span>
+                        <?php break;
+                        default: ?>
+                            <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
+                            <?php break; ?>
+                    <?php endswitch; ?>
+                </div>
+            <?php endif; ?>
         </div>
-       
+        <div class="col-md-6">
+            <label for="" class="text-muted">Reference Code</label>
+            <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
+            <div class="ml-3">
+                <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
+                    <div class="proof_payment_container">
+                        <label for="proof_payment" class="text-muted">Upload Proof of Payment</label>
+                        <input type="text" class="" id="ref_code" name="ref_code" value="<?= isset($ref_code) ? $ref_code : "N/A" ?>" hidden>
+                        <input type="text" class="" id="order_id" name="order_id" value="<?= isset($id) ? $id : "N/A" ?>" hidden>
+                        <input type="text" class="" id="user_name" name="user_name" value="<?= isset($fullname) ? $fullname : "N/A" ?>" hidden>
+                        <input type="file" class="custom_gall form-control-file" id="proof_file" name="proof_file" accept="image/*">
+                        <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
+                    </div>
+                    <form>
+            </div>
+        </div>
         <div class="col-md-6">
             <label for="" class="text-muted">Date Ordered</label>
             <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></div>
@@ -164,33 +204,33 @@ if ($order->num_rows > 0) {
                     while ($row = $order_item->fetch_assoc()) :
                         $total += ($row['quantity'] * $row['price']);
                 ?>
-                    <div class="card mb-3">
-                        <div class="d-flex flex-column">
-                            <div class="d-flex align-items-center w-100 border cart-item px-3" data-id="<?= $row['id'] ?>">
-                                <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
-                                    <div class="d-flex align-items-center w-100 ">
-                                        <div class="col-auto">
-                                            <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-thumbnail prod-cart-img">
-                                        </div>
-                                        <div class="col-auto flex-grow-1 flex-shrink-1 ms-3">
-                                            <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="h4 text-muted" target="_blank">
-                                                <p class="text-truncate-1 m-0"><?= $row['name'] ?></p>
-                                            </a>
-                                            <small><?= $row['brand'] ?></small><br>
-                                            <small><?= $row['category'] ?></small><br>
-                                            <div class="d-flex align-items-center w-100 mb-1">
-                                                <span><?= number_format($row['quantity']) ?></span>
-                                                <span class="ml-2">X <?= number_format($row['price'], 2) ?></span>
+                        <div class="card mb-3">
+                            <div class="d-flex flex-column">
+                                <div class="d-flex align-items-center w-100 border cart-item px-3" data-id="<?= $row['id'] ?>">
+                                    <div class="col-auto flex-grow-1 flex-shrink-1 px-1 py-1">
+                                        <div class="d-flex align-items-center w-100 ">
+                                            <div class="col-auto">
+                                                <img src="<?= validate_image($row['image_path']) ?>" alt="Product Image" class="img-thumbnail prod-cart-img">
                                             </div>
-                                        </div>
-                                        <div class="col-auto text-right">
-                                            <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
+                                            <div class="col-auto flex-grow-1 flex-shrink-1 ms-3">
+                                                <a href="./?p=products/view_product&id=<?= $row['product_id'] ?>" class="h4 text-muted" target="_blank">
+                                                    <p class="text-truncate-1 m-0"><?= $row['name'] ?></p>
+                                                </a>
+                                                <small><?= $row['brand'] ?></small><br>
+                                                <small><?= $row['category'] ?></small><br>
+                                                <div class="d-flex align-items-center w-100 mb-1">
+                                                    <span><?= number_format($row['quantity']) ?></span>
+                                                    <span class="ml-2">X <?= number_format($row['price'], 2) ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-auto text-right">
+                                                <h3><b><?= number_format($row['quantity'] * $row['price'], 2) ?></b></h3>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <?php if (!$row['rated'] && $status == 5) : ?>
+
+                                <?php if (!$row['rated'] && $status == 5) : ?>
                                     <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
                                         <div class="card">
                                             <div class="card-header" id="reviewContent">
@@ -230,9 +270,9 @@ if ($order->num_rows > 0) {
                                         </div>
                                     </div>
                                 <?php endif; ?>
+                            </div>
                         </div>
-                    </div>
-                        
+
                     <?php endwhile; ?>
                 <?php endif; ?>
                 <?php if (isset($order_item) && $order_item->num_rows <= 0) : ?>
@@ -248,9 +288,9 @@ if ($order->num_rows > 0) {
                     </h3>
                 </div>
             </div>
-            <?php 
-                if (isset($_GET['id']) && $_GET['id'] > 0) {
-                    $order_result = $conn->query("SELECT ol.id AS id, p.id AS product_id,
+            <?php
+            if (isset($_GET['id']) && $_GET['id'] > 0) {
+                $order_result = $conn->query("SELECT ol.id AS id, p.id AS product_id,
                         p.name,
                         cl.firstname,
                         cl.lastname,
@@ -261,10 +301,10 @@ if ($order->num_rows > 0) {
                         inner join client_list cl on cl.id = ol.client_id
                         WHERE ol.id = '{$_GET['id']}'");
 
-                    if ($row = $order_result->fetch_assoc()) {
-                ?>
-                        <!-- Start Return/Refund -->
-                        <?php if ($status == 5) : ?>
+                if ($row = $order_result->fetch_assoc()) {
+            ?>
+                    <!-- Start Return/Refund -->
+                    <?php if ($status == 5) : ?>
                         <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
                             <div class="card">
                                 <div class="card-header" id="returnContent">
@@ -286,18 +326,18 @@ if ($order->num_rows > 0) {
                                                 <label for="exampleFormControlTextarea1">Reason For Return/Refund: </label>
                                                 <textarea class="form-control" name="author_comments" id="exampleFormControlTextarea1" rows="3"></textarea>
                                             </div>
-                                            <button class="btn btn-flat btn-primary mt-3" onclick="submitReturn('submit-return', '<?=  $row['id'] ?>')" type="button">Submit</button>
+                                            <button class="btn btn-flat btn-primary mt-3" onclick="submitReturn('submit-return', '<?= $row['id'] ?>')" type="button">Submit</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-                        
-                        <?php endif; ?>
-                <?php 
-                    }
+
+                    <?php endif; ?>
+            <?php
                 }
-                ?>
+            }
+            ?>
 
         </div>
     </div>
@@ -330,7 +370,7 @@ if ($order->num_rows > 0) {
             _conf("Are you sure to cancel this order?", "cancel_order", [])
         })
     }
-    
+
     $('#btn-cancel').click(function() {
         _conf("Are you sure to cancel this order?", "cancel_order", [])
     })
@@ -459,5 +499,52 @@ if ($order->num_rows > 0) {
         })
     }
 
+    $(document).ready(function() {
+        // Product submission
+        $('#proof_form').submit(function(e) {
+            e.preventDefault();
+            var _this = $(this)
+            $('.err-msg').remove();
+            const formData = new FormData($(this)[0]);
+            start_loader();
+            $.ajax({
+                url: _base_url_ + "classes/Master.php?f=save_proof_payment",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST',
+                dataType: 'json',
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log("AJAX Error:");
+                    console.log("Status: " + textStatus);
+                    console.log("Error: " + errorThrown);
+                    console.log("Response Text: " + jqXHR.responseText);
+                    alert_toast("An error occurred. Check the console for details.", 'error');
+                    end_loader();
+                },
+                success: function(resp) {
+                    console.log(resp);
+                    if (typeof resp == 'object' && resp.status == 'success') {
+                        location.href = "./?page=products";
+                    } else if (resp.status == 'failed' && !!resp.msg) {
+                        var el = $('<div>')
+                        el.addClass("alert alert-danger err-msg").text(resp.msg)
+                        _this.prepend(el)
+                        el.show('slow')
+                        $("html, body").animate({
+                            scrollTop: _this.closest('.card').offset().top
+                        }, "fast");
+                        end_loader()
+                    } else {
+                        alert_toast("An error occured", 'error');
+                        end_loader();
+                        console.log(resp)
+                    }
+                }
+            })
+        })
 
+    })
 </script>

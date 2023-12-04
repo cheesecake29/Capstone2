@@ -74,7 +74,7 @@
 
   footer {
     width: 100%;
-     background-color: #1A547E;
+    background-color: #1A547E;
     text-align: center;
     color: #fff;
     padding: 10px;
@@ -121,6 +121,9 @@
 <script src="<?php echo base_url ?>plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="<?php echo base_url ?>plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="<?php echo base_url ?>plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<!-- Updated JavaScript url -->
+<script src="<?php echo base_url ?>plugins/timepicker/timepicker.js"></script>
+
 <!-- overlayScrollbars -->
 <!-- <script src="<?php echo base_url ?>plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script> -->
 <!-- AdminLTE App -->

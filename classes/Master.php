@@ -501,26 +501,26 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 	function delete_product()
-{
-    extract($_POST);
-    $datenow = date("Y-m-d H:i:s");
+	{
+		extract($_POST);
+		$datenow = date("Y-m-d H:i:s");
 
-    // Use DELETE statement to remove records from product_variations
-    $this->conn->query("DELETE FROM `product_variations` WHERE product_id = '{$id}'");
+		// Use DELETE statement to remove records from product_variations
+		$this->conn->query("DELETE FROM `product_variations` WHERE product_id = '{$id}'");
 
-    // Use DELETE statement to remove the product from product_list
-    $del = $this->conn->query("DELETE FROM `product_list` WHERE id = '{$id}'");
+		// Use DELETE statement to remove the product from product_list
+		$del = $this->conn->query("DELETE FROM `product_list` WHERE id = '{$id}'");
 
-    if ($del) {
-        $resp['status'] = 'success';
-        $this->settings->set_flashdata('success', "Product successfully deleted.");
-    } else {
-        $resp['status'] = 'failed';
-        $resp['error'] = $this->conn->error;
-    }
+		if ($del) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Product successfully deleted.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
 
-    return json_encode($resp);
-}
+		return json_encode($resp);
+	}
 
 	function save_service()
 	{
@@ -1148,30 +1148,30 @@ class Master extends DBConnection
 	}
 
 	function delete_config()
-{
-    // Check if the request is for deleting an order configuration
-    if ($_GET['f'] == 'delete_config') {
-        // Extract the POST data
-        extract($_POST);
-        $productId = $_POST['productId'];
+	{
+		// Check if the request is for deleting an order configuration
+		if ($_GET['f'] == 'delete_config') {
+			// Extract the POST data
+			extract($_POST);
+			$productId = $_POST['productId'];
 
-        // Add your code to delete the record with the specified productId from the database
-        $deleteQuery = "DELETE FROM order_config WHERE product_id = '{$productId}'";
-        $deleteResult = $this->conn->query($deleteQuery);
+			// Add your code to delete the record with the specified productId from the database
+			$deleteQuery = "DELETE FROM order_config WHERE product_id = '{$productId}'";
+			$deleteResult = $this->conn->query($deleteQuery);
 
-        if ($deleteResult) {
-            // Record successfully deleted
-            $response = array('status' => 'success');
-        } else {
-            // Error occurred during deletion
-            $response = array('status' => 'error', 'message' => $this->conn->error);
-        }
+			if ($deleteResult) {
+				// Record successfully deleted
+				$response = array('status' => 'success');
+			} else {
+				// Error occurred during deletion
+				$response = array('status' => 'error', 'message' => $this->conn->error);
+			}
 
-        // Send the response as JSON
-        echo json_encode($response);
-        exit;
-    }
-}
+			// Send the response as JSON
+			echo json_encode($response);
+			exit;
+		}
+	}
 
 	function find_order_config()
 	{
@@ -1243,6 +1243,22 @@ class Master extends DBConnection
 		if ($action) {
 			$resp['status'] = 'success';
 			$resp['msg'] = `Appointment successfully updated`;
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		return json_encode($resp);
+	}
+	function retrieve_availability()
+	{
+		extract($_POST);
+		$date = $_POST['date'];
+		$checkAvailabilityDates = $this->conn->query("SELECT hours FROM appointment where dates = '{$date}' and status != 3");
+		if ($checkAvailabilityDates) {
+			$resp['status'] = 'success';
+			$resp['msg'] = `Appointment successfully updated`;
+			$resp['data'] = $checkAvailabilityDates->fetch_all();
 		} else {
 			$resp['error'] = $this->conn->error;
 			$resp['status'] = 'failed';
@@ -1342,6 +1358,9 @@ switch ($action) {
 		break;
 	case 'update_appt_status':
 		echo $Master->update_appt_status();
+		break;
+	case 'retrieve_availability':
+		echo $Master->retrieve_availability();
 		break;
 
 	default:

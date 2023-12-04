@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 03, 2023 at 03:09 PM
+-- Generation Time: Dec 04, 2023 at 09:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -42,10 +42,8 @@ CREATE TABLE `appointment` (
 --
 
 INSERT INTO `appointment` (`id`, `client_id`, `order_id`, `dates`, `hours`, `status`, `datetime`) VALUES
-(142, 14, 39, '2023-12-08', '9am - 10am', 1, '2023-12-03 06:23:19'),
-(143, 14, 40, '2023-12-08', '10am - 11am', 1, '2023-12-03 06:23:17'),
-(144, 14, 41, '2023-12-14', '10am - 11am', 1, '2023-12-03 06:20:00'),
-(145, 14, 42, '2023-12-22', '9am - 10am', 0, '2023-12-03 14:08:02');
+(146, 14, 43, '2023-12-08', '09:00 am', 0, '2023-12-04 07:32:41'),
+(147, 14, 44, '2023-12-08', '10:00 am', 0, '2023-12-04 08:08:41');
 
 -- --------------------------------------------------------
 
@@ -88,6 +86,13 @@ CREATE TABLE `cart_list` (
   `quantity` float NOT NULL,
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_list`
+--
+
+INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
+(90, 14, 50, 53, 1, '2023-12-04 15:40:59');
 
 -- --------------------------------------------------------
 
@@ -248,7 +253,9 @@ INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`,
 (16, 14, 'John Doe  has placed an order.', 0, 2, 39),
 (17, 14, 'John Doe  has placed an order.', 0, 2, 40),
 (18, 14, 'John Doe  has placed an order.', 0, 2, 41),
-(19, 14, 'John Doe  has placed an order.', 0, 2, 42);
+(19, 14, 'John Doe  has placed an order.', 0, 2, 42),
+(20, 14, 'John Doe  has placed an order.', 0, 2, 43),
+(21, 14, 'John Doe  has placed an order.', 0, 2, 44);
 
 -- --------------------------------------------------------
 
@@ -288,19 +295,8 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quantity`, `rated`, `date_added`, `date_updated`) VALUES
-(36, 33, 46, 51, 1, 0, '2023-11-17 18:13:04', NULL),
-(37, 34, 46, 50, 2, 1, '2023-11-17 18:31:20', '2023-11-23 18:19:45'),
-(38, 34, 50, 53, 1, 1, '2023-11-17 18:31:20', '2023-11-23 18:19:54'),
-(39, 35, 50, 52, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:18:36'),
-(40, 35, 50, 53, 1, 1, '2023-11-17 18:45:26', '2023-11-23 18:19:32'),
-(41, 36, 50, 52, 1, 0, '2023-12-02 13:11:22', NULL),
-(42, 36, 46, 49, 1, 0, '2023-12-02 13:11:22', NULL),
-(43, 37, 50, 53, 1, 0, '2023-12-02 15:22:36', NULL),
-(44, 38, 46, 50, 1, 0, '2023-12-02 15:23:48', NULL),
-(45, 39, 46, 49, 1, 0, '2023-12-02 15:26:13', NULL),
-(46, 40, 50, 53, 1, 0, '2023-12-02 15:29:11', NULL),
-(47, 41, 50, 53, 1, 0, '2023-12-02 20:33:40', NULL),
-(48, 42, 46, 49, 3, 0, '2023-12-03 22:08:02', NULL);
+(49, 43, 50, 53, 1, 0, '2023-12-04 15:32:41', NULL),
+(50, 44, 46, 49, 1, 0, '2023-12-04 15:40:52', NULL);
 
 -- --------------------------------------------------------
 
@@ -331,16 +327,8 @@ CREATE TABLE `order_list` (
 --
 
 INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
-(33, '202311-00001', 14, 1150, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-11-17 18:13:04', '2023-11-17 18:13:04'),
-(34, '202311-00002', 14, 2650, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:31:20', '2023-11-22 17:59:38'),
-(35, '202311-00003', 14, 250, '', '1401', '175301', '', '', '', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-11-17 18:45:26', '2023-11-22 14:42:40'),
-(36, '202312-00001', 14, 1600, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 13:11:22', '2023-12-02 13:11:22'),
-(37, '202312-00002', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 15:22:36', '2023-12-02 15:22:36'),
-(38, '202312-00003', 14, 1250, '', '0421', '042106', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-02 15:23:48', '2023-12-02 15:23:48'),
-(39, '202312-00004', 14, 1500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 15:26:13', '2023-12-02 15:26:13'),
-(40, '202312-00005', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 15:29:11', '2023-12-02 15:29:11'),
-(41, '202312-00006', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-02 20:33:40', '2023-12-02 20:33:40'),
-(42, '202312-00007', 14, 4500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-03 22:08:02', '2023-12-03 22:08:02');
+(43, '202312-00001', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:32:41', '2023-12-04 15:32:41'),
+(44, '202312-00002', 14, 1500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:40:52', '2023-12-04 15:40:52');
 
 -- --------------------------------------------------------
 
@@ -584,26 +572,6 @@ INSERT INTO `system_info` (`id`, `meta_field`, `meta_value`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `time_availability`
---
-
-CREATE TABLE `time_availability` (
-  `id` int(11) NOT NULL,
-  `value` varchar(1000) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `time_availability`
---
-
-INSERT INTO `time_availability` (`id`, `value`, `status`) VALUES
-(1, '9am - 10am', 0),
-(2, '10am - 11am', 0);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
@@ -777,12 +745,6 @@ ALTER TABLE `system_info`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `time_availability`
---
-ALTER TABLE `time_availability`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -796,7 +758,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT for table `brand_list`
@@ -808,7 +770,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -838,7 +800,7 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `order_config`
@@ -850,13 +812,13 @@ ALTER TABLE `order_config`
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `product_image_gallery`
@@ -911,12 +873,6 @@ ALTER TABLE `stock_list`
 --
 ALTER TABLE `system_info`
   MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
-
---
--- AUTO_INCREMENT for table `time_availability`
---
-ALTER TABLE `time_availability`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -522,14 +522,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                 <div class="date_picker" style="display: none;">
                                     <div class="d-flex">
                                         <input name="meetup_date" id="meetup_datepicker" class="form-control mb-1" placeholder="Select a date">
-                                        <select name="meetup_time" class="form-control mb-1">
-                                            <?php
-                                            $times = $conn->query("SELECT * FROM `time_availability`");
-                                            while ($time = $times->fetch_assoc()) :
-                                            ?>
-                                                <option value="<?= $time['value'] ?>" id="time-<?= $time['id'] ?>"><?= $time['value'] ?></option>
-                                            <?php endwhile; ?>
-                                        </select>
+                                        <input name="meetup_time" id="meetup_timepicker" disabled class="form-control mb-1" placeholder="Select a time">
                                     </div>
                                     <button type="button" onclick="showAvailability()" class="btn btn-link text-decoration-none px-0 text-primary">Check Calendar</button>
                                 </div>
@@ -561,15 +554,59 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     function showAvailability() {
         $('#calendar_modal').modal('show');
     }
+
     $("#meetup_datepicker").datepicker({
         todayHighlight: true,
         minDate: 3,
         dateFormat: 'yy-mm-dd',
         beforeShowDay: function(date) {
-
             var day = date.getDay();
             return [(day != -1), ''];
+        },
+        onSelect: function(date) {
+            console.log(date)
+            $.ajax({
+                url: _base_url_ + "classes/Master.php?f=retrieve_availability",
+                data: {
+                    date
+                },
+                method: 'POST',
+                type: 'POST',
+                dataType: 'json',
+                error: err => {
+                    console.log(err)
+                    alert_toast("An error occured", 'error');
+                    end_loader();
+                },
+                success: function(resp) {
+                    if (typeof resp == 'object' && resp.status == 'success') {
+                        const unavailableHours = [];
+                        resp.data.forEach((item) => {
+                            const amp = item[0].slice(item[0].length - 2, item[0].length);
+                            const hoursInterval =
+                                parseInt(item[0].slice(0, 2)) + 1 <= 9 ?
+                                `0${parseInt(item[0].slice(0, 2)) + 1}:${item[0].slice(3, 5)} ${amp}` :
+                                `${parseInt(item[0].slice(0, 2)) + 1}:${item[0].slice(3, 5)} ${amp}`;
+                            item.push(hoursInterval);
+                        });
+                        $("#meetup_timepicker").removeAttr('disabled')
+                        $("#meetup_timepicker").timepicker({
+                            minTime: '8am',
+                            maxTime: '6pm',
+                            timeFormat: 'h:i a',
+                            step: 60,
+                            dropdown: true,
+                            scrollbar: true,
+                            disableTimeRanges: resp.data
+                        });
+                    } else {
+                        alert_toast("An error occured", 'error');
+                        end_loader();
+                        console.log(resp)
+                    }
 
+                }
+            })
         }
     });
     $(function() {

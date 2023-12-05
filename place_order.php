@@ -7,6 +7,7 @@ $response1 = file_get_contents($api_url_province);
 $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
 $response2 = file_get_contents($api_url_city);
 $all_order_config = $conn->query("SELECT * from order_config where is_all = 1 limit 1")->fetch_assoc();
+$unavailableDates = $conn->query("SELECT schedule from unavailable_dates")->fetch_all();
 if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     $qry = $conn->query("SELECT * FROM `client_list` where id = '{$_settings->userdata('id')}'");
     if ($qry->num_rows > 0) {
@@ -174,13 +175,13 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         background: #fff;
     }
 
-    .ui-datepicker>table {
+    .ui-datepicker table {
         width: 100%;
     }
 
 
-    .ui-datepicker>table td,
-    th {
+    .ui-datepicker table td,
+    .ui-datepicker table td th {
         border: 1px solid #1A547E;
         padding: 5px;
     }
@@ -227,21 +228,20 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .ui-state-default,
     .ui-widget-content .ui-state-default,
     .ui-widget-header .ui-state-default {
-       
         border-width: 1px 0 0 1px;
     }
 
-    th{
-        color:white;
-       
+    th {
+        color: white;
+
     }
 
-    thead{
+    thead {
         background-color: #0062CC;
         border: none;
     }
 
-    .card-body{
+    .card-body {
         background-color: white;
     }
 </style>
@@ -352,7 +352,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     <input class="form-control" type="text" name="firstname" id="firstname" placeholder="First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" onkeydown="return allowOnlyLetters(event)" required>
                                 </div>
                                 <div class="lname">
-                                    <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>" onkeydown="return allowOnlyLetters(event)"required>
+                                    <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>" onkeydown="return allowOnlyLetters(event)" required>
                                 </div>
                             </div>
                         </div>
@@ -446,7 +446,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                                 echo 'Failed to fetch or decode data.';
                                             }
                                             ?>
-                                             <span class="custom-control-input custom-control-input-primary">Adress Line 1</span>
+                                            <span class="custom-control-input custom-control-input-primary">Adress Line 1</span>
                                             <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input>
                                             <span class="custom-control-input custom-control-input-primary">Adress Line 2</span>
                                             <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
@@ -570,33 +570,37 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 </div>
 
 <script>
-       function allowOnlyLetters(event) {
+    function allowOnlyLetters(event) {
         // Check if the key pressed is a letter
         if (event.key.match(/[A-Za-z]/)) {
-            return true;  // Allow the key press
+            return true; // Allow the key press
         } else {
             return false; // Prevent the key press
         }
     }
-     function allowOnlyNumbers(event) {
-    // Check if the key pressed is a number or the backspace key
-    if (event.key.match(/[0-9]/) || event.keyCode === 8 /* Backspace */) {
-        return true;  // Allow the key press
-    } else {
-        return false; // Prevent the key press
+
+    function allowOnlyNumbers(event) {
+        // Check if the key pressed is a number or the backspace key
+        if (event.key.match(/[0-9]/) || event.keyCode === 8 /* Backspace */ ) {
+            return true; // Allow the key press
+        } else {
+            return false; // Prevent the key press
+        }
+
     }
 
-}
     function showAvailability() {
         $('#calendar_modal').modal('show');
     }
+    const unavailableDates = JSON.parse(JSON.stringify(<?= json_encode($unavailableDates) ?>));
+    var dates = unavailableDates.flatMap(item => item)
     $("#meetup_datepicker").datepicker({
         todayHighlight: true,
         minDate: 3,
         dateFormat: 'yy-mm-dd',
         beforeShowDay: function(date) {
-            var day = date.getDay();
-            return [(day != -1), ''];
+            var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+            return [dates.indexOf(string) == -1];
         },
         onSelect: function(date) {
             console.log(date)

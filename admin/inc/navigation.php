@@ -62,7 +62,19 @@
                     </a>
                 </li>
 
+                <li class="navs nav-item">
+                    <a href="<?php echo base_url ?>admin/?page=shop_config" class="nav-links nav-link">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>Shop Configuration</p>
+                    </a>
+                </li>
 
+                <li class="navs nav-item">
+                    <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-links nav-link">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>Order Configuration</p>
+                    </a>
+                </li>
 
                 <li class="navs nav-item">
                     <a href="#" class="nav-links nav-link">
@@ -71,11 +83,7 @@
                         <i class="right fas fa-angle-left"></i>
                     </a>
 
-
                     <ul class="nav nav-treeview">
-
-
-
                         <li class="navs nav-item">
                             <a href="<?php echo base_url ?>admin/?page=content_management/home" class="nav-links nav-link nav-content_management_home">
                                 <i class="nav-icon fas fa-home"></i>
@@ -124,8 +132,6 @@
                                 <i class="nav-icon fas fa-cog"></i>
                                 <p>Order Configuration</p>
                             </a>
-
-
                         </li>
                         <li class="navs nav-item">
 

@@ -227,8 +227,22 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .ui-state-default,
     .ui-widget-content .ui-state-default,
     .ui-widget-header .ui-state-default {
-        border: solid #FFF;
+       
         border-width: 1px 0 0 1px;
+    }
+
+    th{
+        color:white;
+       
+    }
+
+    thead{
+        background-color: #0062CC;
+        border: none;
+    }
+
+    .card-body{
+        background-color: white;
     }
 </style>
 <div class="content ">
@@ -328,17 +342,17 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                         <div class="dropdown-divider my-3"></div>
                         <div class="form-group">
                             <input class="form-control mb-2" type="email" name="email" id="email" placeholder="yourmail@gmail.com" required value="<?= isset($email) ? $email : "" ?>">
-                            <input class="form-control mb-2" type="text" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>"></input required>
+                            <input class="form-control mb-2" type="text" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>" onkeydown="return allowOnlyNumbers(event)" required>
                         </div>
                         <h1 class="label-info mt-3"><strong>Delivery</strong></h1>
                         <div class="dropdown-divider my-3"></div>
                         <div class="form-group">
                             <div class="input-form-name">
                                 <div class="fname">
-                                    <input class="form-control" type="text" name="firstname" id="firstname" placeholder="First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" required>
+                                    <input class="form-control" type="text" name="firstname" id="firstname" placeholder="First Name" autofocus value="<?= isset($firstname) ? $firstname : "" ?>" onkeydown="return allowOnlyLetters(event)" required>
                                 </div>
                                 <div class="lname">
-                                    <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>">
+                                    <input class="form-control" type="text" name="lastname" id="lastname" placeholder="Last Name" required value="<?= isset($lastname) ? $lastname : "" ?>" onkeydown="return allowOnlyLetters(event)"required>
                                 </div>
                             </div>
                         </div>
@@ -361,7 +375,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </div>
                                     <div class="my-1">
                                         <input class="custom-control-input custom-control-input-primary" type="radio" id="customRadio4" name="order_type" value="4">
-                                        <label for="customRadio4" class="custom-label">Meet up (Shipping fee care of buyer)</label><br>
+                                        <label for="customRadio4" class="custom-label">Meet up (No shipping fee)</label><br>
                                     </div>
                                 </div>
                                 <div class="place-order form-group text-right">
@@ -383,11 +397,11 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     <div class="dropdown-divider my-3"></div>
                                     <div class="custom-control custom-radio addresstype">
                                         <input class="custom-control-input" type="radio" id="default" name="address_type" value="1" checked>
-                                        <label class="custom-control-label" for="default"><strong>Same as shipping address</strong></label>
+                                        <label class="custom-control-label" for="default">Same as shipping address</label>
                                     </div>
                                     <div class="custom-control custom-radio addresstype">
                                         <input class="custom-control-input" type="radio" id="diff" name="address_type" value="2">
-                                        <label class="custom-control-label" for="diff"><strong>Use a different billing address</strong></label>
+                                        <label class="custom-control-label" for="diff">Use a different billing address</label>
                                     </div>
                                     <!-- this will show bu default -->
                                     <div class="default-add">
@@ -412,6 +426,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             } else {
                                                 echo 'Failed to fetch or decode data.';
                                             }
+
+                                            echo '<span class="custom-control-input custom-control-input-primary">Cities</span>';
                                             // Handle JSON data
                                             $cities = json_decode($response2, true);
                                             $selectedCityId = $city;
@@ -430,9 +446,12 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                                 echo 'Failed to fetch or decode data.';
                                             }
                                             ?>
+                                             <span class="custom-control-input custom-control-input-primary">Adress Line 1</span>
                                             <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input>
+                                            <span class="custom-control-input custom-control-input-primary">Adress Line 2</span>
                                             <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
-                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>"></input>
+                                            <span class="custom-control-input custom-control-input-primary">Zip code</span>
+                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>" onkeydown="return allowOnlyNumbers(event)" required>
 
                                         </div>
                                     </div>
@@ -551,10 +570,26 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
 </div>
 
 <script>
+       function allowOnlyLetters(event) {
+        // Check if the key pressed is a letter
+        if (event.key.match(/[A-Za-z]/)) {
+            return true;  // Allow the key press
+        } else {
+            return false; // Prevent the key press
+        }
+    }
+     function allowOnlyNumbers(event) {
+    // Check if the key pressed is a number or the backspace key
+    if (event.key.match(/[0-9]/) || event.keyCode === 8 /* Backspace */) {
+        return true;  // Allow the key press
+    } else {
+        return false; // Prevent the key press
+    }
+
+}
     function showAvailability() {
         $('#calendar_modal').modal('show');
     }
-
     $("#meetup_datepicker").datepicker({
         todayHighlight: true,
         minDate: 3,

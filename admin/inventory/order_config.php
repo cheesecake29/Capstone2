@@ -1,15 +1,26 @@
 <?php
 $order_config = $conn->query("SELECT og.*, pl.id as product_id from order_config og left join product_list pl on pl.id = og.product_id order by og.product_id;");
 ?>
+
+<style>
+ .upper-content{
+    display: flex;
+    justify-content:center ;
+    align-content:center;
+ }
+
+ .order-configuration{
+    background-color: white;
+    width: 100%;
+ }
+</style>
 <div class="order-configuration">
-    <div class="config-header">
-        <h1>Update Order Configuration</h1>
-    </div>
+    
     <div class="dropdown-divider my-3"></div>
     <div class="config-body">
         <form id="order-config" action="">
-            <div class="d-flex align-items-end">
-                <div class="mr-2">
+            <div class="upper-content d-flex align-items-end">
+                <div class=" mr-2">
                     <label for="max-price" class="control-label">Product</label>
                     <select name="type" id="type" class="custom-select select2" required>
                         <!-- <option value="" disabled selected> Select product</option> -->
@@ -22,7 +33,7 @@ $order_config = $conn->query("SELECT og.*, pl.id as product_id from order_config
                         <!-- <?php endwhile; ?> -->
                     </select>
                 </div>
-                <div class="mr-2">
+            <div class="mr-2">
                     <label for="max-price" class="control-label">Maximum order price <?= isset($type) ? $type : '' ?></label>
                     <input name="max-price" id="max-price" type="text" class="form-control rounded-0 CurrencyInput" value="<?php echo isset($value) ? $value : ''; ?>" required>
                 </div>

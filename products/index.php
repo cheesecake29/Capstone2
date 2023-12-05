@@ -14,6 +14,7 @@ $price_filter = ($min_price > 0 || $max_price > 0)
 
 $where = "";
 
+
 ?>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

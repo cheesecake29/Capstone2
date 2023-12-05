@@ -52,7 +52,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
                                 default: ?>
                                     <b class="text-secondary">Pending</b>
                                     <?php break; ?>
-                            <?php endswitch; ?>
+<?php endswitch; ?>
                         </td>
                         <td><?= date('Y-m-d h:m:s a', strtotime($row['datetime'])) ?></td>
                         <td><button class="btn btn-link text-primary update_appointment" data-id="<?php echo $row['id'] ?>"><i class="fas fa-edit"></i></button></td>

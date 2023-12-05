@@ -232,9 +232,15 @@
 
     .notification-item {
         padding: 10px;
-        margin: 5px;
-        background: #ccc;
+       
+        background: #ffff;
         border-radius: 4px;
+    }
+
+    .notification-item:hover {
+      
+        background: #F4F5FA;
+       
     }
 
     .notification-count {

@@ -331,7 +331,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                                 <?php endif; ?>
                                                 <span id='stock_<?php echo $variation['id'] ?>'>
                                                     <?php echo $variation['variation_name'] ?>
-                                                    <span class="text-price me-3"> <?= number_format($variation['variation_price'], 2)  ?> php </span>
+                                                   
                                             </div>
                                             <div class="bd-highlights">
                                                 <small>

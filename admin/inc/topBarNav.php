@@ -59,12 +59,18 @@
 
  }
     
-.notification-item {
- padding:10px;
- margin:5px;
- background:#ccc;
- border-radius:4px;
- }
+ .notification-item {
+        padding: 10px;
+       
+        background: #ffff;
+        border-radius: 4px;
+    }
+
+    .notification-item:hover {
+      
+        background: #F4F5FA;
+       
+    }
 
  .notification-count {
     width: 30px;

@@ -504,13 +504,13 @@ class Master extends DBConnection
 	{
 		extract($_POST);
 		$datenow = date("Y-m-d H:i:s");
-
+	
 		// Use DELETE statement to remove records from product_variations
 		$this->conn->query("DELETE FROM `product_variations` WHERE product_id = '{$id}'");
-
+	
 		// Use DELETE statement to remove the product from product_list
 		$del = $this->conn->query("DELETE FROM `product_list` WHERE id = '{$id}'");
-
+	
 		if ($del) {
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Product successfully deleted.");
@@ -518,7 +518,7 @@ class Master extends DBConnection
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
-
+	
 		return json_encode($resp);
 	}
 
@@ -949,12 +949,19 @@ class Master extends DBConnection
 					$desc = "{$fullname} ' ' has placed an order.";
 					$this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2, `order_id`='{$oid}'");
 					$resp['msg'] = " Order has been place successfully.";
-				} else {
+				} 
+
+				
+				
+				
+				else {
 					$resp['status'] = 'failed';
 					$resp['msg'] = " Order has failed to place.";
 					$resp['error'] = $this->conn->error;
 					$this->conn->query("DELETE FROM `order_list` where id = '{$oid}'");
 				}
+
+				
 			} else {
 				$resp['status'] = 'failed';
 				$resp['msg'] = " Cart is empty.";
@@ -1023,23 +1030,15 @@ class Master extends DBConnection
 						$desc = 'Your order ' . $product_name . ' is pending.';
 					}
 					if ($status == 1) {
-						$desc = 'Your order ' . $product_name . ' is confirmed.';
+						$desc = 'Your order ' . $product_name . ' is shipped.';
 					}
 					if ($status == 2) {
-						$desc = 'Your order ' . $product_name . ' is packed.';
+						$desc = 'Your order ' . $product_name . ' is delivered.';
 					}
 					if ($status == 3) {
-						$desc = 'Your order ' . $product_name . ' is for delivery.';
-					}
-					if ($status == 4) {
-						$desc = 'Your order ' . $product_name . ' is on the way.';
-					}
-					if ($status == 5) {
-						$desc = 'Your order ' . $product_name . ' was delivered.';
-					}
-					if ($status == 6) {
 						$desc = 'Your order ' . $product_name . ' was cancelled.';
 					}
+			
 					$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
 					$resp['status'] = 'success';
 					$resp['msg'] = " Order's status has been updated successfully.";
@@ -1048,6 +1047,9 @@ class Master extends DBConnection
 					$resp['status'] = 'failed';
 					$resp['msg'] = " Order's status has failed to update.";
 				}
+
+				
+			
 			} else {
 				$resp['error'] = $this->conn->error;
 				$resp['status'] = 'failed';

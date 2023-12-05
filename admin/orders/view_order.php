@@ -102,22 +102,14 @@ if ($order->num_rows > 0) {
                             <div class="ml-3">
 
                                 <?php if (isset($status)) : ?>
-                                    <?php if ($status == 1) : ?>
-                                        <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
+                                    <?php if ($status == 0) : ?>
+                                        <span class="badge badge-secondary px-3 rounded-pill">Confirm</span>
 
+                                    <?php elseif ($status == 1) : ?>
+                                        <span class="badge badge-success px-3 rounded-pill">Shipped</span>
                                     <?php elseif ($status == 2) : ?>
-                                        <span class="badge badge-primary px-3 rounded-pill">Confirm</span>
-
-                                        <!-- <?php elseif ($status == 2) : ?>
-                                <span class="badge badge-primary px-3 rounded-pill">Packed</span> -->
-
-                                    <?php elseif ($status == 3) : ?>
-                                        <span class="badge badge-success px-3 rounded-pill">For Delivery</span>
-                                    <?php elseif ($status == 4) : ?>
-                                        <span class="badge badge-warning px-3 rounded-pill">On the Way</span>
-                                    <?php elseif ($status == 5) : ?>
                                         <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
-                                    <?php elseif ($status == 6) : ?>
+                                    <?php elseif ($status == 3) : ?>
                                         <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
                                     <?php else : ?>
                                         <span class="badge badge-danger px-3 rounded-pill">For Return/Refund</span>
@@ -205,21 +197,7 @@ if ($order->num_rows > 0) {
                                 echo '<div class="ml-3" id="adr2">' . $addressline2 . '</div>';
                             }
                             ?>
-                            <label>Proof Of payment</label>
-                            <?php
-                            // Display the first gallery image
-                            if (!empty($id)) {
-                                $gallery_images_query = $conn->query("SELECT file_url FROM `proof_payments` WHERE `ref_code` = '{$ref_code}'");
-
-                                if ($gallery_images_query->num_rows > 0) {
-                                    // Display the first image
-                                    $gallery_row = $gallery_images_query->fetch_assoc();
-                                    echo '<div class="gallery-image-container gallery-item d-flex" data-image="' . $gallery_row['file_url'] . '" >';
-                                    echo '<img src="' . $gallery_row['file_url'] . '" alt="Gallery Image" class="img-thumbnail gallery-image">';
-                                    echo '</div>';
-                                }
-                            }
-                            ?>
+                        
                         </div>
                     </div>
                     <div class="clear-fix my-2"></div>

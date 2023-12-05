@@ -23,9 +23,7 @@
                      <?php echo $_settings->info('homedes1')  ?>  
                     </textarea>
 
-                    <label class="label" for="link" style="font-size: 13px; color: #4A4A4B; ">Social Media Link</label>
-                    <input type="link" class="form-control form-control-sm" name="link" id="link" value="<?php echo $_settings->info('link') ?>">
-
+                   
                     <div class="form-group">
                         <label for="" class="control-label">Website Cover</label>
                         <div class="custom-file">

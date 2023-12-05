@@ -42,15 +42,10 @@
                             <td class="text-center">
                                 <!-- 1=pending,2 = confirmed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled	 -->
                                 <?php if ($row['status'] == 0) : ?>
-                                    <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
+                                    <span class="badge badge-secondary px-3 rounded-pill">Confirmed</span>
                                 <?php elseif ($row['status'] == 1) : ?>
-                                    <span class="badge badge-primary px-3 rounded-pill">Confirmed</span>
-                              
+                                    <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Shipped</span>
                                 <?php elseif ($row['status'] == 2) : ?>
-                                    <span class="badge badge-success px-3 rounded-pill">For Delivery</span>
-                                <?php elseif ($row['status'] == 3) : ?>
-                                    <span class="badge badge-warning px-3 rounded-pill">On the Way</span>
-                                <?php elseif ($row['status'] == 4) : ?>
                                     <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
                                 <?php else : ?>
                                     <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>

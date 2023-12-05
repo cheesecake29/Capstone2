@@ -612,7 +612,6 @@
               };
             }
             settings.disableTimeRanges = this._parseDisableTimeRanges(settings.disableTimeRanges);
-            console.log(settings)
             return settings;
           },
         },

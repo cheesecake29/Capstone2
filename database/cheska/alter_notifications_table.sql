@@ -1,0 +1,1 @@
+ALTER TABLE `notifications` ADD `is_read` INT NOT NULL DEFAULT '0' COMMENT '0=unread, 1=read' AFTER `status`;

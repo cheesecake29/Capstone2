@@ -233,13 +233,27 @@
     .notification-item {
         padding: 10px;
        
+        background: #F4F5FA;
+        border-radius: 4px;
+    }
+
+    .unread-notification {
+        padding: 10px;
+       
+        background: #F4F5FA;
+        border-radius: 4px;
+    }
+
+    .read-notification {
+        padding: 10px;
+       
         background: #ffff;
         border-radius: 4px;
     }
 
     .notification-item:hover {
       
-        background: #F4F5FA;
+        background: #ffff;
        
     }
 
@@ -361,7 +375,9 @@
                                 echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
                                 echo '<i class="fas fa-bell"></i>';
 
-                                $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}'";
+                                $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 1
+                                    AND `is_read` = 0
+                                    AND `client_id` = '{$_settings->userdata('id')}'";
                                 $result = $conn->query($countQuery);
 
                                 if ($result) {
@@ -376,7 +392,8 @@
 
                                 echo '</a>';
 
-                                $sql = "SELECT * FROM notifications WHERE `type` = 1 AND `client_id` = '{$_settings->userdata('id')}' ORDER BY id DESC";
+                                $sql = "SELECT * FROM notifications WHERE `type` = 1
+                                    AND `client_id` = '{$_settings->userdata('id')}' ORDER BY is_read ASC, id DESC";
                                 $result = $conn->query($sql);
                                
 
@@ -387,13 +404,19 @@
                                     echo '<div class="notifications-wrapper">';
 
                                     while ($row = $result->fetch_assoc()) {
-                                        echo '<a class="content" href="./?p=my_orders">';
-                                        echo '<div class="notification-item">';
+                                        $notification_id = $row['id'];
+                                        $is_read = $row['is_read'];
+    
+                                        $notificationClass = ($is_read == 0) ? 'unread-notification' : 'read-notification';
+
+                                        echo '<a class="content notification" href="./?p=my_orders" id="notification_' . $notification_id . '" data-notification-id="'.$notification_id.'">';
+                                        echo '<div class="notification-item ' . $notificationClass . '">';
                                         echo '<h6>Hello, ' .$_settings->userdata('firstname') . '</h6>';
                                         echo '<h4 class="item-title">' . $row['description'] . '</h4>';
                                         // echo '<p class="item-info">' . $row['description'] . '</p>';
                                         echo '</div>';
                                         echo '</a>';
+                                        echo '<audio id="audio_' . $notification_id . '" src="./assets/notif_sound.wav"></audio>';
                                     }
 
                                     echo '</div>';
@@ -470,5 +493,36 @@
     </nav>
 
     <!-- Your content goes here -->
+    <script>
+    $(document).ready(function() {
+        // function fetchNotifications() {
+        //     
+            //TODO:
+        //     });
+        // }
 
-    <!-- Include any necessary scripts at the end of the body -->
+        //
+        // //setInterval(fetchNotifications, 5000);
+
+        $('.notification').on('click', function(e) {
+            e.preventDefault();
+
+            var notificationID = $(this).data('notification-id');
+            var $notificationItem = $(this).find('.notification-item');
+            //var audio = document.getElementById('audio_' + notificationID);
+            
+            //audio.play();
+            $.ajax({
+                url: _base_url_ + 'mark_notification_as_read.php',
+                method: 'POST',
+                data: { notification_id: notificationID },
+                success: function(response) {
+                    $notificationItem.css('background', '#ffff');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>

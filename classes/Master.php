@@ -504,13 +504,13 @@ class Master extends DBConnection
 	{
 		extract($_POST);
 		$datenow = date("Y-m-d H:i:s");
-	
+
 		// Use DELETE statement to remove records from product_variations
 		$this->conn->query("DELETE FROM `product_variations` WHERE product_id = '{$id}'");
-	
+
 		// Use DELETE statement to remove the product from product_list
 		$del = $this->conn->query("DELETE FROM `product_list` WHERE id = '{$id}'");
-	
+
 		if ($del) {
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Product successfully deleted.");
@@ -518,7 +518,7 @@ class Master extends DBConnection
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
-	
+
 		return json_encode($resp);
 	}
 
@@ -949,19 +949,12 @@ class Master extends DBConnection
 					$desc = "{$fullname} ' ' has placed an order.";
 					$this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `type` = 2, `order_id`='{$oid}'");
 					$resp['msg'] = " Order has been place successfully.";
-				} 
-
-				
-				
-				
-				else {
+				} else {
 					$resp['status'] = 'failed';
 					$resp['msg'] = " Order has failed to place.";
 					$resp['error'] = $this->conn->error;
 					$this->conn->query("DELETE FROM `order_list` where id = '{$oid}'");
 				}
-
-				
 			} else {
 				$resp['status'] = 'failed';
 				$resp['msg'] = " Cart is empty.";
@@ -1038,7 +1031,7 @@ class Master extends DBConnection
 					if ($status == 3) {
 						$desc = 'Your order ' . $product_name . ' was cancelled.';
 					}
-			
+
 					$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
 					$resp['status'] = 'success';
 					$resp['msg'] = " Order's status has been updated successfully.";
@@ -1047,9 +1040,6 @@ class Master extends DBConnection
 					$resp['status'] = 'failed';
 					$resp['msg'] = " Order's status has failed to update.";
 				}
-
-				
-			
 			} else {
 				$resp['error'] = $this->conn->error;
 				$resp['status'] = 'failed';
@@ -1268,6 +1258,46 @@ class Master extends DBConnection
 		}
 		return json_encode($resp);
 	}
+	function save_shop_config()
+	{
+		extract($_POST);
+		$opening = $_POST['opening'];
+		$closing = $_POST['closing'];
+		$interval = $_POST['appointment_interval'];
+		$selectConfig = $this->conn->query("SELECT * from shop_config where id = 1");
+		if ($selectConfig) {
+			if ($selectConfig->num_rows > 0) {
+				$action = $this->conn->query("UPDATE `shop_config` SET `opening` = '{$opening}', `closing` ='{$closing}', `appointment_interval` = {$interval} where `id` = 1 ");
+			} else {
+				$action = $this->conn->query("INSERT into `shop_config` (`opening`, `closing`, `appointment_interval`) VALUES ('{$opening}', '{$closing}', {$interval}) ");
+			}
+			if ($action) {
+				$resp['status'] = 'success';
+				$resp['msg'] = `Shop config successfully processed`;
+			} else {
+				$resp['error'] = $this->conn->error;
+				$resp['status'] = 'failed';
+				$resp['msg'] = "Please try again.";
+			}
+		}
+		return json_encode($resp);
+	}
+	function save_unavailable_dates()
+	{
+		extract($_POST);
+		$schedule = $_POST['schedule'];
+		$comments = $_POST['comments'];
+		$action = $this->conn->query("INSERT into `unavailable_dates` (`schedule`, `comments`) VALUES ('{$schedule}', '{$comments}') ");
+		if ($action) {
+			$resp['status'] = 'success';
+			$resp['msg'] = `Shop config successfully processed`;
+		} else {
+			$resp['error'] = $this->conn->error;
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Please try again.";
+		}
+		return json_encode($resp);
+	}
 }
 
 $Master = new Master();
@@ -1364,7 +1394,12 @@ switch ($action) {
 	case 'retrieve_availability':
 		echo $Master->retrieve_availability();
 		break;
-
+	case 'save_shop_config':
+		echo $Master->save_shop_config();
+		break;
+	case 'save_unavailable_dates':
+		echo $Master->save_unavailable_dates();
+		break;
 	default:
 		// echo $sysset->index();
 		break;

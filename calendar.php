@@ -156,15 +156,15 @@ function getCalendar($year = '', $month = '')
 
 								//Current date
 								$currentDate = $dateYear . '-' . $dateMonth . '-' . $dayCount;
-								$holidays = $dateYear . '-' . $dateMonth . '-' . $dayCount;
+								$unavailable = $dateYear . '-' . $dateMonth . '-' . $dayCount;
 								$eventNum = 0;
-								$holidaysTotal = 0;
+								$unavailableTotal = 0;
 								//Include db configuration file
 								//Get number of events based on the current date
 								$result = $conn->query("SELECT hours FROM appointment WHERE dates = '" . $currentDate . "' AND status = 1 GROUP BY hours");
-								$hoiday = $conn->query("SELECT * FROM holidays WHERE dates = '" . $holidays . "'");
+								$hoiday = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $unavailable . "'");
 								$eventNum = $result->num_rows;
-								$holidaysTotal = $hoiday->num_rows;
+								$unavailableTotal = $hoiday->num_rows;
 								//Define date cell color
 						?>
 								<?php if (strtotime($currentDate) == strtotime(date("Y-m-d"))) : ?>
@@ -173,8 +173,8 @@ function getCalendar($year = '', $month = '')
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="bg-success text-white date_cell">
 									<?php elseif ($eventNum === 5) : ?>
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="bg-danger text-white date_cell">
-									<?php elseif ($holidaysTotal == 1) : ?>
-									<li date="<?= $holidays ?>" data-total="<?= $eventNum ?>" style="background: #f44336;">
+									<?php elseif ($unavailableTotal == 1) : ?>
+									<li date="<?= $unavailable ?>" data-total="<?= $unavailableTotal ?>" class="date_cell" style="background: #f44336;">
 									<?php else : ?>
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="date_cell">
 									<?php endif; ?>
@@ -186,7 +186,12 @@ function getCalendar($year = '', $month = '')
 										<!-- Hover event -->
 										<div id="date_popup_<?= $currentDate ?>" class="mt-auto p-1 none">
 											<?php if ($eventNum > 0) : ?>
-												<button type="button" class="btn btn-link text-decoration-none text-light btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
+												<button type="button" data-date="<?= $eventNum ?>" class="btn btn-link text-decoration-none text-light btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
+													View Scheduled
+												</button>
+												test
+											<?php elseif ($unavailableTotal > 0) : ?>
+												<button type="button" data-date="<?= $unavailableTotal ?>" class="off btn btn-link text-decoration-none text-light btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
 													View Scheduled
 												</button>
 											<?php endif; ?>
@@ -302,14 +307,22 @@ function getEvents($date = '')
 	//Include db configuration file
 	global $conn;
 	$eventListHTML = '';
+	$eventListHTML = '<h2 class="text-center">Scheduled on ' . date("l, d M Y", strtotime($date)) . '</h2>';
 	$date = $date ? $date : date("Y-m-d");
 	//Get events based on the current date
 	$result = $conn->query("SELECT hours FROM appointment WHERE dates = '" . $date . "' AND status = 1 GROUP BY hours");
+	$resultUnavailable = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $date . "'");
 	if ($result->num_rows > 0) {
-		$eventListHTML = '<h2 class="text-center">Unavailable time on ' . date("l, d M Y", strtotime($date)) . '</h2>';
 		$eventListHTML .= '<ul>';
 		while ($row = $result->fetch_assoc()) {
 			$eventListHTML .= '<li>' . $row['hours'] . '</li>';
+		}
+		$eventListHTML .= '</ul>';
+	}
+	if ($resultUnavailable->num_rows > 0) {
+		$eventListHTML .= '<ul>';
+		while ($unRow = $resultUnavailable->fetch_assoc()) {
+			$eventListHTML .= '<li>' . $unRow['schedule'] . ' - <b>' . $unRow['comments'] . '</b></li>';
 		}
 		$eventListHTML .= '</ul>';
 	}

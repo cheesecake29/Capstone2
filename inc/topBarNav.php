@@ -496,55 +496,22 @@
     <script>
     $(document).ready(function() {
         // function fetchNotifications() {
-        //     // Make an AJAX call to fetch notifications
-        //     $.ajax({
-        //         url: 'fetch_notifications.php', // Replace with your server endpoint to fetch notifications
-        //         method: 'GET',
-        //         success: function(response) {
-        //             // Process the received notifications here
-        //             console.log('Notifications fetched:', response);
-        //             // Update the UI with the fetched notifications
-        //             // ...
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.error('Error fetching notifications:', error);
-        //         }
+        //     
+            //TODO:
         //     });
         // }
 
-        // // Fetch notifications every 30 seconds (adjust the interval as needed)
-        // //setInterval(fetchNotifications, 5000); // 30 seconds interval
-
-        // Function to simulate fetching notifications
-        function fetchNotifications() {
-            // Simulate getting updated notifications (Replace this with your logic to update notifications)
-            var updatedNotifications = '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
-            updatedNotifications += '<div class="notification-heading"><span class="menu-title">Updated Notifications</span></div>';
-            updatedNotifications += '<li class="divider"></li>';
-            updatedNotifications += '<div class="notifications-wrapper">';
-            updatedNotifications += '<a class="content notification" href="#"><div class="notification-item">';
-            updatedNotifications += '<h6>Hello, John</h6>';
-            updatedNotifications += '<h4 class="item-title">Updated Notification</h4>';
-            updatedNotifications += '</div></a>';
-            updatedNotifications += '</div></ul>';
-
-            // Update the content inside notificationsDropdown
-            $('#dropdown').html(updatedNotifications);
-        }
-
-        // Reload notifications every 5 seconds
-        setInterval(fetchNotifications, 5000); // 5000 milliseconds = 5 seconds
-
+        //
+        // //setInterval(fetchNotifications, 5000);
 
         $('.notification').on('click', function(e) {
             e.preventDefault();
 
             var notificationID = $(this).data('notification-id');
             var $notificationItem = $(this).find('.notification-item');
-            var audio = document.getElementById('audio_' + notificationID);
+            //var audio = document.getElementById('audio_' + notificationID);
             
-            // Play the notification sound
-            audio.play();
+            //audio.play();
             $.ajax({
                 url: _base_url_ + 'mark_notification_as_read.php',
                 method: 'POST',

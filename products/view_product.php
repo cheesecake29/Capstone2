@@ -22,11 +22,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             $available1 = $stocks - $out;
             $available = $available1 - $cart_item_count;
 
-            $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id' and variation_stock > 0");
-            while ($variation = $variations->fetch_array()) {
-                echo "<script>console.log('" . $variation['variation_name'] . "');</script>";
-                echo "<script>console.log('" . $variation['id'] . "');</script>";
-            }
+            // $variations = $conn->query("SELECT * FROM product_variations where product_id = '$id' and variation_stock > 0");
+            // while ($variation = $variations->fetch_array()) {
+            //     echo "<script>console.log('" . $variation['variation_name'] . "');</script>";
+            //     echo "<script>console.log('" . $variation['id'] . "');</script>";
+            // }
         }
     } else {
         echo "<script> alert('Unknown Product ID!'); location.replace('./?page=products');</script>";
@@ -37,7 +37,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 ?>
 
 <style>
-
     .product-img {
         max-width: 450px;
         object-fit: scale-down;
@@ -232,7 +231,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
 <?php
 $variations = $conn->query("SELECT * FROM product_variations where product_id = $id");
-$singleVariation = $variations->fetch_array();
+$copyVariationResult = array();
+function MakeCopy($result, &$c1)
+{
+    while ($row = $result->fetch_assoc()) {
+        foreach ($row as $key => $value) {
+            $c1[$key] = $value;
+        }
+    }
+}
+if ($variations->num_rows === 1) {
+    MakeCopy($variations, $copyVariationResult);
+}
 ?>
 <div class="content my-3">
     <div class="container">
@@ -263,7 +273,7 @@ $singleVariation = $variations->fetch_array();
             </div>
             <div class="right-container px-5">
                 <div class="info">
-                    <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $singleVariation['variation_name'] : '' ?></h1>
+                    <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $copyVariationResult['variation_name'] : '' ?></h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
                 </div>
                 <h3 class="text-success" id="default">
@@ -349,13 +359,13 @@ $singleVariation = $variations->fetch_array();
                                 <?php endif; ?>
                             <?php
                             endwhile; ?>
-                        <?php else : ?>
+                        <?php elseif ($variations->num_rows === 1) : ?>
                             <?php if (isset($product_order_config)) : ?>
-                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $singleVariation['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max='<?= $singleVariation['variation_stock'] ?>' data-price='<?= $singleVariation['variation_price'] ?>' data-name='<?= $singleVariation['variation_name'] ?>' value='<?php echo $singleVariation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($singleVariation['variation_price'], 2)  ?>')" />
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max='<?= $copyVariationResult['variation_stock'] ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
                             <?php elseif (isset($all_order_config)) : ?>
-                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $singleVariation['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max='<?= $singleVariation['variation_stock'] ?>' data-price='<?= $singleVariation['variation_price'] ?>' data-name='<?= $singleVariation['variation_name'] ?>' value='<?php echo $singleVariation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($singleVariation['variation_price'], 2)  ?>')" />
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max='<?= $copyVariationResult['variation_stock'] ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
                             <?php else : ?>
-                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $singleVariation['id'] ?>' data-max='<?= $singleVariation['variation_stock'] ?>' data-price='<?= $singleVariation['variation_price'] ?>' data-name='<?= $singleVariation['variation_name'] ?>' value='<?php echo $singleVariation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($singleVariation['variation_price'], 2)  ?>')" />
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-max='<?= $copyVariationResult['variation_stock'] ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
                             <?php endif; ?>
                         <?php endif; ?>
 

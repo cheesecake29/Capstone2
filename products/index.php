@@ -269,9 +269,7 @@ span.ribbon {
                             </div>
                             <div class="card-body border-top">
                                 <div class="name card-title my-0">
-                                    <br>
                                     <b><?= $row['name'] ?></b>
-
                                 </div>
                                 <p class="price">₱<?= strip_tags(html_entity_decode($row['price'])) ?>
                                     <span class="fas fa-tag"></span>
@@ -329,7 +327,6 @@ span.ribbon {
                                 <div class="card-body border-top">
                                     <div class="name card-title my-0">
                                         <b><?= $row['name'] ?></b>
-
                                     </div>
                                     <p class="price">₱<?= strip_tags(html_entity_decode($row['price'])) ?>
                                         <span class="fas fa-tag"></span>

@@ -428,7 +428,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             <span class="custom-control-input custom-control-input-primary">Adress Line 2</span>
                                             <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
                                             <span class="custom-control-input custom-control-input-primary">Zip code</span>
-                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "" ?>" onkeydown="return allowOnlyNumbers(event)" required>
+                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "0000" ?>" onkeydown="return allowOnlyNumbers(event)" required>
 
                                         </div>
                                     </div>

@@ -100,9 +100,19 @@ if ($shop_config->num_rows > 0) {
     <form id="shop-unavailable" action="">
         <div class="d-flex flex-column align-items-start">
             <div class="d-flex flex-column">
-                <div class="mr-2">
+                <div class="mr-2 mb-2">
                     <label for="schedule" class="control-label">When</label>
-                    <input name="schedule" id="schedule" class="form-control" value="<?= isset($setup) ? $setup['schedule'] : ''; ?>" placeholder="Select a time">
+                    <input name="schedule" id="schedule" class="form-control" placeholder="Select a date">
+                </div>
+                <div class="mr-2 d-flex mb-2">
+                    <div class="schedule-interval">
+                        <label for="from_hours" class="control-label">From</label>
+                        <input name="from_hours" id="from_hours" class="form-control" placeholder="Select a time">
+                    </div>
+                    <div class="schedule-interval ml-1">
+                        <label for="to_hours" class="control-label">To</label>
+                        <input name="to_hours" id="to_hours" disabled class="form-control" required>
+                    </div>
                 </div>
                 <div class="d-flex flex-column">
                     <label for="comments" class="control-label">Comments</label>
@@ -135,6 +145,28 @@ if ($shop_config->num_rows > 0) {
                 return [(day != -1), ''];
             },
         });
+        $("#from_hours").timepicker({
+            minTime: '1am',
+            maxTime: '11pm',
+            timeFormat: 'h:i a',
+            step: 30,
+            dropdown: true,
+            scrollbar: true,
+        });
+        $("#from_hours").on('change', function(e) {
+            const openingValue = moment(`1990-01-01 ${e.currentTarget.value}`).format('LLL');
+            const closingValue = $("#to_hours").val() != '' ? moment(`1990-01-01 ${$("#to_hours").val()}`).format('LLL') : $("#to_hour").val();
+            const clearClosingValue = moment(new Date(closingValue)).isBefore(new Date(openingValue));
+            if (clearClosingValue) {
+                $("#closing").val(moment(openingValue).format('hh:mm a'))
+            }
+            $("#to_hours").removeAttr('disabled');
+            $("#to_hours").timepicker({
+                minTime: e.currentTarget.value,
+                timeFormat: 'h:i a',
+                step: 30,
+            });
+        });
         $("#opening").timepicker({
             minTime: '1am',
             maxTime: '11pm',
@@ -154,6 +186,7 @@ if ($shop_config->num_rows > 0) {
             $("#closing").timepicker({
                 minTime: e.currentTarget.value,
                 timeFormat: 'h:i a',
+                step: 15,
             });
         });
         // shop config submission
@@ -185,6 +218,13 @@ if ($shop_config->num_rows > 0) {
             e.preventDefault();
             const formData = new FormData($(this)[0]);
             // Display the values
+            const startValue = formData.get('from_hours');
+            const endValue = formData.get('to_hours');
+            const start = moment(`1990-01-1 ${startValue}`);
+            const end = moment(`1990-01-1 ${endValue}`);
+            const duration = moment.duration(moment(end).diff(start)).asHours();
+            formData.append('duration', parseFloat(duration));
+            console.log(formData.get('duration'))
             $.ajax({
                 url: _base_url_ + "classes/Master.php?f=save_unavailable_dates",
                 data: formData,

@@ -100,16 +100,20 @@ if ($order->num_rows > 0) {
                         <div class="col-md-6">
                             <label for="" class="text-muted">Status</label>
                             <div class="ml-3">
-
                                 <?php if (isset($status)) : ?>
                                     <?php if ($status == 0) : ?>
-                                        <span class="badge badge-secondary px-3 rounded-pill">Confirm</span>
-
+                                        <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
                                     <?php elseif ($status == 1) : ?>
-                                        <span class="badge badge-success px-3 rounded-pill">Shipped</span>
+                                        <span class="badge badge-success px-3 rounded-pill">Confirmed</span>
                                     <?php elseif ($status == 2) : ?>
-                                        <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
+                                        <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Shipped</span>
                                     <?php elseif ($status == 3) : ?>
+                                        <span class="badge badge-warning px-3 rounded-pill">For Delivery</span>
+                                    <?php elseif ($status == 4) : ?>
+                                        <span class="badge badge-warning px-3 rounded-pill">On The Way</span>
+                                    <?php elseif ($status == 5) : ?>
+                                        <span class="badge badge-success px-3 rounded-pill">Delivered</span>
+                                    <?php elseif ($status == 6) : ?>
                                         <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
                                     <?php else : ?>
                                         <span class="badge badge-danger px-3 rounded-pill">For Return/Refund</span>
@@ -197,7 +201,7 @@ if ($order->num_rows > 0) {
                                 echo '<div class="ml-3" id="adr2">' . $addressline2 . '</div>';
                             }
                             ?>
-                        
+
                         </div>
                     </div>
                     <div class="clear-fix my-2"></div>

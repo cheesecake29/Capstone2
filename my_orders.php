@@ -58,8 +58,8 @@ if (isset($_GET['readytoship'])) {
         <div class="row">
             <div class="navy">
                 <div class="nav flex-row " id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-                <a class="nav-link <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
-                <a class="nav-link <?= ($currentStatus === 'readytoship') ? 'active' : ''; ?>" id="v-pills-readytoship-tab" data-toggle="pill" href="#v-pills-readytoship" role="tab" aria-controls="v-pills-readytoship" aria-selected="<?= ($currentStatus === 'readytoship') ? 'true' : 'false'; ?>">Ready to ship</a>
+                    <a class="nav-link <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
+                    <a class="nav-link <?= ($currentStatus === 'readytoship') ? 'active' : ''; ?>" id="v-pills-readytoship-tab" data-toggle="pill" href="#v-pills-readytoship" role="tab" aria-controls="v-pills-readytoship" aria-selected="<?= ($currentStatus === 'readytoship') ? 'true' : 'false'; ?>">Shipped</a>
 
               
                 <a class="nav-link <?= ($currentStatus === 'delivered') ? 'active' : ''; ?>" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="<?= ($currentStatus === 'delivered') ? 'true' : 'false'; ?>">Delivered</a>

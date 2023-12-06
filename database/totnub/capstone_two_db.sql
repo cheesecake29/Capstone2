@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 05, 2023 at 01:14 PM
+-- Generation Time: Dec 06, 2023 at 12:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,7 +33,7 @@ CREATE TABLE `appointment` (
   `order_id` int(11) NOT NULL,
   `dates` date NOT NULL,
   `hours` varchar(1000) NOT NULL,
-  `status` int(11) NOT NULL COMMENT '0 - Pending, 1 - Confirmed, 2 - Cancelled, 3 - Rejected',
+  `status` int(11) NOT NULL COMMENT '0 - Pending, 1 - Confirmed, 2 - Cancelled, 3 - Rejected, 4 - Done',
   `datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -43,7 +43,10 @@ CREATE TABLE `appointment` (
 
 INSERT INTO `appointment` (`id`, `client_id`, `order_id`, `dates`, `hours`, `status`, `datetime`) VALUES
 (146, 14, 43, '2023-12-08', '09:00 am', 0, '2023-12-04 07:32:41'),
-(147, 14, 44, '2023-12-08', '10:00 am', 1, '2023-12-05 11:56:20');
+(147, 14, 44, '2023-12-08', '10:00 am', 1, '2023-12-05 11:56:20'),
+(148, 14, 45, '2023-12-08', '11:00 am', 4, '2023-12-06 11:13:20'),
+(149, 14, 46, '0000-00-00', '', 0, '2023-12-06 11:07:06'),
+(150, 14, 48, '2023-12-22', '10:00 am', 0, '2023-12-06 11:13:32');
 
 -- --------------------------------------------------------
 
@@ -86,13 +89,6 @@ CREATE TABLE `cart_list` (
   `quantity` float NOT NULL,
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `cart_list`
---
-
-INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
-(90, 14, 50, 53, 1, '2023-12-04 15:40:59');
 
 -- --------------------------------------------------------
 
@@ -255,7 +251,17 @@ INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`,
 (18, 14, 'John Doe  has placed an order.', 0, 2, 41),
 (19, 14, 'John Doe  has placed an order.', 0, 2, 42),
 (20, 14, 'John Doe  has placed an order.', 0, 2, 43),
-(21, 14, 'John Doe  has placed an order.', 0, 2, 44);
+(21, 14, 'John Doe  has placed an order.', 0, 2, 44),
+(22, 14, 'John Doe  has placed an order.', 0, 2, 45),
+(23, 14, 'Your order Test product is pending.', 0, 1, 45),
+(24, 14, 'Your order Test product is shipped.', 0, 1, 45),
+(25, 14, 'Your order Test product is pending.', 0, 1, 45),
+(26, 14, 'Your order Test product is shipped.', 0, 1, 45),
+(27, 14, 'John Doe  has placed an order.', 0, 2, 46),
+(28, 14, 'John Doe  has placed an order.', 0, 2, 47),
+(29, 14, 'Your order Test product is delivered.', 0, 1, 45),
+(30, 14, 'John Doe  has placed an order.', 0, 2, 48),
+(31, 14, '', 0, 1, 45);
 
 -- --------------------------------------------------------
 
@@ -296,7 +302,11 @@ CREATE TABLE `order_items` (
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quantity`, `rated`, `date_added`, `date_updated`) VALUES
 (49, 43, 50, 53, 1, 0, '2023-12-04 15:32:41', NULL),
-(50, 44, 46, 49, 1, 0, '2023-12-04 15:40:52', NULL);
+(50, 44, 46, 49, 1, 0, '2023-12-04 15:40:52', NULL),
+(51, 45, 50, 53, 1, 1, '2023-12-06 18:51:07', '2023-12-06 19:30:11'),
+(52, 46, 50, 52, 1, 0, '2023-12-06 19:07:06', NULL),
+(53, 47, 50, 53, 1, 0, '2023-12-06 19:12:58', NULL),
+(54, 48, 50, 52, 1, 0, '2023-12-06 19:13:32', NULL);
 
 -- --------------------------------------------------------
 
@@ -328,7 +338,11 @@ CREATE TABLE `order_list` (
 
 INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
 (43, '202312-00001', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:32:41', '2023-12-04 15:32:41'),
-(44, '202312-00002', 14, 1500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:40:52', '2023-12-04 15:40:52');
+(44, '202312-00002', 14, 1500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:40:52', '2023-12-04 15:40:52'),
+(45, '202312-00003', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-12-06 18:51:07', '2023-12-06 19:19:00'),
+(46, '202312-00004', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-06 19:07:06', '2023-12-06 19:07:06'),
+(47, '202312-00005', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 2, '', 0, '2023-12-06 19:12:58', '2023-12-06 19:12:58'),
+(48, '202312-00006', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-06 19:13:32', '2023-12-06 19:13:32');
 
 -- --------------------------------------------------------
 
@@ -351,7 +365,8 @@ INSERT INTO `product_image_gallery` (`id`, `product_id`, `image_url`, `is_delete
 (1, 46, 'uploads/product_gallery/46_655dd6dce2abd.png', 0),
 (2, 46, 'uploads/product_gallery/46_655dd80aa4c1e.png', 0),
 (3, 46, 'uploads/product_gallery/46_655dd82f9824e.png', 0),
-(4, 46, 'uploads/product_gallery/46_655dd839bde06.png', 0);
+(4, 46, 'uploads/product_gallery/46_655dd839bde06.png', 0),
+(5, 52, 'uploads/product_gallery/52_65705d4083065.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -382,7 +397,8 @@ CREATE TABLE `product_list` (
 INSERT INTO `product_list` (`id`, `brand_id`, `category_id`, `name`, `models`, `description`, `price`, `weight`, `status`, `image_path`, `delete_flag`, `date_created`, `date_updated`) VALUES
 (46, 10, 11, 'Lorem ipum', 'All model', '&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;Open Sans&amp;quot;, Arial, sans-serif; font-size: 14px; text-align: justify;&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel semper libero. Vestibulum eu urna bibendum, tempus sapien eu, elementum tellus. Nullam congue, est vel semper porta, libero justo varius massa, vestibulum faucibus arcu augue a nisi. Morbi nec rutrum nunc. Phasellus congue consectetur lectus ac aliquam. Integer nec tellus faucibus, lobortis tortor ullamcorper, laoreet massa. Vivamus a odio sem. Donec at rhoncus urna. Nulla aliquet justo vel pulvinar accumsan. Phasellus at augue commodo, volutpat est sit amet, tristique justo.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;', 1500, '500g and below', 1, 'uploads/products/46.jpg?v=1700211715', 0, '2023-11-15 18:31:10', '2023-11-17 17:22:02'),
 (50, 9, 11, 'Test product', 'All', '&lt;p&gt;test only&lt;/p&gt;', 150, '500g and below', 1, 'uploads/products/50.png?v=1700217018', 0, '2023-11-17 18:30:18', '2023-11-17 18:30:18'),
-(51, 9, 11, 'test', 'test', '&lt;p&gt;test&lt;/p&gt;', 100, 'select', 1, '', 1, '2023-11-30 19:07:54', '2023-11-30 19:08:01');
+(51, 9, 11, 'test', 'test', '&lt;p&gt;test&lt;/p&gt;', 100, 'select', 1, '', 1, '2023-11-30 19:07:54', '2023-11-30 19:08:01'),
+(52, 9, 11, 'Product #1', 'For All', '&lt;p&gt;&lt;b&gt;L&lt;span style=&quot;background-color: rgb(244, 245, 250); color: rgb(0, 0, 0); font-family: &amp;quot;Open Sans&amp;quot;, Arial, sans-serif; font-size: 14px; text-align: justify;&quot;&gt;orem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel semper libero. Vestibulum eu urna bibendum, tempus sapien eu, elementum tellus. Nullam congue, est vel semper porta, libero justo varius massa, vestibulum faucibus arcu augue a nisi. Morbi nec rutrum nunc. Phasellus congue consectetur lectus ac aliquam. Integer nec tellus faucibus, lobortis tortor ullamcorper, laoreet massa. Vivamus a odio sem. Donec at rhoncus urna. Nulla aliquet justo vel pulvinar accumsan. Phasellus at augue commodo, volutpat est sit amet, tristique justo.&lt;/span&gt;&lt;/b&gt;&lt;/p&gt;', 1380, '500g and below', 1, 'uploads/products/52.png?v=1701862720', 0, '2023-12-06 19:38:40', '2023-12-06 19:38:40');
 
 -- --------------------------------------------------------
 
@@ -410,7 +426,8 @@ INSERT INTO `product_reviews` (`id`, `product_id`, `variation_id`, `product_name
 (1, 50, 52, 'Test product', 'test, test', 'test@email.com', 4, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor i', '2023-11-23 18:18:36'),
 (2, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Vel turpis nunc eget lorem. Duis ut diam quam nulla porttitor massa id. Commodo sed egestas egestas fringilla phasellus faucibus. Augue eget arcu dictum varius duis at consectetur lorem. Sed enim ut sem viverra. Aliquam ultrices sagittis orci a scelerisqu', '2023-11-23 18:19:32'),
 (3, 46, 50, 'Lorem ipum', 'test, test', 'test@email.com', 3, 'Proin gravida hendrerit lectus a. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Id aliquet risus feugiat in ante. Rutrum tellus pellentesque eu tincidunt tortor aliquam. Turpis egestas integer eget aliquet nibh praesent tristique ma', '2023-11-23 18:19:45'),
-(4, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Tellus mauris a diam maecenas sed enim ut. Semper eget duis at tellus at. Pulvinar mattis nunc sed blandit libero volutpat sed cras ornare. A arcu cursus vitae congue. Magna fringilla urna porttitor rhoncus dolor purus. Id velit ut tortor pretium viverra ', '2023-11-23 18:19:54');
+(4, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Tellus mauris a diam maecenas sed enim ut. Semper eget duis at tellus at. Pulvinar mattis nunc sed blandit libero volutpat sed cras ornare. A arcu cursus vitae congue. Magna fringilla urna porttitor rhoncus dolor purus. Id velit ut tortor pretium viverra ', '2023-11-23 18:19:54'),
+(5, 50, 53, 'Test product', 'Doe, John', 'test@email.com', 4, 'Test test', '2023-12-06 19:30:11');
 
 -- --------------------------------------------------------
 
@@ -440,7 +457,8 @@ INSERT INTO `product_variations` (`id`, `product_id`, `variation_name`, `variati
 (51, 46, 'White', 1150, 93, 0, 0, '2023-11-17 17:01:55', NULL),
 (52, 50, 'Small', 100, 10, 0, 0, '2023-11-17 18:30:18', NULL),
 (53, 50, 'Large', 150, 20, 0, 0, '2023-11-17 18:30:18', NULL),
-(54, 51, 'Default', 100, 1, 1, 0, '2023-11-30 19:07:54', '2023-11-30 19:08:01');
+(54, 51, 'Default', 100, 1, 1, 0, '2023-11-30 19:07:54', '2023-11-30 19:08:01'),
+(55, 52, 'Helmet', 1380, 10, 0, 0, '2023-12-06 19:38:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -561,7 +579,8 @@ CREATE TABLE `stock_list` (
 INSERT INTO `stock_list` (`id`, `product_id`, `quantity`, `type`, `date_created`) VALUES
 (33, 46, 280, 1, '2023-11-15 18:31:10'),
 (40, 50, 30, 1, '2023-11-17 18:30:18'),
-(41, 51, 1, 1, '2023-11-30 19:07:54');
+(41, 51, 1, 1, '2023-11-30 19:07:54'),
+(42, 52, 10, 1, '2023-12-06 19:38:40');
 
 -- --------------------------------------------------------
 
@@ -598,6 +617,9 @@ INSERT INTO `system_info` (`id`, `meta_field`, `meta_value`) VALUES
 CREATE TABLE `unavailable_dates` (
   `id` int(11) NOT NULL,
   `schedule` date NOT NULL,
+  `from_hours` varchar(1000) DEFAULT '',
+  `to_hours` varchar(1000) NOT NULL DEFAULT '',
+  `duration` int(25) DEFAULT 0,
   `comments` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -605,11 +627,8 @@ CREATE TABLE `unavailable_dates` (
 -- Dumping data for table `unavailable_dates`
 --
 
-INSERT INTO `unavailable_dates` (`id`, `schedule`, `comments`) VALUES
-(1, '2023-12-16', 'Test test'),
-(2, '2023-12-25', 'Christmas Day'),
-(3, '2023-12-31', 'Holiday'),
-(4, '2023-12-26', 'Store is closed');
+INSERT INTO `unavailable_dates` (`id`, `schedule`, `from_hours`, `to_hours`, `duration`, `comments`) VALUES
+(8, '2023-12-26', '01:00 am', '12:00 pm', 11, 'Store is closed');
 
 -- --------------------------------------------------------
 
@@ -812,7 +831,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `brand_list`
@@ -824,7 +843,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -854,7 +873,7 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `order_config`
@@ -866,37 +885,37 @@ ALTER TABLE `order_config`
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `product_image_gallery`
 --
 ALTER TABLE `product_image_gallery`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `product_list`
 --
 ALTER TABLE `product_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `product_variations`
 --
 ALTER TABLE `product_variations`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc', AUTO_INCREMENT=55;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc', AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `service_list`
@@ -926,7 +945,7 @@ ALTER TABLE `shop_config`
 -- AUTO_INCREMENT for table `stock_list`
 --
 ALTER TABLE `stock_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `system_info`
@@ -938,7 +957,7 @@ ALTER TABLE `system_info`
 -- AUTO_INCREMENT for table `unavailable_dates`
 --
 ALTER TABLE `unavailable_dates`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`

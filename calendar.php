@@ -87,6 +87,13 @@
 		margin-left: 9px;
 		margin-right: 14px;
 	}
+
+	.dot {
+		height: 25px;
+		width: 25px;
+		border-radius: 50%;
+		display: inline-block;
+	}
 </style>
 <?php
 /*
@@ -123,6 +130,20 @@ function getCalendar($year = '', $month = '')
 	<div class="d-flex flex-column">
 		<div id="calender_section">
 			<h3 class="text-center mt-3 mb-5">ATV Motoshop Calendar</h3>
+			<div class="d-flex justify-content-center mb-3">
+				<div class="today-indicator d-flex align-self-center mx-3">
+					<span class="dot bg-secondary me-1"></span> Date Today
+				</div>
+				<div class="available-success d-flex align-self-center mx-3">
+					<span class="dot bg-success me-1"></span> Still Available
+				</div>
+				<div class="available-success d-flex align-self-center mx-3">
+					<span class="dot bg-danger me-1"></span> Fully Booked
+				</div>
+				<div class="closed-indicator d-flex align-self-center mx-3">
+					<span class="dot bg-dark me-1"></span> Closed
+				</div>
+			</div>
 			<div class="d-flex justify-content-center mx-5">
 				<button class="btn btn-outline-dark" onclick="getCalendarDetails('calendar_div','<?= date('Y', strtotime($date . ' - 1 Month')); ?>','<?php echo date('m', strtotime($date . ' - 1 Month')); ?>');">Prev
 				</button>
@@ -162,9 +183,14 @@ function getCalendar($year = '', $month = '')
 								//Include db configuration file
 								//Get number of events based on the current date
 								$result = $conn->query("SELECT hours FROM appointment WHERE dates = '" . $currentDate . "' AND status = 1 GROUP BY hours");
-								$hoiday = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $unavailable . "'");
+								$holiday = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $unavailable . "'");
+								$holidayData = $holiday->fetch_assoc();
 								$eventNum = $result->num_rows;
-								$unavailableTotal = $hoiday->num_rows;
+								$unavailableTotal = $holiday->num_rows;
+								if ($unavailableTotal > 0) {
+									$secs = $holidayData['duration'] * 3600; // duration * secs
+									$durationPercentage = $secs / 864; // 86,400 secs / 24hours
+								}
 								//Define date cell color
 						?>
 								<?php if (strtotime($currentDate) == strtotime(date("Y-m-d"))) : ?>
@@ -174,27 +200,33 @@ function getCalendar($year = '', $month = '')
 									<?php elseif ($eventNum === 5) : ?>
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="bg-danger text-white date_cell">
 									<?php elseif ($unavailableTotal == 1) : ?>
-									<li date="<?= $unavailable ?>" data-total="<?= $unavailableTotal ?>" class="date_cell" style="background: #f44336;">
+									<li date="<?= $unavailable ?>" data-total="<?= $unavailableTotal ?>" class="date_cell text-white">
 									<?php else : ?>
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="date_cell">
 									<?php endif; ?>
-									<div class="date_cell_info_hover d-flex flex-column h-100">
-										<div class="date_cell_info px-2 pt-1">
-											<!-- Date cell -->
-											<b> <?= $dayCount; ?> </b>
-										</div>
-										<!-- Hover event -->
-										<div id="date_popup_<?= $currentDate ?>" class="mt-auto p-1 none">
-											<?php if ($eventNum > 0) : ?>
-												<button type="button" data-date="<?= $eventNum ?>" class="btn btn-link text-decoration-none text-light btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
-													View Scheduled
-												</button>
-												test
-											<?php elseif ($unavailableTotal > 0) : ?>
-												<button type="button" data-date="<?= $unavailableTotal ?>" class="off btn btn-link text-decoration-none text-light btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
-													View Scheduled
-												</button>
-											<?php endif; ?>
+									<div class="h-100">
+										<?php if ($unavailableTotal > 0) : ?>
+											<!-- Fill by time duration -->
+											<div class="bg-dark" style="position: absolute; width: 100%; height: calc(100% - <?= $durationPercentage ?>%)"></div>
+										<?php endif; ?>
+										<div class="date_cell_info_hover d-flex flex-column position-absolute">
+											<div class="date_cell_info px-2 pt-1">
+												<!-- Date cell -->
+												<b> <?= $dayCount; ?> </b>
+											</div>
+											<!-- Hover event -->
+											<div id="date_popup_<?= $currentDate ?>" class="mt-auto p-1 none">
+												<?php if ($eventNum > 0) : ?>
+													<button type="button" data-date="<?= $eventNum ?>" style="color: #1A547E;" class="btn text-decoration-none btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
+														View Scheduled
+													</button>
+													test
+												<?php elseif ($unavailableTotal > 0) : ?>
+													<button type="button" data-date="<?= $unavailableTotal ?>" style="color: #1A547E;" class="off btn text-decoration-none btn-get-events" onclick="getEvents('<?= $currentDate ?>')">
+														View Scheduled
+													</button>
+												<?php endif; ?>
+											</div>
 										</div>
 									</div>
 									</li>
@@ -322,7 +354,7 @@ function getEvents($date = '')
 	if ($resultUnavailable->num_rows > 0) {
 		$eventListHTML .= '<ul>';
 		while ($unRow = $resultUnavailable->fetch_assoc()) {
-			$eventListHTML .= '<li>' . $unRow['schedule'] . ' - <b>' . $unRow['comments'] . '</b></li>';
+			$eventListHTML .= '<li>' . $unRow['schedule'] . ' ' . $unRow['from_hours'] . ' - ' . $unRow['to_hours'] . ' - <b>' . $unRow['comments'] . '</b></li>';
 		}
 		$eventListHTML .= '</ul>';
 	}

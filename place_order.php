@@ -539,9 +539,9 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </div>
                                 </div>
                                 <div class="date_picker" style="display: none;">
-                                    <div class="d-flex">
-                                        <input name="meetup_date" id="meetup_datepicker" class="form-control mb-1" placeholder="Select a date">
-                                        <input name="meetup_time" id="meetup_timepicker" disabled class="form-control mb-1" placeholder="Select a time">
+                                    <div class="d-flex" id="date_picker">
+                                        <input name="meetup_date" id="meetup_datepicker" class="date-time-input form-control mb-1" placeholder="Select a date">
+                                        <input name="meetup_time" id="meetup_timepicker" disabled class="date-time-input form-control mb-1" placeholder="Select a time">
                                     </div>
                                     <button type="button" onclick="showAvailability()" class="btn btn-link text-decoration-none px-0 text-primary">Check Calendar</button>
                                 </div>
@@ -712,12 +712,12 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
             });
         }
         $('[name="order_type"]').change(function() {
-            console.log("in")
             if ($(this).val() == 1) {
                 $('.jnt-holder').show('slow');
                 $('.pick-up-holder').hide('slow');
                 $('.meet-up-holder').hide('slow');
                 $('.date_picker').hide('slow');
+                $('#date_picker > input').removeAttr('required');
                 $('#totalWithSf').show('slow');
                 $('#totalWithoutSf').hide('slow');
                 $('#sf').show('slow');
@@ -727,6 +727,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('.pick-up-holder').hide('slow');
                 $('.meet-up-holder').hide('slow');
                 $('.date_picker').hide('slow');
+                $('#date_picker > input').removeAttr('required');
                 $('#totalWithSf').hide('slow');
                 $('#totalWithoutSf').show('slow');
                 $('.billing-address').hide('slow');
@@ -735,6 +736,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('.jnt-holder').hide('slow');
                 $('.pick-up-holder').show('slow');
                 $('.date_picker').show('slow');
+                $('.date_picker > input').prop('required', true);
+                $('#date_picker').children('input').prop('required', true);
                 $('.meet-up-holder').hide('slow');
                 $('.other-up-holder').hide('slow');
                 $('#totalWithSf').hide('slow');
@@ -746,6 +749,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('.pick-up-holder').hide('slow');
                 $('.meet-up-holder').show('slow');
                 $('.date_picker').show('slow');
+                $('#date_picker').children('input').prop('required', true);
                 $('#totalWithSf').hide('slow');
                 $('#totalWithoutSf').show('slow');
                 $('#sf').hide('slow');
@@ -755,6 +759,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('.pick-up-holder').hide('slow');
                 $('.meet-up-holder').hide('slow');
                 $('.date_picker').hide('slow');
+                $('#date_picker > input').removeAttr('required');
                 $('#totalWithSf').hide('slow');
                 $('#totalWithoutSf').show('slow');
                 $('#sf').hide('slow');

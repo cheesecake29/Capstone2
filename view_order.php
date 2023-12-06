@@ -125,7 +125,9 @@ if ($order->num_rows > 0) {
         </div>
         <div class="col-md-6">
             <label for="" class="text-muted">Reference Code</label>
-            <div class="ml-3"><b><?= isset($ref_code) ? $ref_code : "N/A" ?></b></div>
+            <div class="ml-3">
+                <b><?= isset($ref_code) ? $ref_code : "N/A" ?></b>
+            </div>
             <div class="ml-3">
                 <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
                     <div class="proof_payment_container">
@@ -136,7 +138,7 @@ if ($order->num_rows > 0) {
                         <input type="file" class="custom_gall form-control-file" id="proof_file" name="proof_file" accept="image/*">
                         <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
                     </div>
-                    <form>
+                </form>
             </div>
         </div>
         <div class="col-md-6">
@@ -289,7 +291,7 @@ if ($order->num_rows > 0) {
                 </div>
             </div>
             <?php
-            if (isset($_GET['id']) && $_GET['id'] > 0) {
+            if (isset($_GET['id']) && $_GET['id'] > 0) :
                 $order_result = $conn->query("SELECT ol.id AS id, p.id AS product_id,
                         p.name,
                         cl.firstname,
@@ -301,8 +303,8 @@ if ($order->num_rows > 0) {
                         inner join client_list cl on cl.id = ol.client_id
                         WHERE ol.id = '{$_GET['id']}'");
 
-                if ($row = $order_result->fetch_assoc()) {
             ?>
+                <?php if ($row = $order_result->fetch_assoc()) : ?>
                     <!-- Start Return/Refund -->
                     <?php if ($status == 5) : ?>
                         <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
@@ -332,13 +334,9 @@ if ($order->num_rows > 0) {
                                 </div>
                             </div>
                         </div>
-
                     <?php endif; ?>
-            <?php
-                }
-            }
-            ?>
-
+                <?php endif; ?>
+            <?php endif; ?>
         </div>
     </div>
     <div class="clear-fix my-2"></div>
@@ -376,6 +374,7 @@ if ($order->num_rows > 0) {
     })
 
     function submitReview(form, formId) {
+        console.log(`${form}-${formId}`)
         var elements = document.getElementById(`${form}-${formId}`).elements;
         var obj = {};
         for (var i = 0; i < elements.length; i++) {

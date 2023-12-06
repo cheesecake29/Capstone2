@@ -65,8 +65,8 @@ if (isset($_GET['confirmed'])) {
         <div class="row">
             <div class="navy">
                 <div class="nav flex-row " id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-                <a class="nav-link <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
-                <a class="nav-link <?= ($currentStatus === 'readytoship') ? 'active' : ''; ?>" id="v-pills-readytoship-tab" data-toggle="pill" href="#v-pills-readytoship" role="tab" aria-controls="v-pills-readytoship" aria-selected="<?= ($currentStatus === 'readytoship') ? 'true' : 'false'; ?>">Shipped</a>
+                    <a class="nav-link <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
+                    <a class="nav-link <?= ($currentStatus === 'readytoship') ? 'active' : ''; ?>" id="v-pills-readytoship-tab" data-toggle="pill" href="#v-pills-readytoship" role="tab" aria-controls="v-pills-readytoship" aria-selected="<?= ($currentStatus === 'readytoship') ? 'true' : 'false'; ?>">Shipped</a>
 
                     <a class="nav-link <?= ($currentStatus === 'for-delivery') ? 'active' : ''; ?>" id="v-pills-for-delivery-tab" data-toggle="pill" href="#v-pills-for-delivery" role="tab" aria-controls="v-pills-for-delivery" aria-selected="<?= ($currentStatus === 'for-delivery') ? 'true' : 'false'; ?>">For Delivery</a>
                     <a class="nav-link <?= ($currentStatus === 'on-the-way') ? 'active' : ''; ?>" id="v-pills-on-the-way-tab" data-toggle="pill" href="#v-pills-on-the-way" role="tab" aria-controls="v-pills-on-the-way" aria-selected="<?= ($currentStatus === 'on-the-way') ? 'true' : 'false'; ?>">On the Way</a>
@@ -118,7 +118,7 @@ if (isset($_GET['confirmed'])) {
                                                     <td class="text-center">
                                                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
                                                     </td>
-                                                <td class="text-center">
+                                                    <td class="text-center">
                                                         <button class="btn btn-flat btn-sm btn-default border view_data" type="button" data-id="<?= $row['id'] ?>"><i class="fa fa-eye"></i> View</button>
                                                     </td>
                                                 </tr>

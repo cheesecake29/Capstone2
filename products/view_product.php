@@ -37,6 +37,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 ?>
 
 <style>
+
     .product-img {
         max-width: 450px;
         object-fit: scale-down;
@@ -229,6 +230,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     }
 </style>
 
+<?php
+$variations = $conn->query("SELECT * FROM product_variations where product_id = $id");
+$singleVariation = $variations->fetch_array();
+?>
 <div class="content my-3">
     <div class="container">
         <div class="d-flex">
@@ -258,7 +263,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             </div>
             <div class="right-container px-5">
                 <div class="info">
-                    <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> </h1>
+                    <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $singleVariation['variation_name'] : '' ?></h1>
                     <?= isset($description) ? html_entity_decode($description) : '' ?>
                 </div>
                 <h3 class="text-success" id="default">
@@ -303,54 +308,64 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         </strong>
                     </h6>
                     <div class="d-flex flex-column">
-                        <?php
-                        $variations = $conn->query("SELECT * FROM product_variations where product_id = $id");
-                        while ($variation = $variations->fetch_assoc()) :
-                            $orderItemWithSameVariation = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}'
+                        <?php if ($variations->num_rows > 1) : ?>
+                            <?php
+                            while ($variation = $variations->fetch_assoc()) :
+                                $orderItemWithSameVariation = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$id}'
                                 and variation_id = '{$variation['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)");
-                            $variationTotalQuantity = $variation['variation_stock'];
-                            $cartVarItemCount = $conn->query("SELECT SUM(quantity) as cartQuantity FROM cart_list where product_id = '{$id}'
+                                $variationTotalQuantity = $variation['variation_stock'];
+                                $cartVarItemCount = $conn->query("SELECT SUM(quantity) as cartQuantity FROM cart_list where product_id = '{$id}'
                                 and variation_id = '{$variation['id']}'")->fetch_array()[0];
-                            if ($orderItemWithSameVariation->num_rows > 0) {
-                                $oitQuantity = $orderItemWithSameVariation->fetch_array()[0];
-                                $variationQuantity = $variation['variation_stock'] - $oitQuantity;
-                                $variationTotalQuantity = $variationQuantity - $cartVarItemCount;
-                            }
-                        ?>
-                            <?php if ($variationTotalQuantity > 0) : ?>
-                                <div class="d-block me-5">
-                                    <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
-                                        <div class="d-flex justify-content-between">
-                                            <div class="bd-highlights">
-                                                <?php if (isset($product_order_config)) : ?>
-                                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
-                                                <?php elseif (isset($all_order_config)) : ?>
-                                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
-                                                <?php else : ?>
-                                                    <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
-                                                <?php endif; ?>
-                                                <span id='stock_<?php echo $variation['id'] ?>'>
-                                                    <?php echo $variation['variation_name'] ?>
-                                                   
+                                if ($orderItemWithSameVariation->num_rows > 0) {
+                                    $oitQuantity = $orderItemWithSameVariation->fetch_array()[0];
+                                    $variationQuantity = $variation['variation_stock'] - $oitQuantity;
+                                    $variationTotalQuantity = $variationQuantity - $cartVarItemCount;
+                                }
+                            ?>
+                                <?php if ($variationTotalQuantity > 0) : ?>
+                                    <div class="d-block me-5">
+                                        <label class="w-100" for='variation_<?php echo $variation['id'] ?>'>
+                                            <div class="d-flex justify-content-between">
+                                                <div class="bd-highlights">
+                                                    <?php if (isset($product_order_config)) : ?>
+                                                        <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                    <?php elseif (isset($all_order_config)) : ?>
+                                                        <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                    <?php else : ?>
+                                                        <input type='radio' name='variations' id='variation_<?php echo $variation['id'] ?>' data-max=' <?= $variationTotalQuantity ?>' data-price='<?= $variation['variation_price'] ?>' data-name='<?= $variation['variation_name'] ?>' value='<?php echo $variation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($variation['variation_price'], 2)  ?>')" />
+                                                    <?php endif; ?>
+                                                    <span id='stock_<?php echo $variation['id'] ?>'>
+                                                        <?php echo $variation['variation_name'] ?>
+                                                    </span>
+                                                </div>
+                                                <div class="bd-highlights">
+                                                    <small>
+                                                        <i id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</i>
+                                                    </small>
+                                                </div>
                                             </div>
-                                            <div class="bd-highlights">
-                                                <small>
-                                                    <i id='variation_stock_<?php echo $variation['id'] ?>' class="var_stock" data-id="<?php echo $variation['id'] ?>" data-total="<?= $variationTotalQuantity ?>"> <?= $variationTotalQuantity ?> qty.</i>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
+                                        </label>
+                                    </div>
+                                <?php endif; ?>
+                            <?php
+                            endwhile; ?>
+                        <?php else : ?>
+                            <?php if (isset($product_order_config)) : ?>
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $singleVariation['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max='<?= $singleVariation['variation_stock'] ?>' data-price='<?= $singleVariation['variation_price'] ?>' data-name='<?= $singleVariation['variation_name'] ?>' value='<?php echo $singleVariation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($singleVariation['variation_price'], 2)  ?>')" />
+                            <?php elseif (isset($all_order_config)) : ?>
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $singleVariation['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max='<?= $singleVariation['variation_stock'] ?>' data-price='<?= $singleVariation['variation_price'] ?>' data-name='<?= $singleVariation['variation_name'] ?>' value='<?php echo $singleVariation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($singleVariation['variation_price'], 2)  ?>')" />
+                            <?php else : ?>
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $singleVariation['id'] ?>' data-max='<?= $singleVariation['variation_stock'] ?>' data-price='<?= $singleVariation['variation_price'] ?>' data-name='<?= $singleVariation['variation_name'] ?>' value='<?php echo $singleVariation['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($singleVariation['variation_price'], 2)  ?>')" />
                             <?php endif; ?>
-                        <?php
-                        endwhile; ?>
+                        <?php endif; ?>
+
                     </div>
                     <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
                 </div>
 
                 <div class="d-block mt-3">
                     <div id="available">
-                        <button id='add_to_cart' class='btn text-white' style="background: #004399" onclick='addToCart()' disabled>Add to Cart</button>
+                        <button id='add_to_cart' class='btn text-white' style="background: #004399" onclick='addToCart()' <?php ($variations->num_rows === 1) ? 'disabled' : '' ?>>Add to Cart</button>
                     </div>
                     <div class="out-of-stock" id="unavailable">
                         <button class="btn btn-danger">Add to cart</button>
@@ -481,6 +496,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         fetch();
         let availability = 0;
         let cart_count = 0;
+        $("input:radio:first").attr('checked', true);
     });
 
     function handleVariationSelect(variation, variation_price) {

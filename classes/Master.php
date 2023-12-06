@@ -973,6 +973,7 @@ class Master extends DBConnection
 		extract($_POST);
 		$update = $this->conn->query("UPDATE `order_list` set status = 5 where id = '{$id}'");
 		if ($update) {
+			$this->conn->query("UPDATE `appointment` set status = 2 where order_id = '{$oid}'");
 			$resp['status'] = 'success';
 			$resp['msg'] = " Order has been cancelled.";
 		} else {
@@ -1021,15 +1022,19 @@ class Master extends DBConnection
 					$desc = "";
 					if ($status == 0) {
 						$desc = 'Your order ' . $product_name . ' is pending.';
+						$this->conn->query("UPDATE `appointment` set `status` = 0 where order_id = '{$id}'");
 					}
 					if ($status == 1) {
 						$desc = 'Your order ' . $product_name . ' is shipped.';
+						$this->conn->query("UPDATE `appointment` set `status` = 1 where order_id = '{$id}'");
 					}
 					if ($status == 2) {
 						$desc = 'Your order ' . $product_name . ' is delivered.';
+						$this->conn->query("UPDATE `appointment` set `status` = 4 where order_id = '{$id}'");
 					}
 					if ($status == 3) {
 						$desc = 'Your order ' . $product_name . ' was cancelled.';
+						$this->conn->query("UPDATE `appointment` set `status` = 2 where order_id = '{$id}'");
 					}
 
 					$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
@@ -1246,7 +1251,7 @@ class Master extends DBConnection
 	{
 		extract($_POST);
 		$date = $_POST['date'];
-		$checkAvailabilityDates = $this->conn->query("SELECT hours FROM appointment where dates = '{$date}' and status != 3");
+		$checkAvailabilityDates = $this->conn->query("SELECT hours FROM appointment where dates = '{$date}' and status not in (2,3)");
 		if ($checkAvailabilityDates) {
 			$resp['status'] = 'success';
 			$resp['msg'] = `Appointment successfully updated`;
@@ -1286,8 +1291,10 @@ class Master extends DBConnection
 	{
 		extract($_POST);
 		$schedule = $_POST['schedule'];
+		$from = $_POST['from_hours'];
+		$to = $_POST['to_hours'];
 		$comments = $_POST['comments'];
-		$action = $this->conn->query("INSERT into `unavailable_dates` (`schedule`, `comments`) VALUES ('{$schedule}', '{$comments}') ");
+		$action = $this->conn->query("INSERT into `unavailable_dates` (`schedule`, `from_hours`, `to_hours`, `duration`,`comments`) VALUES ('{$schedule}', '{$from}', '{$to}', {$duration}, '{$comments}') ");
 		if ($action) {
 			$resp['status'] = 'success';
 			$resp['msg'] = `Shop config successfully processed`;

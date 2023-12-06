@@ -73,7 +73,7 @@ class Login extends DBConnection
 				$resp['status'] = 'success';
 			} else {
 				$resp['status'] = 'failed';
-				$resp['msg'] = ' Your Account has been blocked by the management.';
+				$resp['msg'] = ' Please verify your account.';
 			}
 		} else {
 			$resp['status'] = 'failed';

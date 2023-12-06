@@ -69,13 +69,7 @@
                     </a>
                 </li>
 
-                <li class="navs nav-item">
-                    <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-links nav-link">
-                        <i class="nav-icon fas fa-cog"></i>
-                        <p>Order Configuration</p>
-                    </a>
-                </li>
-
+               
                 <li class="navs nav-item">
                     <a href="#" class="nav-links nav-link">
                         <i class="nav-icon fas fa-boxes"></i>

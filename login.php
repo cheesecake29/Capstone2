@@ -32,6 +32,13 @@
       <form id="clogin-frm" action="" method="post">
         <div class="login-textfield-container">
 
+        <?php if (isset($resp['msg']) && !empty($resp['msg'])) : ?>
+        <div class="error-message">
+          <?php echo $resp['msg']; ?>
+        </div>
+      <?php endif; ?>
+          
+
           <div class="text-field-login">
             <div class="input-area">
               <label class="label" for="email">Email</label>

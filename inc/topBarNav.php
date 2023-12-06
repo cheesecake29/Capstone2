@@ -383,7 +383,7 @@
                                 if ($result) {
                                     $row = $result->fetch_assoc();
                                     $notificationCount = $row['notificationCount'];
-
+                                    echo '<input id="notifcount" value="'. $notificationCount .'" type="hidden">';
                                     echo '<span class="badge bg-danger notification-count">' . $notificationCount . '</span>';
                                 } else {
                                     // Handle the case where the query failed
@@ -391,6 +391,9 @@
                                 }
 
                                 echo '</a>';
+
+                                
+                                echo '<div id="notif-container">';
 
                                 $sql = "SELECT * FROM notifications WHERE `type` = 1
                                     AND `client_id` = '{$_settings->userdata('id')}' ORDER BY is_read ASC, id DESC";
@@ -425,35 +428,9 @@
                                     echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
                                     echo 'No notifications available.';
                                 }
+                                
+                                echo '</div>';
                                 ?>
-
-                                <!-- <ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">
-                                    <div class="notification-heading">
-                                        <span class="menu-title">Notifications</span>
-                                    </di
-                                    <li class="divider"></li>
-                                    <div class="notifications-wrapper">
-                                        <a class="content" href="#">
-                                        <div class="notification-item">
-                                            <h4 class="item-title">Your order is confirmed.</h4>
-                                            <p class="item-info">Sample text</p>
-                                        </div>
-                                        
-                                        </a>
-                                        <a class="content" href="#">
-                                        <div class="notification-item">
-                                            <h4 class="item-title">Your order is confirmed.</h4>
-                                            <p class="item-info">Sample text</p>
-                                        </div>
-                                        </a>
-                                        <a class="content" href="#">
-                                        <div class="notification-item">
-                                            <h4 class="item-title">Your order is on the way.</h4>
-                                            <p class="item-info">Sample text</p>
-                                        </div>
-                                        </a>
-                                    </div>
-                                </ul> -->
                             </div>
                             <div class="nav-item">
                                 <a href="./?p=cart" class="nav-link">
@@ -494,35 +471,64 @@
 
     <!-- Your content goes here -->
     <script>
-    $(document).ready(function() {
-        // function fetchNotifications() {
-        //     
-            //TODO:
-        //     });
-        // }
+    let previousCount = 0;
 
-        //
-        // //setInterval(fetchNotifications, 5000);
-
-        $('.notification').on('click', function(e) {
-            e.preventDefault();
-
-            var notificationID = $(this).data('notification-id');
-            var $notificationItem = $(this).find('.notification-item');
-            //var audio = document.getElementById('audio_' + notificationID);
-            
-            //audio.play();
-            $.ajax({
-                url: _base_url_ + 'mark_notification_as_read.php',
-                method: 'POST',
-                data: { notification_id: notificationID },
-                success: function(response) {
-                    $notificationItem.css('background', '#ffff');
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
+    function fetchNotifications(){
+        $.ajax({
+            url: 'fetch_notifications.php',
+            method: 'GET',
+            dataType: 'html',
+            success: function(response) {
+                fetchNotificationCount();
+                previousCount = $('#notifcount').val();
+                $('#notif-container').html(response);
+            },
+            error: function(xhr, status, error) {
+            console.error(error);
+            }
         });
+
+    }
+
+    function fetchNotificationCount(){
+        var notificationID = $('.notification').data('notification-id');
+        $.ajax({
+            url: 'fetch_notification_count.php',
+            method: 'GET',
+            success: function(response) {
+            const newCount = parseInt(response);
+            if (newCount > previousCount) {
+                var audio = document.getElementById('audio_' + notificationID);
+                audio.play();
+
+            }
+            $('#notifcount').val(response);
+            $('.notification-count').html(response);
+            },
+            error: function(xhr, status, error) {
+            console.error(error);
+            }
+        });
+    }
+    $(document).ready(function() {
+        $('#dLabel').on('click', function(e) {
+            $('.notifications').toggleClass('show');
+
+            if ($('.notifications').hasClass('show')) {
+                $('.notifications').css({
+                'left': '0px',
+                'right': 'inherit'
+                });
+            } else {
+                $('.notifications').css({
+                'left': '',
+                'right': ''
+                });
+            }
+        });
+        fetchNotifications();
+
+        setInterval(fetchNotifications, 15000);
+        setInterval(fetchNotificationCount, 15000);
     });
 </script>

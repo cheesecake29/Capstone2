@@ -8,13 +8,18 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
+html{
+  background-color: #ffff;
+}
+
 .signin-container {
   display: flex;
   flex-direction: row;
+  background-color: #ffff;
 }
 
 .left-signin {
-  background-color: #ffffff;
+ 
   width: 50%;
   height: 60vh;
 }
@@ -112,4 +117,51 @@ label {
   background-color: #ff1900;
   padding: 1.5%;
   color: #ffffff;
+}
+
+
+@media screen and (max-width: 1000px) {
+  .text-field-sign{
+    margin-top: 25px;
+  }
+
+  html{
+    background-color: #ffff;
+  }
+
+  .signin-container {
+    flex-direction: column;
+  
+  }
+
+  .left-signin,
+  .right-signin {
+    width: 100%;
+    float: none;
+   
+  }
+
+  /* Hide the right-login on screens below 1000px */
+  .right-signin {
+    display: none;
+  }
+
+  .left-signin h1 {
+    font-size: 40px; /* Adjust the font size as needed */
+  }
+}
+
+@media screen and (max-width: 550px) {
+  html{
+    background-color: #ffff;
+  }
+  .signin-container {
+    flex-direction: column;
+   
+    width: 100%;
+  }
+
+  .left-signin h1 {
+    font-size: 30px; /* Adjust the font size as needed */
+  }
 }

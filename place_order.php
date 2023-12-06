@@ -299,31 +299,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             </tr>
                                             <?php
                                             $totalItem += ($row['quantity'] * $row['price']);
-                                            switch ($row['weight']) {
-                                                case "500g and below":
-                                                    $shipping += 117;
-                                                    break;
-                                                case "500g – 1kg":
-                                                    $shipping += 200;
-                                                    break;
-                                                case "1kg – 3kg":
-                                                    $shipping += 300;
-                                                    break;
-                                                case "3kg – 4kg":
-                                                    $shipping += 400;
-                                                    break;
-                                                case "4kg – 5kg":
-                                                    $shipping += 500;
-                                                    break;
-                                                case "5kg – 6kg":
-                                                    $shipping += 600;
-                                                    break;
-                                                default:
-                                                    $shipping += 0;
-                                                    break;
-                                            }
 
-                                            $total = $totalItem + $shipping;
+                                            $total = $totalItem;
                                             ?>
                                         <?php endwhile; ?>
                                     </tbody>
@@ -331,7 +308,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                             </div>
                             <div class="mt-auto mx-3 text-end min-vh-5">
                                 <input name="shipping_amount" value="<?= $shipping ?>" type="hidden" />
-                                <h5 id="sf">Shipping Fee: <?= number_format($shipping, 2) ?> </h5>
+                                <p id="sf"><i>Shipping Fees Notice: Our system does not include shipping fees. Please note that shipping costs will be applied separately during checkout</i></p>
                                 <h2 id="totalWithSf" class="righth2">Total Price: <?= number_format($total, 2) ?> </h2>
                                 <h2 id="totalWithoutSf" class="righth2" style="display: none;">Total Price: <?= number_format($totalItem, 2) ?> </h2>
                             </div>

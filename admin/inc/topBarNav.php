@@ -54,12 +54,26 @@
 }
 
 .notifications a.content {
- text-decoration:none;
- background:#ccc;
+        text-decoration: none;
+        background: #ccc;
 
- }
-    
- .notification-item {
+    }
+
+    .notification-item {
+        padding: 10px;
+       
+        background: #F4F5FA;
+        border-radius: 4px;
+    }
+
+    .unread-notification {
+        padding: 10px;
+       
+        background: #F4F5FA;
+        border-radius: 4px;
+    }
+
+    .read-notification {
         padding: 10px;
        
         background: #ffff;
@@ -68,24 +82,25 @@
 
     .notification-item:hover {
       
-        background: #F4F5FA;
+        background: #ffff;
        
     }
 
- .notification-count {
-    width: 30px;
-    height: 30px;
-    padding: 15.2px 7.8px;
-    font-size: 27px;
-    border-radius: 26px;
-    transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
-    transform-origin: top;
-    padding-right: 0;
-    padding-top: 0.2px;
-    padding-left: 0.2px;
-    text-align: center;
-    border-width: 48px;
- }
+    .notification-count {
+        width: 30px;
+        height: 30px;
+        padding: 15.2px 7.8px;
+        font-size: 27px;
+        border-radius: 26px;
+        transform: perspective(0px) translate(-12px) rotate(0deg) scale(0.50);
+        transform-origin: top;
+        padding-right: 0;
+        padding-top: 0.2px;
+        padding-left: 0.2px;
+        text-align: center;
+        border-width: 48px;
+    }
+
  /* END: NOTIFICATIONS */
 </style>
 <!-- Navbar -->
@@ -103,10 +118,10 @@
         <ul class="navbar-nav ml-auto align-items-center">
           <li class="notif dropdown">
           <?php
-              echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
+              echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#">';
               echo '<i class="fas fa-bell"></i>';
 
-              $countQuery = "SELECT COUNT(id) AS order_list FROM notifications WHERE `type` = 2";
+              $countQuery = "SELECT COUNT(id) AS order_list FROM notifications WHERE `type` = 2 AND `is_read` = 0" ;
               $result = $conn->query($countQuery);
 
               if ($result === false) {
@@ -120,59 +135,50 @@
                       echo '<span class="badge bg-danger notification-count">No data found</span>';
                   } else {
                       $notificationCount = $row['order_list'];
+                      echo '<input id="notifcount" value="'. $notificationCount .'" type="hidden">';
                       echo '<span class="badge bg-danger notification-count">' . $notificationCount . '</span>';
                   }
               }
 
               echo '</a>';
+
+              echo '<div id="notif-container">';
                         
-                        $sql = "SELECT * FROM notifications WHERE `type` = 2 ORDER BY id DESC";
-                        $result = $conn->query($sql);
+                    $sql = "SELECT * FROM notifications WHERE `type` = 2 ORDER BY is_read ASC, id DESC";
+                    $result = $conn->query($sql);
 
-                        if ($result->num_rows > 0) {
-                            echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
-                            echo '<div class="notification-heading"><span class="menu-title">Notifications</span></div>';
-                            echo '<li class="divider"></li>';
-                            echo '<div class="notifications-wrapper">';
+                    if ($result->num_rows > 0) {
+                        echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
+                        echo '<div class="notification-heading"><span class="menu-title">Notifications</span></div>';
+                        echo '<li class="divider"></li>';
+                        echo '<div class="notifications-wrapper">';
 
-                            while ($row = $result->fetch_assoc()) {
-                                echo '<a class="content" href="./?page=orders/view_order&id='. $row['order_id'] . '">';
-                                echo '<div class="notification-item">';
-                                echo '<h4 class="item-title">' . $row['description'] . '</h4>';
-                                // echo '<p class="item-info">' . $row['description'] . '</p>';
-                                echo '</div>';
-                                echo '</a>';
-                            }
+                        while ($row = $result->fetch_assoc()) {
+                            $notification_id = $row['id'];
+                            $is_read = $row['is_read'];
 
+                            $notificationClass = ($is_read == 0) ? 'unread-notification' : 'read-notification';
+
+                            echo '<a class="content notification" href="./?page=orders/view_order&id='. $row['order_id'] . '"
+                              id="notification_' . $notification_id . '" data-notification-id="'.$notification_id.'">';
+                            echo '<div class="notification-item">';
+                            echo '<h4 class="item-title">' . $row['description'] . '</h4>';
+                            // echo '<p class="item-info">' . $row['description'] . '</p>';
                             echo '</div>';
-                            echo '</ul>';
-                        } else {
-                            echo 'No notifications available.';
+                            echo '</a>';
                         }
+
+                        echo '</div>';
+                        echo '</ul>';
+                    } else {
+                        echo 'No notifications available.';
+                    }
+
+                        
+                echo '</div>';
 
                         ?>
           </li>
-          <!-- Navbar Search -->
-          <!-- <li class="nav-item">
-            <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-            <i class="fas fa-search"></i>
-            </a>
-            <div class="navbar-search-block">
-              <form class="form-inline">
-                <div class="input-group input-group-sm">
-                  <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                  <div class="input-group-append">
-                    <button class="btn btn-navbar" type="submit">
-                    <i class="fas fa-search"></i>
-                    </button>
-                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                    <i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </li> -->
           <!-- Messages Dropdown Menu -->
           <li class="nav-item">
             <div class="btn-group nav-link">
@@ -199,3 +205,68 @@
         </ul>
       </nav>
       <!-- /.navbar -->
+<script>
+    let previousCount = 0;
+
+    function fetchNotifications(){
+        $.ajax({
+            url: 'fetch_notifications_admin.php',
+            method: 'GET',
+            dataType: 'html',
+            success: function(response) {
+                fetchNotificationCount();
+                previousCount = $('#notifcount').val();
+                $('#notif-container').html(response);
+            },
+            error: function(xhr, status, error) {
+            console.error(error);
+            }
+        });
+
+    }
+
+    function fetchNotificationCount(){
+        var notificationID = $('.notification').data('notification-id');
+        $.ajax({
+            url: 'fetch_notification_count_admin.php',
+            method: 'GET',
+            success: function(response) {
+            const newCount = parseInt(response);
+            console.log("new Count: ", newCount);
+            console.log("previousCount: ", previousCount);
+            if (newCount > previousCount) {
+                var audio = document.getElementById('audio_' + notificationID);
+                audio.play();
+                console.log("played Audio: ");
+
+            }
+            $('#notifcount').val(response);
+            $('.notification-count').html(response);
+            },
+            error: function(xhr, status, error) {
+            console.error(error);
+            }
+        });
+    }
+    $(document).ready(function() {
+        $('#dLabel').on('click', function(e) {
+            $('.notifications').toggleClass('show');
+
+            if ($('.notifications').hasClass('show')) {
+                $('.notifications').css({
+                'left': '0px',
+                'right': 'inherit'
+                });
+            } else {
+                $('.notifications').css({
+                'left': '',
+                'right': ''
+                });
+            }
+        });
+        fetchNotifications();
+
+        setInterval(fetchNotifications, 15000);
+        setInterval(fetchNotificationCount, 15000);
+    });
+</script>

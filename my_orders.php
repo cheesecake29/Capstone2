@@ -1,24 +1,18 @@
 <?php
 // 0=pending,1 = confirmed, 2 = packed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled
-$pending = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 0 order by unix_timestamp(ol.date_created) desc ");
-$confirmed = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status  in (1,2)  order by unix_timestamp(ol.date_created) desc ");
-$forDelivery = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 3 order by unix_timestamp(ol.date_created) desc ");
-$onTheWay = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 4 order by unix_timestamp(ol.date_created) desc ");
-$delivered = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 5 order by unix_timestamp(ol.date_created) desc ");
-$cancelled = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 6 order by unix_timestamp(ol.date_created) desc ");
-$return = $conn->query("SELECT ol.*, a.id as appointment_id FROM `order_list` ol left join `appointment` a on a.order_id = ol.id where ol.client_id = '{$_settings->userdata('id')}' and ol.status = 7 order by unix_timestamp(ol.date_created) desc ");
+$pending = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 0 order by unix_timestamp(date_created) desc ");
+$readytoship = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 1  order by unix_timestamp(date_created) desc ");
+$delivered = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 2 order by unix_timestamp(date_created) desc ");
+$cancelled = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 3 order by unix_timestamp(date_created) desc ");
+$return = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 4 order by unix_timestamp(date_created) desc ");
 
 
 $currentStatus = "pending"; // Default status is pending
 
 // Check the current status and update the variable accordingly
-if (isset($_GET['confirmed'])) {
-    $currentStatus = "confirmed";
-} elseif (isset($_GET['for_delivery'])) {
-    $currentStatus = "for-delivery";
-} elseif (isset($_GET['on_the_way'])) {
-    $currentStatus = "on-the-way";
-} elseif (isset($_GET['delivered'])) {
+if (isset($_GET['readytoship'])) {
+    $currentStatus = "readytoship";
+}  elseif (isset($_GET['delivered'])) {
     $currentStatus = "delivered";
 } elseif (isset($_GET['cancelled'])) {
     $currentStatus = "cancelled";
@@ -33,30 +27,29 @@ if (isset($_GET['confirmed'])) {
     .text-center {
         color: #004399;
     }
-
-    .row {
-        display: flex;
-        flex-direction: column;
+    .row{
+    display: flex;
+    flex-direction: column;
     }
 
-    .navy .nav {
+    .navy .nav{
         display: flex;
         justify-content: space-around;
         align-items: center;
         width: 100%;
         background-color: white;
-
+        
     }
 
-
+    
 
     .nav-link.active {
-        background-color: #0062CC;
-        /* Set your desired background color */
-        color: white !important;
-        /* Set the text color */
+        background-color: #0062CC; /* Set your desired background color */
+        color: white !important; /* Set the text color */
         padding: 1% 3%;
     }
+
+  
 </style>
 <div class="content py-5 mt-3">
     <div class="container">
@@ -66,13 +59,12 @@ if (isset($_GET['confirmed'])) {
             <div class="navy">
                 <div class="nav flex-row " id="v-pills-tab" role="tablist" aria-orientation="horizontal">
                 <a class="nav-link <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
-                <a class="nav-link <?= ($currentStatus === 'readytoship') ? 'active' : ''; ?>" id="v-pills-readytoship-tab" data-toggle="pill" href="#v-pills-readytoship" role="tab" aria-controls="v-pills-readytoship" aria-selected="<?= ($currentStatus === 'readytoship') ? 'true' : 'false'; ?>">Shipped</a>
+                <a class="nav-link <?= ($currentStatus === 'readytoship') ? 'active' : ''; ?>" id="v-pills-readytoship-tab" data-toggle="pill" href="#v-pills-readytoship" role="tab" aria-controls="v-pills-readytoship" aria-selected="<?= ($currentStatus === 'readytoship') ? 'true' : 'false'; ?>">Ready to ship</a>
 
-                    <a class="nav-link <?= ($currentStatus === 'for-delivery') ? 'active' : ''; ?>" id="v-pills-for-delivery-tab" data-toggle="pill" href="#v-pills-for-delivery" role="tab" aria-controls="v-pills-for-delivery" aria-selected="<?= ($currentStatus === 'for-delivery') ? 'true' : 'false'; ?>">For Delivery</a>
-                    <a class="nav-link <?= ($currentStatus === 'on-the-way') ? 'active' : ''; ?>" id="v-pills-on-the-way-tab" data-toggle="pill" href="#v-pills-on-the-way" role="tab" aria-controls="v-pills-on-the-way" aria-selected="<?= ($currentStatus === 'on-the-way') ? 'true' : 'false'; ?>">On the Way</a>
-                    <a class="nav-link <?= ($currentStatus === 'delivered') ? 'active' : ''; ?>" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="<?= ($currentStatus === 'delivered') ? 'true' : 'false'; ?>">Delivered</a>
-                    <a class="nav-link <?= ($currentStatus === 'cancelled') ? 'active' : ''; ?>" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="<?= ($currentStatus === 'cancelled') ? 'true' : 'false'; ?>">Cancelled</a>
-                    <a class="nav-link <?= ($currentStatus === 'return-refund') ? 'active' : ''; ?>" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="<?= ($currentStatus === 'return-refund') ? 'true' : 'false'; ?>">For Return/Refund</a>
+              
+                <a class="nav-link <?= ($currentStatus === 'delivered') ? 'active' : ''; ?>" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="<?= ($currentStatus === 'delivered') ? 'true' : 'false'; ?>">Delivered</a>
+                <a class="nav-link <?= ($currentStatus === 'cancelled') ? 'active' : ''; ?>" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="<?= ($currentStatus === 'cancelled') ? 'true' : 'false'; ?>">Cancelled</a>
+                <a class="nav-link <?= ($currentStatus === 'return-refund') ? 'active' : ''; ?>" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="<?= ($currentStatus === 'return-refund') ? 'true' : 'false'; ?>">For Return/Refund</a>
                 </div>
             </div>
             <div class="order-container">
@@ -118,7 +110,7 @@ if (isset($_GET['confirmed'])) {
                                                     <td class="text-center">
                                                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
                                                     </td>
-                                                <td class="text-center">
+                                                    <td class="text-center">
                                                         <button class="btn btn-flat btn-sm btn-default border view_data" type="button" data-id="<?= $row['id'] ?>"><i class="fa fa-eye"></i> View</button>
                                                     </td>
                                                 </tr>
@@ -130,7 +122,7 @@ if (isset($_GET['confirmed'])) {
                         </div>
                     </div>
                     <!-- Confirmed and Packed -->
-                    <div class="tab-pane fade" id="v-pills-confirmed" role="tabpanel" aria-labelledby="v-pills-confirmed-tab">
+                    <div class="tab-pane fade" id="v-pills-readytoship" role="tabpanel" aria-labelledby="v-pills-readytoship-tab">
                         <div class="card card-outline card-dark shadow rounded-0">
                             <div class="card-body">
                                 <div class="container-fluid">
@@ -156,7 +148,7 @@ if (isset($_GET['confirmed'])) {
                                         <tbody>
                                             <?php
                                             $i = 1;
-                                            while ($row = $confirmed->fetch_assoc()) :
+                                            while ($row = $readytoship->fetch_assoc()) :
                                             ?>
                                                 <tr>
                                                     <td class="text-center"><?= $i++ ?></td>
@@ -168,7 +160,7 @@ if (isset($_GET['confirmed'])) {
                                                     </td>
                                                     <td class="text-center"><?= number_format($row['total_amount'], 2) ?></td>
                                                     <td class="text-center">
-                                                        <span class="badge badge-secondary px-3 rounded-pill p-2 " style="background-color: #1A547E;">Shipped</span>
+                                                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Ready to ship</span>
                                                     </td>
                                                     <td class="text-center">
                                                         <button class="btn btn-flat btn-sm btn-default border view_data" type="button" data-id="<?= $row['id'] ?>"><i class="fa fa-eye"></i> View</button>
@@ -181,6 +173,7 @@ if (isset($_GET['confirmed'])) {
                             </div>
                         </div>
                     </div>
+                  
                     <!-- Delivered -->
                     <div class="tab-pane fade" id="v-pills-delivered" role="tabpanel" aria-labelledby="v-pills-delivered">
                         <div class="card card-outline card-dark shadow rounded-0">

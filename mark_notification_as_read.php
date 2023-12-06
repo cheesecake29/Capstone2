@@ -4,7 +4,8 @@ require_once('./config.php');
 if (isset($_POST['notification_id'])) {
     $clicked_notification_id = $_POST['notification_id'];
 
-    function markNotificationAsRead($conn, $notification_id) {
+    function markNotificationAsRead($conn, $notification_id)
+    {
 
         $result = $conn->query("UPDATE notifications SET is_read = 1 WHERE id = $notification_id");
 

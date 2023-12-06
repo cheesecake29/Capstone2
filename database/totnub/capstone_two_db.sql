@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 06, 2023 at 12:59 PM
+-- Generation Time: Dec 06, 2023 at 04:46 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,7 +46,8 @@ INSERT INTO `appointment` (`id`, `client_id`, `order_id`, `dates`, `hours`, `sta
 (147, 14, 44, '2023-12-08', '10:00 am', 1, '2023-12-05 11:56:20'),
 (148, 14, 45, '2023-12-08', '11:00 am', 4, '2023-12-06 11:13:20'),
 (149, 14, 46, '0000-00-00', '', 0, '2023-12-06 11:07:06'),
-(150, 14, 48, '2023-12-22', '10:00 am', 0, '2023-12-06 11:13:32');
+(150, 14, 48, '2023-12-22', '10:00 am', 0, '2023-12-06 11:13:32'),
+(151, 14, 49, '2023-12-19', '09:00 am', 0, '2023-12-06 15:46:21');
 
 -- --------------------------------------------------------
 
@@ -222,6 +223,7 @@ CREATE TABLE `notifications` (
   `client_id` int(11) NOT NULL,
   `description` text NOT NULL,
   `status` int(11) NOT NULL DEFAULT 0,
+  `is_read` int(11) NOT NULL DEFAULT 0 COMMENT '0=unread, 1=read',
   `type` int(11) NOT NULL DEFAULT 1 COMMENT '1=client, 2=admin',
   `order_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -230,38 +232,39 @@ CREATE TABLE `notifications` (
 -- Dumping data for table `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `type`, `order_id`) VALUES
-(1, 13, '0', 0, 1, 0),
-(2, 13, '0', 0, 1, 0),
-(3, 13, 'Your order is confirmed.', 0, 1, 29),
-(4, 13, 'Test Last. has placed an order.', 0, 2, 30),
-(5, 13, 'Your order is confirmed.', 0, 1, 0),
-(6, 14, 'test test  has placed an order.', 0, 2, 31),
-(7, 14, 'test test  has placed an order.', 0, 2, 32),
-(8, 14, 'test test  has placed an order.', 0, 2, 33),
-(9, 14, 'test test  has placed an order.', 0, 2, 34),
-(10, 14, 'test test  has placed an order.', 0, 2, 35),
-(11, 14, 'Your order Test product was delivered.', 0, 1, 35),
-(12, 14, 'Your order Lorem ipum was delivered.', 0, 1, 34),
-(13, 14, 'John Doe  has placed an order.', 0, 2, 36),
-(14, 14, 'John Doe  has placed an order.', 0, 2, 37),
-(15, 14, 'John Doe  has placed an order.', 0, 2, 38),
-(16, 14, 'John Doe  has placed an order.', 0, 2, 39),
-(17, 14, 'John Doe  has placed an order.', 0, 2, 40),
-(18, 14, 'John Doe  has placed an order.', 0, 2, 41),
-(19, 14, 'John Doe  has placed an order.', 0, 2, 42),
-(20, 14, 'John Doe  has placed an order.', 0, 2, 43),
-(21, 14, 'John Doe  has placed an order.', 0, 2, 44),
-(22, 14, 'John Doe  has placed an order.', 0, 2, 45),
-(23, 14, 'Your order Test product is pending.', 0, 1, 45),
-(24, 14, 'Your order Test product is shipped.', 0, 1, 45),
-(25, 14, 'Your order Test product is pending.', 0, 1, 45),
-(26, 14, 'Your order Test product is shipped.', 0, 1, 45),
-(27, 14, 'John Doe  has placed an order.', 0, 2, 46),
-(28, 14, 'John Doe  has placed an order.', 0, 2, 47),
-(29, 14, 'Your order Test product is delivered.', 0, 1, 45),
-(30, 14, 'John Doe  has placed an order.', 0, 2, 48),
-(31, 14, '', 0, 1, 45);
+INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `is_read`, `type`, `order_id`) VALUES
+(1, 13, '0', 0, 0, 1, 0),
+(2, 13, '0', 0, 0, 1, 0),
+(3, 13, 'Your order is confirmed.', 0, 0, 1, 29),
+(4, 13, 'Test Last. has placed an order.', 0, 0, 2, 30),
+(5, 13, 'Your order is confirmed.', 0, 0, 1, 0),
+(6, 14, 'test test  has placed an order.', 0, 0, 2, 31),
+(7, 14, 'test test  has placed an order.', 0, 0, 2, 32),
+(8, 14, 'test test  has placed an order.', 0, 0, 2, 33),
+(9, 14, 'test test  has placed an order.', 0, 0, 2, 34),
+(10, 14, 'test test  has placed an order.', 0, 0, 2, 35),
+(11, 14, 'Your order Test product was delivered.', 0, 0, 1, 35),
+(12, 14, 'Your order Lorem ipum was delivered.', 0, 0, 1, 34),
+(13, 14, 'John Doe  has placed an order.', 0, 0, 2, 36),
+(14, 14, 'John Doe  has placed an order.', 0, 0, 2, 37),
+(15, 14, 'John Doe  has placed an order.', 0, 0, 2, 38),
+(16, 14, 'John Doe  has placed an order.', 0, 0, 2, 39),
+(17, 14, 'John Doe  has placed an order.', 0, 0, 2, 40),
+(18, 14, 'John Doe  has placed an order.', 0, 0, 2, 41),
+(19, 14, 'John Doe  has placed an order.', 0, 0, 2, 42),
+(20, 14, 'John Doe  has placed an order.', 0, 0, 2, 43),
+(21, 14, 'John Doe  has placed an order.', 0, 0, 2, 44),
+(22, 14, 'John Doe  has placed an order.', 0, 0, 2, 45),
+(23, 14, 'Your order Test product is pending.', 0, 0, 1, 45),
+(24, 14, 'Your order Test product is shipped.', 0, 0, 1, 45),
+(25, 14, 'Your order Test product is pending.', 0, 1, 1, 45),
+(26, 14, 'Your order Test product is shipped.', 0, 1, 1, 45),
+(27, 14, 'John Doe  has placed an order.', 0, 0, 2, 46),
+(28, 14, 'John Doe  has placed an order.', 0, 0, 2, 47),
+(29, 14, 'Your order Test product is delivered.', 0, 1, 1, 45),
+(30, 14, 'John Doe  has placed an order.', 0, 0, 2, 48),
+(31, 14, '', 0, 1, 1, 45),
+(32, 14, 'John Doe  has placed an order.', 0, 0, 2, 49);
 
 -- --------------------------------------------------------
 
@@ -306,7 +309,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quan
 (51, 45, 50, 53, 1, 1, '2023-12-06 18:51:07', '2023-12-06 19:30:11'),
 (52, 46, 50, 52, 1, 0, '2023-12-06 19:07:06', NULL),
 (53, 47, 50, 53, 1, 0, '2023-12-06 19:12:58', NULL),
-(54, 48, 50, 52, 1, 0, '2023-12-06 19:13:32', NULL);
+(54, 48, 50, 52, 1, 0, '2023-12-06 19:13:32', NULL),
+(55, 49, 50, 52, 1, 0, '2023-12-06 23:46:21', NULL),
+(56, 49, 52, 55, 1, 0, '2023-12-06 23:46:21', NULL);
 
 -- --------------------------------------------------------
 
@@ -342,7 +347,8 @@ INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contac
 (45, '202312-00003', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-12-06 18:51:07', '2023-12-06 19:19:00'),
 (46, '202312-00004', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-06 19:07:06', '2023-12-06 19:07:06'),
 (47, '202312-00005', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 2, '', 0, '2023-12-06 19:12:58', '2023-12-06 19:12:58'),
-(48, '202312-00006', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-06 19:13:32', '2023-12-06 19:13:32');
+(48, '202312-00006', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-06 19:13:32', '2023-12-06 19:13:32'),
+(49, '202312-00007', 14, 1480, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-06 23:46:21', '2023-12-06 23:46:21');
 
 -- --------------------------------------------------------
 
@@ -831,7 +837,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
 
 --
 -- AUTO_INCREMENT for table `brand_list`
@@ -843,7 +849,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -873,7 +879,7 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `order_config`
@@ -885,13 +891,13 @@ ALTER TABLE `order_config`
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `product_image_gallery`

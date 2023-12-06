@@ -141,6 +141,7 @@ if ($order->num_rows > 0) {
                         <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
                     </div>
                 </form>
+                <?php endif; ?>
             </div>
         </div>
         <div class="col-md-6">

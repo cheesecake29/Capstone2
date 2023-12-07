@@ -361,11 +361,11 @@ if ($variations->num_rows === 1) {
                             endwhile; ?>
                         <?php elseif ($variations->num_rows === 1) : ?>
                             <?php if (isset($product_order_config)) : ?>
-                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max='<?= $copyVariationResult['variation_stock'] ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-maxprice='<?= $product_order_config['value'] ?>' data-max='<?= $productStockTotalQuantity ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
                             <?php elseif (isset($all_order_config)) : ?>
-                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max='<?= $copyVariationResult['variation_stock'] ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-maxprice='<?= $all_order_config['value'] ?>' data-max='<?= $productStockTotalQuantity ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
                             <?php else : ?>
-                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-max='<?= $copyVariationResult['variation_stock'] ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
+                                <input type='radio' name='variations' class="invisible" id='variation_<?php echo $copyVariationResult['id'] ?>' data-max='<?= $productStockTotalQuantity ?>' data-price='<?= $copyVariationResult['variation_price'] ?>' data-name='<?= $copyVariationResult['variation_name'] ?>' value='<?php echo $copyVariationResult['id'] ?>' onclick="handleVariationSelect(this, '<?= number_format($copyVariationResult['variation_price'], 2)  ?>')" />
                             <?php endif; ?>
                         <?php endif; ?>
 
@@ -589,12 +589,6 @@ if ($variations->num_rows === 1) {
         const variationId = $("input[type='radio'][name='variations']:checked").val();
         const orderQuantity = $('#order-quantity').val();
         if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
-            availability--;
-            let avail_stock = availability - cart_count;
-            $('#available_stock').html(avail_stock);
-            let var_item_stock = $('#variation_stock_' + variationId).data('total');
-            var_item_stock--;
-            $('#variation_stock_' + variationId).html(var_item_stock + " qty.");
             if (availability > 0) {
                 start_loader();
                 $.ajax({
@@ -617,6 +611,13 @@ if ($variations->num_rows === 1) {
                             alert_toast("Product has been added to cart.", 'success');
                             update_cart_count(resp.cart_count);
                             const cartCount = resp.cart_count;
+                            // Order quantity - Total Available stock
+                            const avail_stock = availability - orderQuantity;
+                            $('#available_stock').html(avail_stock);
+                            // Update the available stock by variation
+                            const var_item_stock = $('#variation_stock_' + variationId).data('total');
+                            const updated_var_item_stock = var_item_stock - orderQuantity;
+                            $('#variation_stock_' + variationId).html(updated_var_item_stock + " qty.");
                             const cartCountSpan = $('#cart_count');
 
                             if (cartCount !== 0) {

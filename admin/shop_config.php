@@ -138,7 +138,7 @@ if ($shop_config->num_rows > 0) {
     $(document).ready(function() {
         $("#schedule").datepicker({
             todayHighlight: true,
-            minDate: 3,
+            minDate: 1,
             dateFormat: 'yy-mm-dd',
             beforeShowDay: function(date) {
                 var day = date.getDay();

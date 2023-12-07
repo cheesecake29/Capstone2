@@ -29,6 +29,7 @@ require_once('./config.php');
         }
 
         echo '</div>';
+        echo '<div class="m-2"><button class=" btn btn-sm btn-primary notifAllclient">Mark All Read</button></div>'; 
         echo '</ul>';
     } else {
         echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
@@ -67,6 +68,39 @@ require_once('./config.php');
                 success: function(response) {
                     fetchNotificationCount();
                     $notificationItem.css('background', '#ffff');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+    $(document).ready(function() {
+        $('.notifAllclient').on('click', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: _base_url_ + 'mark_all_as_readClient.php',
+                method: 'POST',
+                data: { type: 1 },
+                success: function(response) {
+                    if (response && response.message !== undefined) {
+                        var successMessage = response.message;
+                        $.ajax({
+                            url: 'fetch_notifications.php',
+                            method: 'GET',
+                            dataType: 'html',
+                            success: function(response) {
+                                fetchNotificationCount();
+                                previousCount = $('#notifcount').val();
+                                $('#notif-container').html(response);
+                            },
+                            error: function(xhr, status, error) {
+                            console.error(error);
+                            }
+                        });
+                    } else {
+                        console.warn("Success response does not contain a 'message' property:", response);
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error(error);

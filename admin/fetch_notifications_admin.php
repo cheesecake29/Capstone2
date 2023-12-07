@@ -27,6 +27,7 @@ if ($result->num_rows > 0) {
     }
 
     echo '</div>';
+    echo '<div class="m-2"><button class=" btn btn-sm btn-primary notifAll">Mark All Read</button></div>';
     echo '</ul>';
 } else {
     echo 'No notifications available.';
@@ -64,6 +65,40 @@ if ($result->num_rows > 0) {
                 success: function(response) {
                     fetchNotificationCount();
                     $notificationItem.css('background', '#ffff');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.notifAll').on('click', function(e) {
+            console.log("CLICK admin");
+            e.preventDefault();
+            $.ajax({
+                url: _base_url_ + 'mark_all_as_readClient.php',
+                method: 'POST',
+                data: { type: 2 },
+                success: function(response) {
+                    if (response && response.message !== undefined) {
+                        $.ajax({
+                            url: 'fetch_notifications_admin.php',
+                            method: 'GET',
+                            dataType: 'html',
+                            success: function(response) {
+                                fetchNotificationCount();
+                                previousCount = $('#notifcount').val();
+                                $('#notif-container').html(response);
+                            },
+                            error: function(xhr, status, error) {
+                            console.error(error);
+                            }
+                        });
+                    } else {
+                        console.warn("Success response does not contain a 'message' property:", response);
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error(error);

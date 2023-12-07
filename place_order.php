@@ -573,7 +573,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     var dates = unavailableDates.flatMap(item => item)
     $("#meetup_datepicker").datepicker({
         todayHighlight: true,
-        minDate: 3,
+        minDate: 1,
         dateFormat: 'yy-mm-dd',
         beforeShowDay: function(date) {
             var string = jQuery.datepicker.formatDate('yy-mm-dd', date);

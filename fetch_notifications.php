@@ -77,7 +77,6 @@ require_once('./config.php');
     });
     $(document).ready(function() {
         $('.notifAllclient').on('click', function(e) {
-            console.log("CLICK admin");
             e.preventDefault();
             $.ajax({
                 url: _base_url_ + 'mark_all_as_readClient.php',
@@ -86,9 +85,19 @@ require_once('./config.php');
                 success: function(response) {
                     if (response && response.message !== undefined) {
                         var successMessage = response.message;
-                        alert("Success: " + successMessage);
-                        console.log("Success: " + successMessage);
-                        location.reload();
+                        $.ajax({
+                            url: 'fetch_notifications.php',
+                            method: 'GET',
+                            dataType: 'html',
+                            success: function(response) {
+                                fetchNotificationCount();
+                                previousCount = $('#notifcount').val();
+                                $('#notif-container').html(response);
+                            },
+                            error: function(xhr, status, error) {
+                            console.error(error);
+                            }
+                        });
                     } else {
                         console.warn("Success response does not contain a 'message' property:", response);
                     }

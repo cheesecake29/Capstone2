@@ -83,10 +83,19 @@ if ($result->num_rows > 0) {
                 data: { type: 2 },
                 success: function(response) {
                     if (response && response.message !== undefined) {
-                        var successMessage = response.message;
-                        alert("Success: " + successMessage);
-                        console.log("Success: " + successMessage);
-                        location.reload();
+                        $.ajax({
+                            url: 'fetch_notifications_admin.php',
+                            method: 'GET',
+                            dataType: 'html',
+                            success: function(response) {
+                                fetchNotificationCount();
+                                previousCount = $('#notifcount').val();
+                                $('#notif-container').html(response);
+                            },
+                            error: function(xhr, status, error) {
+                            console.error(error);
+                            }
+                        });
                     } else {
                         console.warn("Success response does not contain a 'message' property:", response);
                     }

@@ -315,7 +315,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                         </div>
                     </div>
                     <div class="mx-1">
-                        <h1 class="label-info mt-3"><strong>Contact</strong></h1>
+                    <h1 class="label-info mt-3"><strong>Contact <span style="color: red;">*</span></strong></h1>
                         <div class="dropdown-divider my-3"></div>
                         <div class="form-group">
                             <input class="form-control mb-2" type="email" name="email" id="email" placeholder="yourmail@gmail.com" required value="<?= isset($email) ? $email : "" ?>">
@@ -391,18 +391,20 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             $selectedProvinceId = $province;
 
                                             if ($provinces['data'] && is_array($provinces['data'])) {
-                                                echo '<select name="province" id="provinces" class="form-control mb-1">';
                                                 foreach ($provinces['data'] as $option) {
                                                     $optionId = $option['id'];
                                                     $optionName = $option['name'];
 
-                                                    $selected1 = ($optionId === $selectedProvinceId) ? 'selected' : '';
-                                                    echo '<option value="' . $optionId . '" ' . $selected1 . '>' . $optionName . '</option>';
+                                                    if ($optionId === $selectedProvinceId) {
+                                                        $selectedValue = $optionName;
+                                                        break;
+                                                    }
                                                 }
-                                                echo '</select>';
+                                                echo '<input type="text" name="province" id="provinceInput" class="form-control mb-1" value="' . $selectedValue . '" readonly>';
                                             } else {
                                                 echo 'Failed to fetch or decode data.';
                                             }
+
 
                                             echo '<span class="custom-control-input custom-control-input-primary">Cities</span>';
                                             // Handle JSON data
@@ -410,25 +412,28 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             $selectedCityId = $city;
 
                                             if ($cities['data'] && is_array($cities['data'])) {
-                                                echo '<select name="city" id="cities" class="form-control mb-1">';
                                                 foreach ($cities['data'] as $option) {
                                                     $optionId = $option['id'];
                                                     $optionName = $option['name'];
 
-                                                    $selected2 = ($optionId === $selectedCityId) ? 'selected' : '';
-                                                    echo '<option value="' . $optionId . '" ' . $selected2 . '>' . $optionName . '</option>';
+                                                    if ($optionId === $selectedCityId) {
+                                                        $selectedValue = $optionName;
+                                                        break; // Break the loop when the selected value is found
+                                                    }
                                                 }
-                                                echo '</select>';
+                                                // Display the input field with the selected value
+                                                echo '<input type="text" name="city" id="cityInput" class="form-control mb-1" value="' . $selectedValue . '" readonly>';
                                             } else {
                                                 echo 'Failed to fetch or decode data.';
                                             }
+
                                             ?>
                                             <span class="custom-control-input custom-control-input-primary">Adress Line 1</span>
-                                            <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>"></input>
+                                            <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>" readonly></input>
                                             <span class="custom-control-input custom-control-input-primary">Adress Line 2</span>
-                                            <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>"></input>
+                                            <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>" readonly></input>
                                             <span class="custom-control-input custom-control-input-primary">Zip code</span>
-                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "0000" ?>" onkeydown="return allowOnlyNumbers(event)" required>
+                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "N/A" ?>" onkeydown="return allowOnlyNumbers(event)" required readonly>
 
                                         </div>
                                     </div>
@@ -635,7 +640,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         $('.diff-add').hide('slow');
         $('#totalWithoutSf').hide('slow');
         $('.billing-address').show('slow');
-        // fetchCities();
+        fetchCities();
         setOtherMeetup();
 
         function fetchCities() {
@@ -699,6 +704,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('#totalWithoutSf').hide('slow');
                 $('#sf').show('slow');
                 $('.billing-address').show('slow');
+                $('#zipcode').prop('required', true);
+
             } else if ($(this).val() == 2) {
                 $('.jnt-holder').hide('slow');
                 $('.pick-up-holder').hide('slow');
@@ -709,6 +716,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('#totalWithoutSf').show('slow');
                 $('.billing-address').hide('slow');
                 $('#sf').hide('slow');
+                $('#zipcode').removeAttr('required');
             } else if ($(this).val() == 3) {
                 $('.jnt-holder').hide('slow');
                 $('.pick-up-holder').show('slow');
@@ -721,6 +729,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('#totalWithoutSf').show('slow');
                 $('#sf').hide('slow');
                 $('.billing-address').hide('slow');
+                $('#zipcode').removeAttr('required');
             } else if ($(this).val() == 4) {
                 $('.jnt-holder').hide('slow');
                 $('.pick-up-holder').hide('slow');
@@ -731,6 +740,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('#totalWithoutSf').show('slow');
                 $('#sf').hide('slow');
                 $('.billing-address').hide('slow');
+                $('#zipcode').removeAttr('required');
             } else {
                 $('.jnt-holder').show('slow');
                 $('.pick-up-holder').hide('slow');
@@ -741,6 +751,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                 $('#totalWithoutSf').show('slow');
                 $('#sf').hide('slow');
                 $('.billing-address').show('slow');
+                $('#zipcode').removeAttr('required');
             }
         });
 

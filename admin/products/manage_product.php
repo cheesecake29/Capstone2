@@ -75,6 +75,17 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		right: 15px;
 		cursor: pointer;
 	}
+	.galleryDelContainer {
+	
+		left: 0;
+	}
+	.galleryDelContainer a span {
+		color: red;
+		cursor: pointer;
+	}
+	.galleryDelContainer a span {
+		color: red;
+	}
 </style>
 <div class="card card-outline card-info rounded-0">
 	<div class="card-header">
@@ -193,6 +204,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							endif; ?>
 
 						</div>
+						<div id="gallery-preview" style="overflow-x: auto; white-space: nowrap;">
+
+						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="d-flex justify-content-center">
@@ -202,8 +216,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							<?php
 							// Display existing gallery images
 							if (!empty($id)) {
-								$gallery_images_query = $conn->query("SELECT image_url FROM `product_image_gallery` WHERE `product_id` = '{$id}'");
-
+								$gallery_images_query = $conn->query("SELECT id, image_url FROM `product_image_gallery` WHERE `product_id` = '{$id}' AND is_deleted = 0");
+								
 								$count = 0; // Initialize counter
 
 								while ($gallery_row = $gallery_images_query->fetch_assoc()) {
@@ -211,18 +225,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 										// Start a new row for every three images
 										echo '</div><div class="d-flex">';
 									}
-
+									$galleryID = $gallery_row['id'];
+									echo '<div class="galleryDelContainer"><a class="deleteBtn"  data-gallery-id="'.$galleryID.'"><span class="fa fa-trash"></span></a></div>';
 									echo '<div class="gallery-image-container gallery-item d-flex" data-image="../' . $gallery_row['image_url'] . '" >';
 									echo '<img src="../' . $gallery_row['image_url'] . '" alt="Gallery Image" class="img-thumbnail gallery-image">';
+									
 									echo '</div>';
 
 									$count++;
 								}
 							}
 							?>
-							<div id="gallery-preview" style="overflow-x: auto; white-space: nowrap;">
-
-							</div>
+							
 							<div id="lightbox">
 								<span class="close">&times;</span>
 								<img id="lightbox-image" src="" alt="Lightbox Image">
@@ -511,4 +525,37 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		variationContainer.appendChild(variationRemoveBtn);
 		fieldgroup.appendChild(variationContainer);
 	}
+
+	$(document).ready(function() {
+		// Attach click event to the delete button
+		$(".deleteBtn").on("click", function() {
+			// Get the data-gallery-id attribute value
+			var galleryID = $(this).data("gallery-id");
+
+			// Ask for confirmation before deleting
+			var confirmDelete = confirm("Are you sure you want to delete the image?");
+
+			if (confirmDelete) {
+				// Make an AJAX request to your PHP script
+				$.ajax({
+					type: "POST",
+					url: _base_url_ + "deleteGallery.php",
+					data: { galleryID: galleryID },
+					success: function(response) {
+						// Handle the response from the PHP script if needed
+						console.log(response);
+
+						// Reload the page after successful deletion
+						location.reload();
+					},
+					error: function(xhr, status, error) {
+						// Handle errors
+						console.error(xhr.responseText);
+					}
+				});
+			} else {
+				console.log("Deletion canceled.");
+			}
+		});
+	});
 </script>

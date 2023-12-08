@@ -100,6 +100,101 @@
             text-align: center;
             margin-top: 60px;
         }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .d-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        /* Styles for large screens */
+        @media (min-width: 992px) {
+            .banner_fw_container {
+                height: 80vh;
+            }
+            .banner_fw .banner_fw_container {
+                height: 100%;
+            }
+            .header_product_home {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .button_bottom_home {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+            .banner_content h1 {
+                font-size: 65px;
+            }
+            .banner_content p {
+                font-size: 20px;
+            }
+        }
+
+        /* Styles for medium screens */
+        @media (max-width: 991px) {
+            .banner_fw_container {
+                height: 60vh;
+            }
+            .banner_fw .banner_fw_container {
+                height: 100%;
+            }
+            .header_product_home {
+                align-items: center;
+            }
+            .button_bottom_home {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+            .banner_content h1 {
+                font-size: 50px;
+                overflow-wrap: break-word;
+            }
+            .banner_content p {
+                font-size: 18px;
+                overflow-wrap: break-word;
+            }
+        }
+
+        /* Styles for small screens */
+        @media (max-width: 767px) {
+            .banner_fw_container {
+                height: 40vh;
+            }
+            .banner_fw .banner_fw_container {
+                height: 100%;
+            }
+            .header_product_home {
+                align-items: center;
+
+            }
+            .button_bottom_home {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+            .banner_content h1 {
+                font-size: 40px;
+                overflow-wrap: break-word;
+            }
+            .banner_content p {
+                font-size: 16px;
+                overflow-wrap: break-word;
+            }
+        }
+
     </style>
 </head>
 <body>

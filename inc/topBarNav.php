@@ -54,6 +54,11 @@
         display: flex;
         align-items: center;
         margin-right: auto;
+        
+       
+    }
+    .navbar{
+        background-color: #004399;
     }
 
     .nav li {
@@ -65,7 +70,7 @@
     .nav-link {
         display: block;
         padding: 10px 5px;
-        color: #1A547E;
+        color: #ffff;
         font-size: 14px;
         position: relative;
         /* Create a positioning context for pseudo-element */
@@ -74,7 +79,15 @@
     .nav-link.active,
     .nav-link:hover {
 
-        color: #004399;
+        color: #ffff;
+    }
+
+    i.bell{
+        color: #ffff;
+    }
+
+    i.cartt{
+          color: #ffff;
     }
 
     /* Underline hover effect for "nav" items with the "nav-item" class */
@@ -85,7 +98,7 @@
         bottom: 0;
         width: 0;
         height: 2px;
-        background-color: #3002ff;
+        background-color:  #ffff;
         transform: scaleX(0);
         transition: 0.3s ease-in;
     }
@@ -117,7 +130,7 @@
         border-radius: 20px;
         padding: 8px 20px;
         margin: 8px;
-        color: #fff;
+        color: #ffff;
         cursor: pointer;
         box-shadow: 0 0 5px rgba(104, 164, 228, 0.6);
         font-size: 14px;
@@ -331,6 +344,8 @@
     .hidden {
         display: none;
     }
+
+   
 </style>
 
 <body>
@@ -373,7 +388,7 @@
                             <div class="dropdown">
                                 <?php
                                 echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
-                                echo '<i class="fas fa-bell"></i>';
+                                echo '<i class="bell fas fa-bell"></i>';
 
                                 $countQuery = "SELECT COUNT(id) AS notificationCount FROM notifications WHERE `type` = 1
                                     AND `is_read` = 0
@@ -434,7 +449,7 @@
                             </div>
                             <div class="nav-item">
                                 <a href="./?p=cart" class="nav-link">
-                                    <i class="fas fa-shopping-cart"></i>
+                                    <i class=" cartt fas fa-shopping-cart"></i>
                                     <?php
                                     $styleClass = ($cart_count !== 0) ? 'badge bg-danger cart-badge' : 'hidden';
 

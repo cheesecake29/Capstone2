@@ -17,7 +17,7 @@ if ($result2) {
     $has_placed_order = false; // If an error occurred, set to false or handle it as needed
 }
 
-echo '<input type="text" data-id="hasOrder" id="hasOrder" value="'.$has_placed_order.'" />';
+echo '<input type="hidden" data-id="hasOrder" id="hasOrder" value="'.$has_placed_order.'" />';
 
 
 if ($result->num_rows > 0) {

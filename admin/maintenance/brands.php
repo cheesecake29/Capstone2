@@ -27,7 +27,7 @@
 					<col width="20%">
 					<col width="15%">
 					<col width="20%">
-					<col width="15%">
+					
 					<col width="20%">
 					<col width="15%">
 				</colgroup>
@@ -37,7 +37,7 @@
 						<th>Date Created</th>
 						<th>Logo</th>
 						<th>Brand</th>
-						<th>Category</th>
+						
 						<th>Status</th>
 						<th>Action</th>
 					</tr>
@@ -57,7 +57,7 @@
                                 <img src="<?= validate_image($row['image_path']) ?>" alt="Brand Logo - <?= $row['name'] ?>" class="img-logo img-thumbnail">
                             </td>
 							<td><?php echo $row['name'] ?></td>
-							<td><?php echo $categories['category'] ?></td>
+						
 							<td class="text-center">
                                 <?php if($row['status'] == 1): ?>
                                     <span class="badge badge-success mx-3 rounded-pill">Active</span>

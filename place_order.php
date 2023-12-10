@@ -1,5 +1,7 @@
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
 <?php
+$selectedValue = ""; 
+
 include 'sendemailporder.php';
 $total = 0;
 $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
@@ -356,17 +358,15 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </div>
                                 </div>
                                 <div class="place-order form-group text-right">
-                                    <?php if (isset($all_order_config)) : ?>
-                                        <?php if ((int)$total > (int)$all_order_config['value']) : ?>
-                                            <h1 id="warning-label" class="text-danger invinsible">Sorry! You've reached the order limit (<?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?> php)</h1>
-                                        <?php endif; ?>
+                                    <?php if ((int)$total > (int)($all_order_config['value'] ?? 0)) : ?>
+                                        <h1 id="warning-label" class="text-danger">Sorry! You've reached the order limit (<?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?> php)</h1>
                                     <?php else : ?>
                                         <button class="btn btn-flat btn-primary" type="submit" name="submit">
                                             Place Order
                                         </button>
                                     <?php endif; ?>
-
                                 </div>
+
                             </div>
                             <div class="w-50 billing-address-container">
                                 <div class="billing-address">

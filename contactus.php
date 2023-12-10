@@ -185,7 +185,9 @@ include 'sendemail.php';
      </div>
 
 
-
+     <?php if (!empty($alert)) : ?>
+    <div class="alert"><?php echo $alert; ?></div>
+<?php endif; ?>
         <div class="connect-with-us">
        <h2>Connect with us!</h2>
 
@@ -203,7 +205,7 @@ include 'sendemail.php';
     <div class="contact-form">
       
         <form class="contact" action="" method="post">
-            <input type="varchar" id="name" name="name" class="text-box" placeholder="Your Name" required>
+            <input type="varchar" id="name" name="name" class="text-box" placeholder="Your Name" ronkeydown="return allowOnlyLetters(event)" required>
             <input type="email" id="email" name="email" class="text-box" placeholder="Your Email" required>
             <textarea type="text" name="message" id="message" rows="5" placeholder="Message" required></textarea>
             <input type="submit" name="submit" class="send-btn" value="Send">
@@ -212,9 +214,7 @@ include 'sendemail.php';
     </div>
    
 </div>
-<?php if (!empty($alert)) : ?>
-    <div class="alert"><?php echo $alert; ?></div>
-<?php endif; ?>
+
 
 <script type="text/javascript">
     if (window.history.replaceState) {
@@ -224,6 +224,17 @@ include 'sendemail.php';
 
 
 </body>
+
+<script>
+function allowOnlyLetters(event) {
+        // Check if the key pressed is a letter
+        if (event.key.match(/[A-Za-z]/)) {
+            return true;  // Allow the key press
+        } else {
+            return false; // Prevent the key press
+        }
+    }
+</script>
 
 
     

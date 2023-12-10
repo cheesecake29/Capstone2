@@ -256,7 +256,9 @@ class Master extends DBConnection
 	function delete_brand()
 	{
 		extract($_POST);
-		$del = $this->conn->query("UPDATE `brand_list` set `delete_flag` = 1  where id = '{$id}'");
+
+		$del = $this->conn->query("DELETE FROM `brand_list` WHERE id = '{$id}'");
+		
 		if ($del) {
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Brand successfully deleted.");
@@ -872,7 +874,7 @@ class Master extends DBConnection
 				$withShippingFee = true;
 				$other_address = '';
 				break;
-			case 1: // Lalamove
+			case 2: // Lalamove
 				$withShippingFee = false;
 				$other_address = '';
 				break;
@@ -1021,7 +1023,7 @@ class Master extends DBConnection
 				if ($update) {
 					$desc = "";
 					if ($status == 0) {
-						$desc = 'Your order ' . $product_name . ' is pending.';
+						$desc = 'Your order ' . $product_name . ' is confirmed.';
 						$this->conn->query("UPDATE `appointment` set `status` = 0 where order_id = '{$id}'");
 					}
 					if ($status == 1) {
@@ -1192,7 +1194,7 @@ class Master extends DBConnection
 		$configType = $_POST['configType'];
 		$configPrice = $_POST['configPrice'];
 		$configQuantity = $_POST['configQuantity'];
-		$isAll = false;
+		$isAll = true; //set to true because per product is removed
 		if ($configType === 'All') {
 			$configType = null;
 			$isAll = true;

@@ -61,13 +61,14 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-
+                <?php if ($_settings->userdata('type') == 1) : ?>
                 <li class="navs nav-item">
                     <a href="<?php echo base_url ?>admin/?page=shop_config" class="nav-links nav-link">
                         <i class="nav-icon fas fa-cog"></i>
                         <p>Shop Configuration</p>
                     </a>
                 </li>
+                <?php endif; ?>
 
                
                 <li class="navs nav-item">
@@ -97,13 +98,7 @@
                                 <p>Contact Us</p>
                             </a>
                         </li>
-                        <li class="navs nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=content_management/aboutus" class=" nav-links nav-link nav-content_management_aboutus">
-                                <i class="nav-icon fas fa-info-circle"></i>
-                                <p>About Us</p>
-                            </a>
-                        </li>
-
+                       
                         <li class="navs nav-item">
                             <a href="<?php echo base_url ?>admin/?page=content_management/logo" class=" nav-links nav-link nav-content_management_logo">
                                 <i class="nav-icon fas fa-envelope"></i>
@@ -151,6 +146,7 @@
                         <i class="right fas fa-angle-left"></i>
                     </a>
                     <ul class="nav nav-treeview">
+                    <?php if ($_settings->userdata('type') == 1) : ?>
                         <li class="navs nav-item">
                             <a href="<?php echo base_url ?>admin/?page=shop_calendar" class="nav-links nav-link nav-clients">
                                 <i class="nav-icon fas fa-calendar"></i>
@@ -172,6 +168,8 @@
                                 <p>Registered Clients</p>
                             </a>
                         </li>
+
+                        <?php endif; ?>
 
                         <li class="navs nav-item">
                             <a href="<?php echo base_url ?>admin/?page=clients/inquiries" class="nav-links nav-link nav-clients_inquiries">

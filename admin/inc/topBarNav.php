@@ -59,7 +59,7 @@
 
     }
 
-    .notification-item {
+.notification-item {
         padding: 10px;
        
         background: #F4F5FA;
@@ -118,7 +118,7 @@
         <ul class="navbar-nav ml-auto align-items-center">
           <li class="notif dropdown">
           <?php
-              echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#">';
+              echo '<a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="/page.html">';
               echo '<i class="fas fa-bell"></i>';
 
               $countQuery = "SELECT COUNT(id) AS order_list FROM notifications WHERE `type` = 2 AND `is_read` = 0" ;
@@ -232,8 +232,6 @@
             method: 'GET',
             success: function(response) {
             const newCount = parseInt(response);
-            console.log("new Count: ", newCount);
-            console.log("previousCount: ", previousCount);
             if (newCount > previousCount) {
                 var audio = document.getElementById('audio_' + notificationID);
                 audio.play();
@@ -248,6 +246,30 @@
             }
         });
     }
+
+    function notificationReminder(){
+        var hasOrder = $('#hasOrder').val();
+        if (hasOrder) {
+            function insertNotification() {
+                $.ajax({
+                    url: 'insert_notification.php',
+                    method: 'POST',
+                    data: {
+                        notificationType: 'You still have pending orders.' // Adjust as needed
+                    },
+                    success: function (response) {
+                        console.log("Notification inserted:", response);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error inserting notification:", error);
+                    }
+                });
+            }
+
+            insertNotification();
+        }
+    }
+
     $(document).ready(function() {
         $('#dLabel').on('click', function(e) {
             $('.notifications').toggleClass('show');
@@ -264,8 +286,10 @@
                 });
             }
         });
+        notificationReminder();
         fetchNotifications();
 
+        setInterval(notificationReminder, 30 * 60 * 1000);
         setInterval(fetchNotifications, 15000);
         setInterval(fetchNotificationCount, 15000);
     });

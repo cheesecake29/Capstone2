@@ -19,30 +19,11 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 </style>
 <div class="container-fluid">
     <form action="" id="brand-form">
-        <input type="hidden" name ="category_id" value="<?php echo isset($category_id) ? $category_id : '' ?>">
+        <input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
         <div class="form-group">
-            <label for="name" class="control-label">Brand Name</label>
+            <label for="name" class="control-label">Name</label>
             <input name="name" id="name" class="form-control form-control-sm" value="<?php echo isset($name) ? $name : ''; ?>" required/>
         </div>
-
-        <div class="form-group">
-    <label for="category_id" class="control-label">Category</label>
-    <select name="category_id" id="category_id" class="custom-select select2">
-        <option value="" <?= !isset($category_id) ? "selected" : "" ?> disabled></option>
-        <?php 
-            $categories = $conn->query("SELECT * FROM categories where delete_flag = 0 ".(isset($category_id) ? " or id = '{$category_id}'" : "")." order by `category` asc ");
-            while($row = $categories->fetch_assoc()):
-        ?>
-            <option value="<?= $row['id'] ?>" category_id="<?= $row['id'] ?>" <?= isset($category) && $category == $row['id'] ? "selected" : "" ?>><?= $row['category'] ?> <?= $row['delete_flag'] == 1 ? "<small>Deleted</small>" : "" ?></option>
-
-
-
-        
-        <?php endwhile; ?>
-    </select>
-</div>
-
-
         <div class="form-group">
             <label for="status" class="control-label">Status</label>
             <select name="status" id="status" class="custom-select selevt">
@@ -50,11 +31,10 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
             <option value="0" <?php echo isset($status) && $status == 0 ? 'selected' : '' ?>>Inactive</option>
             </select>
         </div>
-       
         <div class="form-group">
             <label for="" class="control-label">Brand Logo</label>
             <div class="custom-file">
-                <input type="file" class="custom-file-input rounded-circle" id="customFile" name="img" onchange="displayImg(this,$(this))">
+                <input type="file" class="custom-file-input rounded-circle" id="customFile" name="img">
                 <label class="custom-file-label" for="customFile">Choose file</label>
             </div>
         </div>

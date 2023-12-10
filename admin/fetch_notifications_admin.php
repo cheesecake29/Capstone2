@@ -4,6 +4,22 @@ require_once('./../config.php');
 $sql = "SELECT * FROM notifications WHERE `type` = 2 ORDER BY is_read ASC, id DESC";
 $result = $conn->query($sql);
 
+$sql2 = "SELECT COUNT(*) AS count FROM notifications WHERE `type` = 2 AND `description` LIKE '%has placed an order%' AND is_read = 0";
+$result2 = $conn->query($sql2);
+
+$has_placed_order = false;
+
+if ($result2) {
+    $row = $result2->fetch_assoc();
+    $has_placed_order = ($row['count'] > 0); // Returns true if there are notifications matching the criteria
+} else {
+    // Handle query error
+    $has_placed_order = false; // If an error occurred, set to false or handle it as needed
+}
+
+echo '<input type="hidden" data-id="hasOrder" id="hasOrder" value="'.$has_placed_order.'" />';
+
+
 if ($result->num_rows > 0) {
     echo '<ul class="dropdown-menu notifications" role="menu" aria-labelledby="dLabel">';
     echo '<div class="notification-heading"><span class="menu-title">Notifications</span></div>';

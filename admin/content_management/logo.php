@@ -26,11 +26,16 @@
                         <label class="custom-file-label" for="cimg">Choose file</label>
                     </div>
                 </div>
+
                 <div class="form-group d-flex justify-content-center">
                     <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
                 </div>
 
 
+                <label for="systitle" class="control-label">System Title</label>
+                <input name="systitle" id="systitle" cols="1" rows="1" class="form-control summernote">
+                     <?php echo $_settings->info('systitle')  ?>  
+                </input>
 
                 <label for="sysname" class="control-label">System Name</label>
                 <textarea name="sysname" id="sysname" cols="1" rows="1" class="form-control summernote">

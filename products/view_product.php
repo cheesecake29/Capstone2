@@ -227,11 +227,32 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .invinsible {
         visibility: hidden;
     }
+    .details{
+       margin: 2% 0;
+        padding: 2%;
+        background-color: #ffff;
+    }
+    .productt{
+        background-color: #ffff;
+        padding: 2%;
+    }
+
+    .review-section {
+          background-color: #ffff;
+    }
+
+    .descript>h5{
+        background-color: #1A547E;
+    }
+
 </style>
 
 <?php
+$SingleVariation = null; // Initialize $SingleVariation
+
 $variations = $conn->query("SELECT * FROM product_variations where product_id = $id");
 $copyVariationResult = array();
+
 function MakeCopy($result, &$c1)
 {
     while ($row = $result->fetch_assoc()) {
@@ -240,13 +261,16 @@ function MakeCopy($result, &$c1)
         }
     }
 }
+
 if ($variations->num_rows === 1) {
     MakeCopy($variations, $copyVariationResult);
+    $SingleVariation = $copyVariationResult; // Assign value to $SingleVariation
 }
+
 ?>
 <div class="content my-3">
     <div class="container">
-        <div class="d-flex">
+        <div class="productt d-flex">
             <div class="left-container">
                 <div class="image product-image text-center">
                     <img src="<?= validate_image(isset($image_path) ? $image_path : "") ?>" alt="Product Image <?= isset($name) ? $name : "" ?>" class="img-thumbnail product-img">
@@ -273,8 +297,9 @@ if ($variations->num_rows === 1) {
             </div>
             <div class="right-container px-5">
                 <div class="info">
-                    <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $copyVariationResult['variation_name'] : '' ?></h1>
-                    <?= isset($description) ? html_entity_decode($description) : '' ?>
+                <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $SingleVariation['variation_name'] : '' ?></h1>
+
+                   
                 </div>
                 <h3 class="text-success" id="default">
                     ₱<?php
@@ -283,18 +308,7 @@ if ($variations->num_rows === 1) {
                         ?>
                 </h3>
                 <h3 class="text-success" id="selectedVariation"></h3>
-                <div class="mt-3 border-bottom">
-                    <h5>Details: </h3>
-                </div>
-                <div class="info">
-                    <small>Compatible Models: <?= isset($models) ? $models : '' ?></small>
-                </div>
-                <div class="info">
-                    <small>Category: <strong><?= isset($category) ? $category : '' ?></strong></small>
-                </div>
-                <div class="info">
-                    <small> Brand: <strong><?= isset($brand) ? $brand : '' ?></strong></small>
-                </div>
+                
                 <div class="mt-3 border-bottom">
                     <h5>Variation: </h3>
                 </div>
@@ -380,10 +394,45 @@ if ($variations->num_rows === 1) {
                     <div class="out-of-stock" id="unavailable">
                         <button class="btn btn-danger">Add to cart</button>
                     </div>
+
                 </div>
             </div>
         </div>
-    </div>
+              <div class="details">
+
+        
+        <div class="spec">
+        <div class="mt-3 border-bottom">
+                    <h5>Product Specifications</h3>
+                </div>
+                <div class="info">
+                    <small class="text-muted">Compatible Models:</small >
+                    <small > <?= isset($models) ? $models : '' ?></small>
+                    
+                </div>
+                <div class="info">
+                    
+
+                    <small class="text-muted">Category:</small>
+                    <small><?= isset($category) ? $category : '' ?></small>
+                </div>
+                <div class="info">
+                    <small class="text-muted"> Brand: </small>
+                    <small> Brand: <?= isset($brand) ? $brand : '' ?></small>
+                </div>
+                    </div>
+                    <br>
+        <div class="descript">
+        <div class="mt-3 border-bottom">
+                    <h5>Description</h3>
+                </div>
+                   
+                    <?= isset($description) ? html_entity_decode($description) : '' ?>
+                </div>
+
+                </div>
+    
+    
     <div class="container my-5">
         <div class="product-review">
             <?php
@@ -449,6 +498,7 @@ if ($variations->num_rows === 1) {
             <?php endwhile; ?>
         </div>
     </div>
+</div>
 </div>
 
 <div class="modal fade" id="cart_modal" role='dialog'>

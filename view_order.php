@@ -129,7 +129,7 @@ if ($order->num_rows > 0) {
                 <b><?= isset($ref_code) ? $ref_code : "N/A" ?></b>
             </div>
             <div class="ml-3">
-            <?php if (isset($status)  && $status == 2) : ?>
+            <?php if (isset($status)  && $status == 3) : ?>
               
                 <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
                     <div class="proof_payment_container">
@@ -157,12 +157,12 @@ if ($order->num_rows > 0) {
                     <?php if ($status == 0) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
                     <?php elseif ($status == 1) : ?>
-                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Shipped</span>
+                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Cancelled</span>
                 
                     <?php elseif ($status == 2) : ?>
-                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Delivered</span>
+                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Confirmed</span>
                     <?php elseif ($status == 3) : ?>
-                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Cancelled</span>
+                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Shipped</span>
                     <?php else : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
                     <?php endif; ?>
@@ -230,7 +230,7 @@ if ($order->num_rows > 0) {
                                     </div>
                                 </div>
 
-                                <?php if (!$row['rated'] && $status == 2) : ?>
+                                <?php if (!$row['rated'] && $status == 3) : ?>
                                     <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
                                         <div class="card">
                                             <div class="card-header" id="reviewContent">
@@ -290,7 +290,7 @@ if ($order->num_rows > 0) {
             </div>
             <?php
             if (isset($_GET['id']) && $_GET['id'] > 0) :
-                $order_result = $conn->query("SELECT ol.id AS id, p.id AS product_id,
+                $order_result = $conn->query("SELECT ol.id AS id, p.id AS product_id, pv.id AS variation_id,
                         p.name,
                         cl.firstname,
                         cl.lastname,
@@ -299,12 +299,13 @@ if ($order->num_rows > 0) {
                         INNER JOIN order_items oi ON oi.order_id = ol.id
                         INNER JOIN product_list p ON oi.product_id = p.id
                         inner join client_list cl on cl.id = ol.client_id
+                        inner join product_variations pv on pv.id = oi.variation_id 
                         WHERE ol.id = '{$_GET['id']}'");
 
             ?>
                 <?php if ($row = $order_result->fetch_assoc()) : ?>
                     <!-- Start Return/Refund -->
-                    <?php if ($status == 2) : ?>
+                    <?php if ($status == 3) : ?>
                         <div class="accordion" id="accordionExample-<?= $row['id'] ?>">
                             <div class="card">
                                 <div class="card-header" id="returnContent">
@@ -318,6 +319,7 @@ if ($order->num_rows > 0) {
                                     <form id="submit-return-<?= $row['id'] ?>" action="">
                                         <div class="card-body">
                                             <input class="invisible w-0" value="<?= $row['product_id'] ?>" required type="hidden" name="product_id">
+                                            <input class="invisible w-0" value="<?= $row['variation_id'] ?>" required type="hidden" name="variation_id">
                                             <input class="invisible w-0" value="<?= $row['name'] ?>" required type="hidden" name="product_name">
                                             <input class="invisible w-0" value="<?= $row['lastname'], ', ', $row['firstname'] ?>" required type="hidden" name="author_name">
                                             <input class="invisible w-0" value="<?= $row['email'] ?>" required type="hidden" name="author_email">
@@ -339,33 +341,16 @@ if ($order->num_rows > 0) {
     </div>
     <div class="clear-fix my-2"></div>
     <div class="row">
-        <div class="col-8 text-left" id="disregardThisDiv">
-            <?php if (isset($status)  && $status == 0) : ?>
-                <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
+        <div class="col-12 text-right">
+            <?php if(isset($status)  && $status == 0): ?>
+            <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
             <?php endif; ?>
-            <button class="btn btn-dark btn-flat btn-sm print-btn" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
-        </div>
-        <div class="col-4 text-right">
-            <button onclick="printOrderDetails()" class="btn btn-link print-btn">Print Order Details</button>
+            <button class="btn btn-dark btn-flat btn-sm" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
         </div>
     </div>
 </div>
 <script>
-    function printOrderDetails() {
-        // Specify the div to print using its ID
-        var printContents = document.getElementById("orderDetailsContainer").innerHTML;
-        // Create a new window for printing
-        var originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        document.getElementById("disregardThisDiv").style.display = 'none';
-        // Use the JavaScript print function to print the content of the div
-        window.print();
-        // Restore the original content after printing
-        document.body.innerHTML = originalContents;
-        $('#btn-cancel').click(function() {
-            _conf("Are you sure to cancel this order?", "cancel_order", [])
-        })
-    }
+   
 
     $('#btn-cancel').click(function() {
         _conf("Are you sure to cancel this order?", "cancel_order", [])
@@ -469,27 +454,27 @@ if ($order->num_rows > 0) {
     }
 
 
-    function cancel_order() {
+    
+
+    function cancel_order(){
         start_loader();
         $.ajax({
-            url: _base_url_ + 'classes/Master.php?f=cancel_order',
-            data: {
-                id: "<?= isset($id) ? $id : '' ?>"
-            },
-            method: 'POST',
-            dataType: 'json',
-            error: err => {
+            url:_base_url_+'classes/master.php?f=cancel_order',
+            data:{id : "<?= isset($id) ? $id : '' ?>"},
+            method:'POST',
+            dataType:'json',
+            error:err=>{
                 console.error(err)
-                alert_toast('An error occurred.', 'error')
+                alert_toast('An error occurred.','error')
                 end_loader()
             },
-            success: function(resp) {
-                if (resp.status == 'success') {
+            success:function(resp){
+                if(resp.status == 'success'){
                     location.reload()
-                } else if (!!resp.msg) {
-                    alert_toast(resp.msg, 'error')
-                } else {
-                    alert_toast('An error occurred.', 'error')
+                }else if(!!resp.msg){
+                    alert_toast(resp.msg,'error')
+                }else{
+                    alert_toast('An error occurred.','error')
                 }
                 end_loader();
             }

@@ -1022,22 +1022,23 @@ class Master extends DBConnection
 
 				if ($update) {
 					$desc = "";
-					if ($status == 0) {
-						$desc = 'Your order ' . $product_name . ' is confirmed.';
-						$this->conn->query("UPDATE `appointment` set `status` = 0 where order_id = '{$id}'");
-					}
+
 					if ($status == 1) {
-						$desc = 'Your order ' . $product_name . ' is shipped.';
-						$this->conn->query("UPDATE `appointment` set `status` = 1 where order_id = '{$id}'");
+						$desc = 'Your order ' . $product_name . ' was cancelled.';
+						$this->conn->query("UPDATE `appointment` set `status` = 3 where order_id = '{$id}'");
 					}
+					
 					if ($status == 2) {
-						$desc = 'Your order ' . $product_name . ' is delivered.';
-						$this->conn->query("UPDATE `appointment` set `status` = 4 where order_id = '{$id}'");
+						$desc = 'Your order ' . $product_name . ' is confirmed.';
+						$this->conn->query("UPDATE `appointment` set `status` = 1 where order_id = '{$id}'");
+
+					
 					}
 					if ($status == 3) {
-						$desc = 'Your order ' . $product_name . ' was cancelled.';
+						$desc = 'Your order ' . $product_name . ' is shipped.';
 						$this->conn->query("UPDATE `appointment` set `status` = 2 where order_id = '{$id}'");
 					}
+					
 
 					$notify = $this->conn->query("INSERT INTO `notifications` SET `client_id` = '{$client_id}', `description` = '{$desc}', `order_id`='{$id}'");
 					$resp['status'] = 'success';
@@ -1118,7 +1119,7 @@ class Master extends DBConnection
 		extract($_POST);
 		$productId = $_POST['product_id'];
 		$productName = $_POST['product_name'];
-		// $variationId = $_POST['variation_id'];
+		$variationId = $_POST['variation_id'];
 		$authorName = $_POST['author_name'];
 		$authorEmail = $_POST['author_email'];
 		$orderId = $_POST['order_id'];
@@ -1129,9 +1130,9 @@ class Master extends DBConnection
 			$resp['msg'] = "Order ID not found";
 			return json_encode($resp);
 		}
-		$this->conn->query("UPDATE `order_list` ol SET ol.status = 7 where id = '{$orderId}'");
-		$submitReturn = $this->conn->query("INSERT into `product_returns` (`product_id`, `product_name`, `author_name`, `author_email`, `author_comment`)
-		VALUES ('{$productId}', '{$productName}', '{$authorName}', '{$authorEmail}', '{$authorComments}' )
+		$this->conn->query("UPDATE `order_list` ol SET ol.status = 4 where id = '{$orderId}'");
+		$submitReturn = $this->conn->query("INSERT into `product_returns` (`product_id`, `variation_id`, `order_id`, `product_name`, `author_name`, `author_email`, `author_comment`)
+		VALUES ('{$productId}', '{$variationId}', '{$orderId}', '{$productName}', '{$authorName}', '{$authorEmail}', '{$authorComments}' )
 		");
 		if ($submitReturn) {
 			$resp['status'] = 'success';
@@ -1318,6 +1319,12 @@ switch ($action) {
 		break;
 	case 'delete_category':
 		echo $Master->delete_category();
+		break;
+	case 'save_supplier':
+		echo $Master->save_supplier();
+		break;
+	case 'delete_supplier':
+		echo $Master->delete_supplier();
 		break;
 	case 'save_brand':
 		echo $Master->save_brand();

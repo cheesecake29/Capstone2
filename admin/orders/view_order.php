@@ -14,7 +14,19 @@ if (!isset($_GET['id'])) {
     $_settings->set_flashdata('error', 'No order ID Provided.');
     redirect('admin/?page=orders');
 }
-$order = $conn->query("SELECT o.*,concat(c.firstname,' ',c.lastname) as fullname, a.status as appointment_status, a.dates, a.hours FROM `order_list` o inner join client_list c on c.id = o.client_id left join `appointment` a on a.order_id = o.id where o.id = '{$_GET['id']}' ");
+$order = $conn->query("SELECT
+        o.*,concat(c.firstname,' ',c.lastname) as fullname,
+        a.status as appointment_status,
+        pr.author_comment as reason,
+        a.dates, a.hours
+    FROM `order_list` o
+    inner join client_list c on c.id = o.client_id
+    left join `appointment` a on a.order_id = o.id
+    LEFT JOIN (
+        SELECT *
+        FROM `product_returns`
+        ORDER BY id DESC LIMIT 1
+    ) pr ON pr.order_id = o.id where o.id = '{$_GET['id']}'");
 if ($order->num_rows > 0) {
     foreach ($order->fetch_assoc() as $k => $v) {
         $$k = $v;
@@ -93,7 +105,9 @@ if ($order->num_rows > 0) {
                     </div>
                     <div class="col-md-6">
                         <label for="" class="text-muted">Date Ordered</label>
-                        <div class="ml-3"><b><?= isset($date_created) ? date("M d, Y h:i A", strtotime($date_created)) : "N/A" ?></b></ </div>
+                        <div class="ml-3"><b><?= isset($date_created) ? date(DATE_RFC2822, strtotime($date_created)) : "N/A" ?>
+
+</b></div>
                         </div>
                     </div>
                     <div class="row">
@@ -104,17 +118,16 @@ if ($order->num_rows > 0) {
                                     <?php if ($status == 0) : ?>
                                         <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
                                     <?php elseif ($status == 1) : ?>
-                                        <span class="badge badge-success px-3 rounded-pill">Confirmed</span>
-                                    <?php elseif ($status == 2) : ?>
-                                        <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Shipped</span>
-                                    <?php elseif ($status == 3) : ?>
-                                        <span class="badge badge-warning px-3 rounded-pill">For Delivery</span>
-                                    <?php elseif ($status == 4) : ?>
-                                        <span class="badge badge-warning px-3 rounded-pill">On The Way</span>
-                                    <?php elseif ($status == 5) : ?>
-                                        <span class="badge badge-success px-3 rounded-pill">Delivered</span>
-                                    <?php elseif ($status == 6) : ?>
                                         <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
+                                  
+                                    <?php elseif ($status == 2) : ?>
+                                        <span class="badge badge-secondary px-3 rounded-pill">Confirmed</span>
+                                  
+                                    
+                                
+                                    <?php elseif ($status == 3) : ?>
+                                        <span class="badge badge-success px-3 rounded-pill">Delivered</span>
+                                   
                                     <?php else : ?>
                                         <span class="badge badge-danger px-3 rounded-pill">For Return/Refund</span>
                                     <?php endif; ?>
@@ -122,6 +135,12 @@ if ($order->num_rows > 0) {
                                     N/A
                                 <?php endif; ?>
                             </div>
+                            <?php if ($status == 4) : ?>
+                            <label for="" class="text-muted">Reason for return/refund</label>
+                            <div class="ml-3">
+                                <b><?= $reason ?></b>
+                            </div>
+                            <?php endif; ?>
                             <label for="" class="text-muted">Order Type</label>
                             <div class="ml-3">
                                 <b>
@@ -193,7 +212,7 @@ if ($order->num_rows > 0) {
 
                                 echo '<label for="" class="text-muted">Address Line 1</label>';
 
-                                echo '<div class="ml-3" id="adr1">', '<b>' . $addressline1 . '</b>', '</div>';
+                                echo '<div class="ml-3" id="adr1">', $addressline1, '</div>';
                             }
                             if ($addressline2) {
                                 echo '<label for="" class="text-muted">Address Line 2</label>';

@@ -35,20 +35,24 @@
                     ?>
                         <tr>
                             <td class="text-center"><?= $i++ ?></td>
-                            <td><?= date("Y-m-d H:i", strtotime($row['date_created'])) ?></td>
+                           
+                            <td><?= isset($row['date_created']) ? date("M d, Y", strtotime($row['date_created'])) : "N/A" ?></td>
+
                             <td><?= $row['ref_code'] ?></td>
                             <td><?= $row['fullname'] ?></td>
                             <td class="text-right"><?= number_format($row['total_amount'],2) ?></td>
                             <td class="text-center">
                                 <!-- 1=pending,2 = confirmed, 3 = for delivery, 4 = on the way, 5= delivered, 6=cancelled	 -->
                                 <?php if ($row['status'] == 0) : ?>
-                                    <span class="badge badge-secondary px-3 rounded-pill">Confirmed</span>
+                                    <span class="badge badge-secondary px-3 rounded-pill">Pending</span>
                                 <?php elseif ($row['status'] == 1) : ?>
-                                    <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Shipped</span>
-                                <?php elseif ($row['status'] == 2) : ?>
-                                    <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
-                                <?php else : ?>
                                     <span class="badge badge-danger px-3 rounded-pill">Cancelled</span>
+                                <?php elseif ($row['status'] == 2) : ?>
+                                    <span class="badge badge-secondary px-3 rounded-pill">Confirmed</span>
+                               
+                                <?php else : ?>
+                                    <span class="badge badge-default bg-gradient-teal px-3 rounded-pill">Delivered</span>
+                               
                                 <?php endif; ?>
                             </td>
                             <td class="text-center">
@@ -64,24 +68,6 @@
                     <?php endwhile; ?>
                 </tbody>
             </table>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmationModalLabel">Item Packed</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                The item has been packed!
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
 </div>

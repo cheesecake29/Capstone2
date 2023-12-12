@@ -199,7 +199,7 @@ include 'sendemail.php';
 
     
 
-    <div class="contact-section">
+   <!--- <div class="contact-section">
 
     
     <div class="contact-form">
@@ -213,7 +213,7 @@ include 'sendemail.php';
         </form>
     </div>
    
-</div>
+</div>------->
 
 
 <script type="text/javascript">

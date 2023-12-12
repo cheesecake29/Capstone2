@@ -28,7 +28,6 @@
 					<col width="15%">
 					<col width="20%">
 					<col width="15%">
-					<col width="20%">
 					
 				</colgroup>
 				<thead>
@@ -37,8 +36,7 @@
 						<th>Date Created</th>
 						<th>Name</th>
 						<th>Contact</th>
-						<th>Address</th>
-						<th>Email</th>
+						<th>Action</th>
 					
 					</tr>
 				</thead>
@@ -55,8 +53,8 @@
 							<td><?php echo date("Y-m-d H:i",strtotime($row['date_created'])) ?></td>
                            
 							<td><?php echo $row['name'] ?></td>
-                            <td><?php echo $row['contact'] ?></td>
-                            <td><?php echo $row['email'] ?></td>
+                            <td><?php echo $row['sup_contact'] ?></td>
+						
 							
 							<td class="text-center">
                                 <?php if($row['status'] == 1): ?>
@@ -90,10 +88,10 @@
 			_conf("Are you sure to delete this supplier permanently?","delete_supplier",[$(this).attr('data-id')])
 		})
         $('#create_new').click(function(){
-            uni_modal("Add New Brand","maintenance/manage_supplier.php","mid-large")
+            uni_modal("Add New Supplier","maintenance/manage_supplier.php","mid-large")
         })
         $('.edit_data').click(function(){
-            uni_modal("Add New Brand","maintenance/manage_supplier.php?id="+$(this).attr('data-id'),"mid-large")
+            uni_modal("Add New Supplier","maintenance/manage_supplier.php?id="+$(this).attr('data-id'),"mid-large")
         })
         $('.table th, .table td').addClass("align-middle px-2 py-1")
 		$('.table').dataTable();

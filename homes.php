@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" integrity="sha512-17EgCFERpgZKcm0j0fEq1YCJuyAWdz9KUtv1EjVuaOz8pDnh/0nZxmU6BBXwaaxqoi9PQXnRWqlcDB027hgv9A==" crossorigin="anonymous" referrerpolicy="no-referrer" /> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" referrerpolicy="no-referrer" />   
+    
     <style>
 
         .body{
@@ -162,32 +165,44 @@ section.new_arrivals {
   flex-direction: column;
 }
 
-#brand_list {
+  .row{
+            margin: 2%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        #brand_list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Center the items horizontally */
+    justify-content: center;
+}
+
+.product_archive{
+     margin: 0 10px 15px;
 }
 
 .brand-item {
-    width: 255px;
-    margin: 0 10px 15px; /* Adjust margin for spacing between items */
+    width: 200px; /* Adjust the width of each brand item as needed */
+    margin: 0 10px 15px;
+    
 }
 
 .brand-img-holder {
     overflow: hidden;
     position: relative;
     border-radius: 10px;
-    height: 200px; /* Set a fixed height for the image holder */
-    display: flex;
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
+    width: 100%; /* Ensure the container takes the full width of its parent */
 }
 
 .brand-img-holder img {
-    max-width: 100%;
-    height: auto; /* Maintain aspect ratio */
-    border-radius: 10px; /* Match the border-radius of the parent container */
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the entire image is covered, maintaining aspect ratio */
+    display: block;
+    border-radius: 10px;
 }
+
+
 
 
 
@@ -221,6 +236,8 @@ section.new_arrivals {
         .new_arrivals{
             background-color: #ffff;
         }
+
+      
 
 
 
@@ -332,14 +349,14 @@ section.new_arrivals {
        <h2>Featured Brands</h2>
      </div>
 
-     <div class="row" id="brand_list">
+     <div class="row responsive" id="brand_list" >
     <?php 
     $brands = $conn->query("SELECT * FROM `brand_list` where status = 1 and delete_flag = 0 order by `name`");
     while($row = $brands->fetch_assoc()):
     ?>
     <div class=" brand-item">
         <div class="card ">
-            <div class="brand-img-holder ">
+            <div class="brand-img-holder overflow-hidden position-relative">
                 <img src="<?= validate_image($row['image_path']) ?>" alt="Brand Image" class="img-top">
             </div>
             <div class="card-body">
@@ -355,9 +372,9 @@ section.new_arrivals {
     <section class="new_arrivals py-5">
         <div class="container">
             <h1 class="new-arrivals-ctn">New Arrivals</h1>
-            <div class="row">
+            <div class="row responsive">
                 <?php
-                $products = $conn->query("SELECT p.*, b.name as brand, c.category FROM `product_list` p INNER JOIN brand_list b ON p.brand_id = b.id INNER JOIN `categories` c ON p.category_id = c.id WHERE p.delete_flag = 0 AND p.status = 1 LIMIT 4");
+                $products = $conn->query("SELECT p.*, b.name as brand, c.category FROM `product_list` p INNER JOIN brand_list b ON p.brand_id = b.id INNER JOIN `categories` c ON p.category_id = c.id WHERE p.delete_flag = 0 AND p.status = 1 LIMIT 6");
                 // Counter variable to keep track of displayed products
                 $counter = 0;
                 while ($row = $products->fetch_assoc()) :
@@ -385,15 +402,16 @@ section.new_arrivals {
                     </div>
                 <?php
                     // Check if we have displayed 4 products, and break out of the loop if true
-                    if ($counter >= 3) {
+                    if ($counter >= 6) {
                         break;
                     }
                 endwhile;
                 ?>
-                <div class="button_bottom_home">
+               
+            </div>
+            <div class="button_bottom_home">
                     <a href="./?p=products/">Shop Now</a>
                 </div>
-            </div>
         </div>
     </section>
 
@@ -453,4 +471,44 @@ section.new_arrivals {
 
     
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js" integrity="sha512-XtmMtDEcNz2j7ekrtHvOVR4iwwaD6o/FUJe6+Zq+HgcCsk3kj4uSQQR8weQ2QVj1o0Pk6PwYLohm206ZzNfubg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="text/javascript">
+ $('.responsive').slick({
+  dots: true,
+  infinite: false,
+  speed: 300,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2
+      }
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1
+      }
+    }
+    // You can unslick at a given breakpoint now by adding:
+    // settings: "unslick"
+    // instead of a settings object
+  ]
+});
+</script>
 </html>

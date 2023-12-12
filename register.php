@@ -35,7 +35,7 @@
         <div class="text-field-sign">
           <div class="input-area">
             <label class="label" for="lastname">Last Name</label>
-            <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" onkeydown="return allowOnlyLetters(event)" required>
+            <input type="text" name="lastname" id="lastname" placeholder="Enter Last Name" onkeydown="return  allowOnlyLettersLastname(event)" required>
           </div>
         </div>
 
@@ -98,14 +98,25 @@
 <!-- <script src="<?= base_url ?>dist/js/adminlte.min.js"></script> -->
 
 <script>
-      function allowOnlyLetters(event) {
-        // Check if the key pressed is a letter
-        if (event.key.match(/[A-Za-z]/)) {
-            return true;  // Allow the key press
-        } else {
-            return false; // Prevent the key press
-        }
+
+
+function allowOnlyLetters(event) {
+    // Check if the key pressed is a letter or a space
+    if ((event.key >= 'A' && event.key <= 'Z') || (event.key >= 'a' && event.key <= 'z') || event.key === ' ') {
+        return true;  // Allow the key press
+    } else {
+        return false; // Prevent the key press
     }
+}
+
+function allowOnlyLettersLastname(event) {
+    // Check if the key pressed is a letter or a space
+    if (event.key.match(/[A-Za-z]/)) {
+        return true;  // Allow the key press
+    } else {
+        return false; // Prevent the key press
+    }
+}
   $(document).ready(function(){
 
  

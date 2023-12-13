@@ -400,7 +400,11 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                                         break;
                                                     }
                                                 }
+<<<<<<< Updated upstream
                                                 echo '<input type="text" name="province" id="provinceInput" class="form-control mb-1" value="' . $selectedValue . '" readonly>';
+=======
+                                                echo '<input type="text" name="province" id="provinceInput" class="form-control mb-1" value="' . $selectedValue . '" required  readonly>';
+>>>>>>> Stashed changes
                                             } else {
                                                 echo 'Failed to fetch or decode data.';
                                             }
@@ -422,18 +426,31 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                                     }
                                                 }
                                                 // Display the input field with the selected value
+<<<<<<< Updated upstream
                                                 echo '<input type="text" name="city" id="cityInput" class="form-control mb-1" value="' . $selectedValue . '" readonly>';
+=======
+                                                echo '<input type="text" name="city" id="cityInput" class="form-control mb-1" value="' . $selectedValue . '" required  readonly>';
+>>>>>>> Stashed changes
                                             } else {
                                                 echo 'Failed to fetch or decode data.';
                                             }
 
                                             ?>
+<<<<<<< Updated upstream
                                             <span class="custom-control-input custom-control-input-primary">Adress Line 1</span>
                                             <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 1" value="<?= isset($addressline1) ? $addressline1 : "" ?>" readonly></input>
                                             <span class="custom-control-input custom-control-input-primary">Adress Line 2</span>
                                             <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="Address Line 2 (Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>" readonly></input>
                                             <span class="custom-control-input custom-control-input-primary">Zip code</span>
                                             <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "N/A" ?>" onkeydown="return allowOnlyNumbers(event)" required readonly>
+=======
+                                            <span class="custom-control-input custom-control-input-primary">Address Line 1</span>
+                                            <input name="addressline1" id="addressline1" rows="3" class="form-control mb-1 rounded-0" placeholder="Streeet, Blk, Lot, and brgy" value="<?= isset($addressline1) ? $addressline1 : "" ?>" required  readonly></input>
+                                            <span class="custom-control-input custom-control-input-primary">Address Line 2</span>
+                                            <input name="addressline2" id="addressline2" rows="3" class="form-control mb-1 rounded-0" placeholder="(Apartment, suite, etc, (optional))" value="<?= isset($addressline2) ? $addressline2 : "" ?>" required  readonly></input>
+                                            <span class="custom-control-input custom-control-input-primary">Zip code</span>
+                                            <input type="text" name="zipcode" id="zipcode" rows="3" class="form-control mb-1 zipcode" placeholder="Zip Code" value="<?= isset($zipcode) ? $zipcode : "N/A" ?>" onkeydown="return allowOnlyNumbers(event)" required readonly></input>
+>>>>>>> Stashed changes
 
                                         </div>
                                     </div>
@@ -485,9 +502,16 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             }
                                             ?>
 
+<<<<<<< Updated upstream
                                             <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
                                             <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
                                             <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+=======
+<input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value="" required></input>
+<input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value="" required></input>
+<input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value="" required></input>
+
+>>>>>>> Stashed changes
                                         </div>
 
                                     </div>

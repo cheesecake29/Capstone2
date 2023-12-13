@@ -163,8 +163,15 @@ if ($order->num_rows > 0) {
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Confirmed</span>
                     <?php elseif ($status == 3) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Shipped</span>
+<<<<<<< Updated upstream
                     <?php else : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
+=======
+                    <?php elseif ($status == 4) : ?>
+                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
+                    <?php else : ?>
+                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Received</span>
+>>>>>>> Stashed changes
                     <?php endif; ?>
                 <?php else : ?>
                     N/A
@@ -344,6 +351,8 @@ if ($order->num_rows > 0) {
         <div class="col-12 text-right">
             <?php if(isset($status)  && $status == 0): ?>
             <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
+            <?php elseif(isset($status)  && $status == 3): ?>
+            <button class="btn btn-danger btn-flat btn-sm" onclick="receiveOrder(<?= $id ?>)" id="btn-received" type="button">Order Received</button>
             <?php endif; ?>
             <button class="btn btn-dark btn-flat btn-sm" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
         </div>
@@ -453,13 +462,43 @@ if ($order->num_rows > 0) {
         })
     }
 
+<<<<<<< Updated upstream
+=======
+    function receiveOrder(orderId) {
+    console.log(orderId);
+    $.ajax({
+        url: _base_url_ + "classes/Master.php?f=order_received",
+        method: 'POST',
+        dataType: 'json',
+        data: {
+            order_id: orderId
+        },
+        error: err => {
+            console.log(err);
+            alert_toast("An error occurred", 'error');
+            end_loader();
+        },
+        success: function(resp) {
+            console.log(resp);
+            if (resp.status == 'success') {
+                // Your success logic
+            } else if (resp.status === 'failed') {
+                // Your failed logic
+            } else {
+                alert_toast('An error occurred.', 'error');
+            }
+        }
+    });
+}
+
+>>>>>>> Stashed changes
 
     
 
     function cancel_order(){
         start_loader();
         $.ajax({
-            url:_base_url_+'classes/master.php?f=cancel_order',
+            url:_base_url_+'classes/Master.php?f=cancel_order',
             data:{id : "<?= isset($id) ? $id : '' ?>"},
             method:'POST',
             dataType:'json',

@@ -145,12 +145,16 @@
   <script src="<?php echo base_url ?>dist/js/script.js"></script>
   <script src="<?php echo base_url ?>assets/js/scripts.js"></script>
   <style>
+<<<<<<< Updated upstream
      html
    {
   
       background-color: #ffff;
      
     }
+=======
+  
+>>>>>>> Stashed changes
 
     html
     body {
@@ -158,7 +162,11 @@
       width: 100%;
       font-family: 'Poppins', sans-serif;
       text-decoration: none;
+<<<<<<< Updated upstream
       
+=======
+     
+>>>>>>> Stashed changes
       overflow-x: hidden;
       margin: 0;
       font-weight: 600;

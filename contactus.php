@@ -83,18 +83,52 @@ include 'sendemail.php';
     margin: 5px 0;
   }
   
-  .connect-with-us{
+  .connect-with-us {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+.messenger-icon {
+  display: flex;
+  align-items: center;
+ 
+
+ 
+  padding: 10px; /* Adjust padding as needed */
+  border-radius: 10px; /* Add border-radius for rounded corners */
+}
+
+.messenger-icon i {
+ color:#EF4A98;
+   /* Add some spacing between the icon and the background */
+  font-size: 54px;
+ 
+  margin:10%;
+}
+
+  .contact-section{
     display: flex;
-    flex-direction:column;
+    flex-direction: row;
+    
     justify-content: center;
+<<<<<<< Updated upstream
     align-items: center;
 
   }
+=======
+  align-items: center;
+ 
+}
+>>>>>>> Stashed changes
 
-  .connect-with-us > h2{
-    margin-top: 1%;
-  }
+.contact{
+    display: flex;
+    flex-direction: column;
+    padding: 4%;
+}
 
+<<<<<<< Updated upstream
   .connect-with-us a{
     margin-top: 1%;
     margin-bottom: 1%;
@@ -117,6 +151,8 @@ include 'sendemail.php';
     padding: 4%;
 }
 
+=======
+>>>>>>> Stashed changes
 
 
 
@@ -183,6 +219,7 @@ include 'sendemail.php';
 
        
      </div>
+<<<<<<< Updated upstream
 
 
      <?php if (!empty($alert)) : ?>
@@ -193,6 +230,19 @@ include 'sendemail.php';
 
        <a href=" <?php echo $_settings->info('link') ?>"><i class="fab fa-facebook"><?php echo $_settings->info('link') ?> </i></a>
        </div>
+=======
+
+
+     <?php if (!empty($alert)) : ?>
+    <div class="alert"><?php echo $alert; ?></div>
+<?php endif; ?>
+<div class="connect-with-us">
+  <a href="<?php echo $_settings->info('link') ?>" class="messenger-icon">
+    <i class="fab fa-facebook-messenger"></i>
+  </a>
+</div>
+
+>>>>>>> Stashed changes
     </div>
 
 

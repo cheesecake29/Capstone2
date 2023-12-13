@@ -236,7 +236,11 @@
                                 <a href="<?php echo base_url ?>admin/?page=user/list" class="nav-links nav-link nav-user_list">
                                     <i class="fas fa-users nav-icon"></i>
 
+<<<<<<< Updated upstream
                                     <p>User List</p>
+=======
+                                    <p>Roles Management</p>
+>>>>>>> Stashed changes
                                 </a>
                             </li>
 

@@ -384,7 +384,7 @@ if ($variations->num_rows === 1) {
                         <?php endif; ?>
 
                     </div>
-                    <span id="limit" style="font-size: 0.8rem; color: #dc3545;">You have reached the maximum limit for this item</span>
+                    <span id="limit" style="font-size: 0.8rem; color: #dc3545;">Out of stocks!</span>
                 </div>
 
                 <div class="d-block mt-3">
@@ -633,6 +633,7 @@ if ($variations->num_rows === 1) {
         $('#item-price').html(variationPrice);
         $('#item-max-price').html(variationMaxPrice);
         $('#cart-total').html(formattedPrice);
+<<<<<<< Updated upstream
     }
 
     function saveToCart() {
@@ -691,6 +692,78 @@ if ($variations->num_rows === 1) {
         }
     }
 
+=======
+    }
+
+    function saveToCart() {
+    const variationId = $("input[type='radio'][name='variations']:checked").val();
+    const orderQuantity = $('#order-quantity').val();
+    if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
+        if (availability > 0) {
+            start_loader();
+            $.ajax({
+                url: _base_url_ + "classes/Master.php?f=save_to_cart",
+                method: 'POST',
+                data: {
+                    product_id: '<?= isset($id) ? $id : "" ?>',
+                    variation_id: variationId,
+                    quantity: orderQuantity
+                },
+                dataType: 'json',
+                error: err => {
+                    console.error(err);
+                    alert_toast("An error occurred", "error");
+                    end_loader();
+                },
+                success: function(resp) {
+                    if (resp.status == 'success') {
+                        fetch();
+                        alert_toast("Product has been added to cart.", 'success');
+                        update_cart_count(resp.cart_count);
+                        const cartCount = resp.cart_count;
+                        // Order quantity - Total Available stock
+                        const avail_stock = availability - orderQuantity;
+                        $('#available_stock').html(avail_stock);
+                        
+                        // Update the available stock by variation
+                        const var_item_stock = $('#variation_stock_' + variationId).data('total');
+                        const updated_var_item_stock = var_item_stock - orderQuantity;
+                        $('#variation_stock_' + variationId).data('total', updated_var_item_stock);
+                        $('#variation_stock_' + variationId).html(updated_var_item_stock + " qty.");
+
+                        console.log("var_item_stock", var_item_stock);
+                        console.log("updated_var_item_stock", updated_var_item_stock);
+
+                        if(updated_var_item_stock < 1 || var_item_stock < 1){
+                            $('#confirm').prop('disabled', true);
+                        }else{
+                            $('#confirm').removeAttr('disabled');
+                        }
+                        const cartCountSpan = $('#cart_count');
+                        if (cartCount !== 0) {
+                            cartCountSpan.text(cartCount).addClass('badge bg-danger cart-badge').removeClass('hidden');
+                        } else {
+                            cartCountSpan.text('').removeClass('badge bg-danger cart-badge').addClass('hidden');
+                        }
+                    } else if (!!resp.msg) {
+                        alert_toast(resp.msg, 'error');
+                    } else {
+                        alert_toast("An error occurred", "error");
+                    }
+                    end_loader();
+                }
+            });
+        } else {
+            alert_toast("You have reached the maximum limit for this item", "error");
+        }
+    } else {
+        alert_toast("Please Login First!", 'warning');
+    }
+}
+
+
+
+>>>>>>> Stashed changes
     // function update_cart_count($count){
     //     $('#cart_count').text($count)
     // }

@@ -972,10 +972,33 @@ class Master extends DBConnection
 	}
 	function cancel_order()
 	{
-		extract($_POST);
-		$update = $this->conn->query("UPDATE `order_list` set status = 5 where id = '{$id}'");
+		//extract($_POST);
+		$orderId = $_POST['id'];
+		$update = $this->conn->query("UPDATE `order_list` set status = 1 where id = '{$orderId}'");
 		if ($update) {
+<<<<<<< Updated upstream
 			$this->conn->query("UPDATE `appointment` set status = 2 where order_id = '{$oid}'");
+=======
+			$this->conn->query("UPDATE `appointment` set status = 2 where order_id = '{$orderId}'");
+			$resp['status'] = 'success';
+			$resp['msg'] = " Order has been cancelled.";
+		} else {
+			$resp['status'] = 'failed';
+			$resp['msg'] = " Order has failed to cancel.";
+			$resp['error'] = $this->conn->error;
+		}
+		if ($resp['status'] == 'success')
+			$this->settings->set_flashdata('success', $resp['status']);
+		return json_encode($resp);
+	}
+
+	function order_received()
+	{
+		$orderId = $_POST['order_id'];
+		$update = $this->conn->query("UPDATE `order_list` set status = 6 where id = '{$orderId}'");
+		if ($update) {
+			$this->conn->query("UPDATE `appointment` set status = 2 where order_id = '{$orderId}'");
+>>>>>>> Stashed changes
 			$resp['status'] = 'success';
 			$resp['msg'] = " Order has been cancelled.";
 		} else {
@@ -1379,6 +1402,9 @@ switch ($action) {
 		break;
 	case 'cancel_order':
 		echo $Master->cancel_order();
+		break;
+	case 'order_received':
+		echo $Master->order_received();
 		break;
 	case 'update_order_status':
 		echo $Master->update_order_status();

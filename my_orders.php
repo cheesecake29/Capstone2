@@ -8,6 +8,12 @@ $delivered = $conn->query("SELECT * FROM `order_list` where client_id = '{$_sett
 $return = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 4 order by unix_timestamp(date_created) desc ");
 
 
+<<<<<<< Updated upstream
+=======
+$received = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 6 order by unix_timestamp(date_created) desc ");
+
+
+>>>>>>> Stashed changes
 $currentStatus = "pending"; // Default status is pending
 
 // Check the current status and update the variable accordingly
@@ -24,6 +30,12 @@ elseif (isset($_GET['confirmed'])) {
  elseif (isset($_GET['return_refund'])) {
     $currentStatus = "return-refund";
 }
+<<<<<<< Updated upstream
+=======
+elseif (isset($_GET['received'])) {
+   $currentStatus = "received";
+}
+>>>>>>> Stashed changes
 ?>
 
 
@@ -309,7 +321,11 @@ elseif (isset($_GET['confirmed'])) {
                                         <tbody>
                                             <?php
                                             $i = 1;
+<<<<<<< Updated upstream
                                             while ($row = $delivered->fetch_assoc()) :
+=======
+                                            while ($row = $received->fetch_assoc()) :
+>>>>>>> Stashed changes
                                             ?>
                                                 <tr>
                                                     <td class="text-center"><?= $i++ ?></td>

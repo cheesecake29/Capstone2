@@ -325,7 +325,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                         <div class="dropdown-divider my-3"></div>
                         <div class="form-group">
                             <input class="form-control mb-2" type="email" name="email" id="email" placeholder="yourmail@gmail.com" required value="<?= isset($email) ? $email : "" ?>">
-                            <input class="form-control mb-2" type="text" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>" onkeydown="return allowOnlyNumbers(event)" required>
+                            <input class="form-control mb-2" type="text" name="phone_number" id="phone_number" rows="3" class="phone_number" placeholder="Phone" value="<?= isset($contact) ? $contact : "" ?>" onkeydown="return allowOnlyNumbers(event)" maxlength="11" required>
                         </div>
                         <h1 class="label-info mt-3"><strong>Delivery</strong></h1>
                         <div class="dropdown-divider my-3"></div>
@@ -362,10 +362,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </div>
                                 </div>
                                 <div class="place-order form-group text-right">
-                                    <?php if ($all_order_config) : ?>
-                                        <?php if ((int)$total > (int)($all_order_config['value'] ?? 0)) : ?>
-                                            <h1 id="warning-label" class="text-danger">Sorry! You've reached the order limit (<?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?> php)</h1>
-                                        <?php endif; ?>
+                                    <?php if ((int)$total > (int)($all_order_config['value'] ?? 0)) : ?>
+                                        <h1 id="warning-label" class="text-danger">Sorry! You've reached the order limit <?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?></h1>
                                     <?php else : ?>
                                         <button class="btn btn-flat btn-primary" type="submit" name="submit">
                                             Place Order
@@ -491,9 +489,9 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             }
                                             ?>
 
-                                            <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
-                                            <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
-                                            <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+<input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value="" ></input>
+<input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value="" ></input>
+<input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
 
                                         </div>
 

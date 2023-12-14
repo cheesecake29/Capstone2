@@ -112,7 +112,7 @@
           </div>
           <div class="col-12 col-sm-6 col-md-3">
             <div class="shadow info-box mb-3">
-              <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-tasks"></i></span>
+              <span class="info-box-icon bg-gradient-secondary elevation-1"><i class="fas fa-hourglass-half"></i></span>
 
               <div class="info-box-content">
               <a href="<?php echo base_url ?>admin/?page=orders">
@@ -131,11 +131,11 @@
           </div>
           <div class="col-12 col-sm-6 col-md-3">
             <div class="shadow info-box mb-3">
-              <span class="info-box-icon bg-gradient-primary elevation-1"><i class="fas fa-tasks"></i></span>
+              <span class="info-box-icon bg-gradient-primary elevation-1"> <i class="fas fa-times"></i></span>
 
               <div class="info-box-content">
               <a href="<?php echo base_url ?>admin/?page=orders">
-                <span class="info-box-text">Confirmed Orders</span>
+                <span class="info-box-text">Cancelled Orders</span>
                 <span class="info-box-number">
                 <?php 
                     $services = $conn->query("SELECT count(id) as total FROM `order_list` where status =  1")->fetch_assoc()['total'];
@@ -154,7 +154,7 @@
 
               <div class="info-box-content">
               <a href="<?php echo base_url ?>admin/?page=orders">
-                <span class="info-box-text">Orders For Delivery</span>
+                <span class="info-box-text">Delivered orders</span>
                 <span class="info-box-number">
                 <?php 
                     $services = $conn->query("SELECT count(id) as total FROM `order_list` where status = 2 ")->fetch_assoc()['total'];
@@ -167,63 +167,8 @@
             </div>
             <!-- /.info-box -->
           </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="shadow info-box mb-3">
-              <span class="info-box-icon bg-gradient-warning elevation-1"><i class="fas fa-tasks"></i></span>
-
-              <div class="info-box-content">
-              <a href="<?php echo base_url ?>admin/?page=orders">
-                <span class="info-box-text">On the Way Orders</span>
-                <span class="info-box-number">
-                <?php 
-                    $services = $conn->query("SELECT count(id) as total FROM `order_list` where status = 3 ")->fetch_assoc()['total'];
-                    echo number_format($services);
-                  ?>
-                  </a>
-                </span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="shadow info-box mb-3">
-              <span class="info-box-icon bg-gradient-success elevation-1"><i class="fas fa-tasks"></i></span>
-
-              <div class="info-box-content">
-              <a href="<?php echo base_url ?>admin/?page=orders">
-                <span class="info-box-text">Delivered Orders</span>
-                <span class="info-box-number">
-                <?php 
-                    $services = $conn->query("SELECT count(id) as total FROM `order_list` where status = 4 ")->fetch_assoc()['total'];
-                    echo number_format($services);
-                  ?>
-                   </a>
-                </span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
-          <div class="col-12 col-sm-6 col-md-3">
-            <div class="shadow info-box mb-3">
-              <span class="info-box-icon bg-gradient-danger elevation-1"><i class="fas fa-tasks"></i></span>
-
-              <div class="info-box-content">
-              <a href="<?php echo base_url ?>admin/?page=orders">
-                <span class="info-box-text">Cancelled Orders</span>
-                <span class="info-box-number">
-                <?php 
-                    $services = $conn->query("SELECT count(*) as total FROM `order_list` where status =5 ")->fetch_assoc()['total'];
-                    echo number_format($services);
-                  ?>
-                   </a>
-                </span>
-              </div>
-              <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
-          </div>
+     
+      
           
  
 

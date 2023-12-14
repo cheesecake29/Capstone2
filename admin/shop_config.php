@@ -1,5 +1,6 @@
 <?php
 $shop_config = $conn->query("SELECT * from shop_config limit 1");
+$unavailable_dates = $conn->query("SELECT * from unavailable_dates");
 if ($shop_config->num_rows > 0) {
     $config = $shop_config->fetch_assoc();
 }
@@ -124,6 +125,31 @@ if ($shop_config->num_rows > 0) {
             </div>
         </div>
     </form>
+    <div class="main-container my-5">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">When</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Comments</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <?php
+                while ($row = $unavailable_dates->fetch_assoc()) :
+                ?>
+                    <tr>
+                        <td><?= date('Y-m-d h:m:s a', strtotime($row['schedule'])) ?></td>
+                        <td><?= $row['from_hours'] . ' - ' . $row['to_hours'] ?></td>
+                        <td><?= $row['comments'] ?></td>
+                        <td><button class="btn btn-link text-danger remove_config" data-id="<?php echo $row['id'] ?>"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
     <div class="d-flex justify-content-center">
         <div id="calendar_div" class="mx-5" style="min-width: 750px; max-width: 750px;">
             <?php
@@ -136,6 +162,34 @@ if ($shop_config->num_rows > 0) {
 
 <script>
     $(document).ready(function() {
+        $('.table').dataTable();
+        $('.remove_config').on('click', function() {
+            const id = $(this).data('id');
+            const currentRow = $(this); // Store the reference to this element
+            // Confirm deletion
+            if (confirm('Are you sure you want to delete this record?')) {
+                // Send AJAX request to delete the record
+                $.ajax({
+                    url: _base_url_ + "classes/Master.php?f=delete_unavailable_dates",
+                    data: {
+                        id
+                    },
+                    method: 'POST',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(resp) {
+                        if (typeof resp == 'object' && resp.status == 'success') {
+                            // Remove the row from the table
+                            currentRow.closest('tr').remove();
+                            alert_toast('Unavailable date successfully deleted', 'success');
+                        } else {
+                            alert_toast("An error occurred", 'error');
+                            console.log(resp);
+                        }
+                    }
+                });
+            }
+        })
         $("#schedule").datepicker({
             todayHighlight: true,
             minDate: 1,

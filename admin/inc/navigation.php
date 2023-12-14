@@ -69,6 +69,12 @@
                         </a>
                     </li>
                 <?php endif; ?>
+                <li class="navs nav-item">
+                    <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-links nav-link">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>Order Configuration</p>
+                    </a>
+                </li>
 
 
                 <li class="navs nav-item">
@@ -116,12 +122,6 @@
                         <i class="right fas fa-angle-left"></i>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="navs nav-item">
-                            <a href="<?php echo base_url ?>admin/?page=inventory/order_config" class="nav-links nav-link nav-inventory">
-                                <i class="nav-icon fas fa-cog"></i>
-                                <p>Order Configuration</p>
-                            </a>
-                        </li>
                         <li class="navs nav-item">
 
                             <a href="<?php echo base_url ?>admin/?page=inventory" class=" nav-links nav-link nav-inventory">

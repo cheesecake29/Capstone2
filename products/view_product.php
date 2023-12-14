@@ -395,6 +395,12 @@ if ($variations->num_rows === 1) {
                         <button class="btn btn-danger">Add to cart</button>
                     </div>
 
+                    <div class="share">
+    <a href="javascript:void(0);" onclick="copyShareLink(<?php echo $id; ?>)">
+        <i class="fas fa-share-alt"></i> Share
+    </a>
+</div>
+
                 </div>
             </div>
         </div>
@@ -565,6 +571,32 @@ if ($variations->num_rows === 1) {
             $('#default').hide("slow");
             $('#selectedVariation').html(`₱ ${variation_price}`);
         }
+    }
+
+    function copyShareLink(productId) {
+        // Construct the share link based on the provided product ID.
+        var shareLink = 'https://atvmotoshop.online/?p=products/view_product&id=' + productId;
+
+        // Create a temporary input element to facilitate copying to clipboard.
+        var tempInput = document.createElement('input');
+        tempInput.value = shareLink;
+        document.body.appendChild(tempInput);
+
+        // Select the text in the input element.
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text to the clipboard.
+        document.execCommand('copy');
+
+        // Remove the temporary input element from the DOM.
+        document.body.removeChild(tempInput);
+
+        // You can provide feedback to the user that the link has been copied.
+        alert('Link copied to clipboard: ' + shareLink);
+
+        // You can do further processing or use the link as needed.
+        // For example, you can open a share modal or redirect the user to the share link.
     }
 
     function currencyToNumber(currency) {

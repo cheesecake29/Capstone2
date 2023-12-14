@@ -104,6 +104,22 @@ $where = "";
 
     .product-img-holder {
         margin: 2%;
+        
+    }
+
+    .product-container{
+       
+        margin-top: 3%
+    }
+
+    .product-container:hover{
+     
+        -webkit-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+box-shadow: 0px 2px 25px -1px rgba(0,0,0,0.75);
+ border-radius: 10px;
+
+      
     }
 
     .product-img-holder img {
@@ -119,6 +135,8 @@ $where = "";
 
     .card {
         border: none;
+      
+        
     }
 
     .custom-control {

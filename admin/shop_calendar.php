@@ -10,7 +10,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
             ?>
         </div>
     </div>
-    <div class="appointment-list my-5">
+    <div class="appointment-list my-5 pb-5">
         <div class="config-header">
             <h1>Appointment List</h1>
         </div>
@@ -93,6 +93,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
 </div>
 <script>
     $(document).ready(function() {
+		$('.table').dataTable();
         $('.update_appointment').click(function() {
             $('#update_status').modal('show');
             const appointmentId = $(this).attr('data-id');

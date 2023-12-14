@@ -1326,6 +1326,33 @@ class Master extends DBConnection
 		}
 		return json_encode($resp);
 	}
+
+
+	function delete_unavailable_dates()
+	{
+		// Check if the request is for deleting an order configuration
+		if ($_GET['f'] == 'delete_unavailable_dates') {
+			// Extract the POST data
+			extract($_POST);
+			$id = $_POST['id'];
+
+			// Add your code to delete the record with the specified productId from the database
+			$deleteQuery = "DELETE FROM unavailable_dates WHERE id = '{$id}'";
+			$deleteResult = $this->conn->query($deleteQuery);
+
+			if ($deleteResult) {
+				// Record successfully deleted
+				$response = array('status' => 'success');
+			} else {
+				// Error occurred during deletion
+				$response = array('status' => 'error', 'message' => $this->conn->error);
+			}
+
+			// Send the response as JSON
+			echo json_encode($response);
+			exit;
+		}
+	}
 }
 
 $Master = new Master();
@@ -1436,6 +1463,9 @@ switch ($action) {
 		break;
 	case 'save_unavailable_dates':
 		echo $Master->save_unavailable_dates();
+		break;
+	case 'delete_unavailable_dates':
+		echo $Master->delete_unavailable_dates();
 		break;
 	default:
 		// echo $sysset->index();

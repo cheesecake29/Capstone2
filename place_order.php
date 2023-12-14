@@ -9,6 +9,7 @@ $api_url_province = 'https://ph-locations-api.buonzz.com/v1/provinces';
 $response1 = file_get_contents($api_url_province);
 $api_url_city = 'https://ph-locations-api.buonzz.com/v1/cities';
 $response2 = file_get_contents($api_url_city);
+$shop_config = $conn->query("SELECT * from shop_config limit 1")->fetch_assoc();
 $all_order_config = $conn->query("SELECT * from order_config where is_all = 1 limit 1")->fetch_assoc();
 $unavailableDates = $conn->query("SELECT * from unavailable_dates");
 while ($unavailDate = $unavailableDates->fetch_assoc()) {
@@ -271,7 +272,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     <thead>
                                         <tr>
                                             <th width="25%" class="text-center">Image</th>
-                                            <th>Product Name</th>
+                                            <th>Product Name </th>
                                             <th>Variation</th>
                                             <th>Weight</th>
                                             <th>Quantity</th>
@@ -625,8 +626,8 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                         console.log(resp.data);
                         $("#meetup_timepicker").removeAttr('disabled')
                         $("#meetup_timepicker").timepicker({
-                            minTime: '8am',
-                            maxTime: '6pm',
+                            minTime: '<?= isset($shop_config) ? $shop_config['opening'] : '8 am' ?>',
+                            maxTime: '<?= isset($shop_config) ? $shop_config['closing'] : '6 pm' ?>',
                             timeFormat: 'h:i a',
                             step: 60,
                             dropdown: true,

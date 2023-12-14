@@ -227,24 +227,25 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     .invinsible {
         visibility: hidden;
     }
-    .details{
-       margin: 2% 0;
+
+    .details {
+        margin: 2% 0;
         padding: 2%;
         background-color: #ffff;
     }
-    .productt{
+
+    .productt {
         background-color: #ffff;
         padding: 2%;
     }
 
     .review-section {
-          background-color: #ffff;
+        background-color: #ffff;
     }
 
-    .descript>h5{
+    .descript>h5 {
         background-color: #1A547E;
     }
-
 </style>
 
 <?php
@@ -297,9 +298,8 @@ if ($variations->num_rows === 1) {
             </div>
             <div class="right-container px-5">
                 <div class="info">
-                <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $SingleVariation['variation_name'] : '' ?></h1>
+                    <h1 class="brand_name text-capitalize"><?= isset($name) ? $name : '' ?> <?= $variations->num_rows === 1 ? ' - ' . $SingleVariation['variation_name'] : '' ?></h1>
 
-                   
                 </div>
                 <h3 class="text-success" id="default">
                     ₱<?php
@@ -308,7 +308,7 @@ if ($variations->num_rows === 1) {
                         ?>
                 </h3>
                 <h3 class="text-success" id="selectedVariation"></h3>
-                
+
                 <div class="mt-3 border-bottom">
                     <h5>Variation: </h3>
                 </div>
@@ -398,20 +398,20 @@ if ($variations->num_rows === 1) {
                 </div>
             </div>
         </div>
-              <div class="details">
+        <div class="details">
 
-        
-        <div class="spec">
-        <div class="mt-3 border-bottom">
+
+            <div class="spec">
+                <div class="mt-3 border-bottom">
                     <h5>Product Specifications</h3>
                 </div>
                 <div class="info">
-                    <small class="text-muted">Compatible Models:</small >
-                    <small > <?= isset($models) ? $models : '' ?></small>
-                    
+                    <small class="text-muted">Compatible Models:</small>
+                    <small> <?= isset($models) ? $models : '' ?></small>
+
                 </div>
                 <div class="info">
-                    
+
 
                     <small class="text-muted">Category:</small>
                     <small><?= isset($category) ? $category : '' ?></small>
@@ -420,85 +420,85 @@ if ($variations->num_rows === 1) {
                     <small class="text-muted"> Brand: </small>
                     <small> Brand: <?= isset($brand) ? $brand : '' ?></small>
                 </div>
-                    </div>
-                    <br>
-        <div class="descript">
-        <div class="mt-3 border-bottom">
+            </div>
+            <br>
+            <div class="descript">
+                <div class="mt-3 border-bottom">
                     <h5>Description</h3>
                 </div>
-                   
-                    <?= isset($description) ? html_entity_decode($description) : '' ?>
-                </div>
 
-                </div>
-    
-    
-    <div class="container my-5">
-        <div class="product-review">
-            <?php
-            $productReviews = $conn->query(
-                "SELECT pr.author_rate, pr.author_comment, pr.date_created, pr.author_name, pv.variation_name FROM `product_reviews` pr
+                <?= isset($description) ? html_entity_decode($description) : '' ?>
+            </div>
+
+        </div>
+
+
+        <div class="container my-5">
+            <div class="product-review">
+                <?php
+                $productReviews = $conn->query(
+                    "SELECT pr.author_rate, pr.author_comment, pr.date_created, pr.author_name, pv.variation_name FROM `product_reviews` pr
                     inner join `product_variations` pv on pr.variation_id = pv.id
                 where pr.product_id =  $id order by unix_timestamp(pr.date_created) desc;
                 "
-            );
-            while ($review = $productReviews->fetch_assoc()) :
-            ?>
-                <div class="review-section mb-3 border rounded p-3">
-                    <figure class="mb-1">
-                        <blockquote class="blockquote">
-                            <p><?= ucfirst($review['author_name']) ?></p>
-                        </blockquote>
-                        <figcaption class="blockquote-footer mb-1">
-                            <?= date("Y-m-d h:i:s A", strtotime($review['date_created'])) ?> | Variation: <?= $review['variation_name'] ?>
-                        </figcaption>
-                    </figure>
-                    <div class="review-details">
-                        <?php switch (strval($review['author_rate'])):
-                            case "1": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "2": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "3": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "4": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star-o"></i>
-                            <?php break;
-                            case "5": ?>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                                <i class="fa fa-star checked"></i>
-                            <?php break;
-                            default: ?>
-                        <?php endswitch; ?>
-                        <p class="reviewer-comments mt-3"><?= ucfirst($review['author_comment']) ?></p>
+                );
+                while ($review = $productReviews->fetch_assoc()) :
+                ?>
+                    <div class="review-section mb-3 border rounded p-3">
+                        <figure class="mb-1">
+                            <blockquote class="blockquote">
+                                <p><?= ucfirst($review['author_name']) ?></p>
+                            </blockquote>
+                            <figcaption class="blockquote-footer mb-1">
+                                <?= date("Y-m-d h:i:s A", strtotime($review['date_created'])) ?> | Variation: <?= $review['variation_name'] ?>
+                            </figcaption>
+                        </figure>
+                        <div class="review-details">
+                            <?php switch (strval($review['author_rate'])):
+                                case "1": ?>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                <?php break;
+                                case "2": ?>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                <?php break;
+                                case "3": ?>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star-o"></i>
+                                    <i class="fa fa-star-o"></i>
+                                <?php break;
+                                case "4": ?>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star-o"></i>
+                                <?php break;
+                                case "5": ?>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                    <i class="fa fa-star checked"></i>
+                                <?php break;
+                                default: ?>
+                            <?php endswitch; ?>
+                            <p class="reviewer-comments mt-3"><?= ucfirst($review['author_comment']) ?></p>
+                        </div>
                     </div>
-                </div>
-            <?php endwhile; ?>
+                <?php endwhile; ?>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <div class="modal fade" id="cart_modal" role='dialog'>
@@ -633,7 +633,6 @@ if ($variations->num_rows === 1) {
         $('#item-price').html(variationPrice);
         $('#item-max-price').html(variationMaxPrice);
         $('#cart-total').html(formattedPrice);
-<<<<<<< Updated upstream
     }
 
     function saveToCart() {
@@ -665,12 +664,22 @@ if ($variations->num_rows === 1) {
                             // Order quantity - Total Available stock
                             const avail_stock = availability - orderQuantity;
                             $('#available_stock').html(avail_stock);
+
                             // Update the available stock by variation
                             const var_item_stock = $('#variation_stock_' + variationId).data('total');
                             const updated_var_item_stock = var_item_stock - orderQuantity;
+                            $('#variation_stock_' + variationId).data('total', updated_var_item_stock);
                             $('#variation_stock_' + variationId).html(updated_var_item_stock + " qty.");
-                            const cartCountSpan = $('#cart_count');
 
+                            console.log("var_item_stock", var_item_stock);
+                            console.log("updated_var_item_stock", updated_var_item_stock);
+
+                            if (updated_var_item_stock < 1 || var_item_stock < 1) {
+                                $('#confirm').prop('disabled', true);
+                            } else {
+                                $('#confirm').removeAttr('disabled');
+                            }
+                            const cartCountSpan = $('#cart_count');
                             if (cartCount !== 0) {
                                 cartCountSpan.text(cartCount).addClass('badge bg-danger cart-badge').removeClass('hidden');
                             } else {
@@ -692,78 +701,8 @@ if ($variations->num_rows === 1) {
         }
     }
 
-=======
-    }
-
-    function saveToCart() {
-    const variationId = $("input[type='radio'][name='variations']:checked").val();
-    const orderQuantity = $('#order-quantity').val();
-    if ("<?= $_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2 ?>" == 1) {
-        if (availability > 0) {
-            start_loader();
-            $.ajax({
-                url: _base_url_ + "classes/Master.php?f=save_to_cart",
-                method: 'POST',
-                data: {
-                    product_id: '<?= isset($id) ? $id : "" ?>',
-                    variation_id: variationId,
-                    quantity: orderQuantity
-                },
-                dataType: 'json',
-                error: err => {
-                    console.error(err);
-                    alert_toast("An error occurred", "error");
-                    end_loader();
-                },
-                success: function(resp) {
-                    if (resp.status == 'success') {
-                        fetch();
-                        alert_toast("Product has been added to cart.", 'success');
-                        update_cart_count(resp.cart_count);
-                        const cartCount = resp.cart_count;
-                        // Order quantity - Total Available stock
-                        const avail_stock = availability - orderQuantity;
-                        $('#available_stock').html(avail_stock);
-                        
-                        // Update the available stock by variation
-                        const var_item_stock = $('#variation_stock_' + variationId).data('total');
-                        const updated_var_item_stock = var_item_stock - orderQuantity;
-                        $('#variation_stock_' + variationId).data('total', updated_var_item_stock);
-                        $('#variation_stock_' + variationId).html(updated_var_item_stock + " qty.");
-
-                        console.log("var_item_stock", var_item_stock);
-                        console.log("updated_var_item_stock", updated_var_item_stock);
-
-                        if(updated_var_item_stock < 1 || var_item_stock < 1){
-                            $('#confirm').prop('disabled', true);
-                        }else{
-                            $('#confirm').removeAttr('disabled');
-                        }
-                        const cartCountSpan = $('#cart_count');
-                        if (cartCount !== 0) {
-                            cartCountSpan.text(cartCount).addClass('badge bg-danger cart-badge').removeClass('hidden');
-                        } else {
-                            cartCountSpan.text('').removeClass('badge bg-danger cart-badge').addClass('hidden');
-                        }
-                    } else if (!!resp.msg) {
-                        alert_toast(resp.msg, 'error');
-                    } else {
-                        alert_toast("An error occurred", "error");
-                    }
-                    end_loader();
-                }
-            });
-        } else {
-            alert_toast("You have reached the maximum limit for this item", "error");
-        }
-    } else {
-        alert_toast("Please Login First!", 'warning');
-    }
-}
 
 
-
->>>>>>> Stashed changes
     // function update_cart_count($count){
     //     $('#cart_count').text($count)
     // }

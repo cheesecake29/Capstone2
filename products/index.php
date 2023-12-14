@@ -21,54 +21,61 @@ $where = "";
 
 
 <style>
+    @media only screen and (max-width: 1000px) {
+        .filters-container {
+            display: none;
+            /* Hide the filters by default on small screens */
+        }
 
-@media only screen and (max-width: 1000px) {
-    .filters-container {
-        display: none; /* Hide the filters by default on small screens */
+        .filter-toggle {
+            display: block;
+            /* Show the filter toggle button on small screens */
+            margin-top: 10px;
+            /* Add some top margin for better spacing */
+            background-color: #007bff;
+            /* Add a background color for better visibility */
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            /* Stack the columns in a vertical layout on smaller screens */
+            align-items: center;
+            /* Center align content on smaller screens */
+        }
+
+        .filters-container.show {
+            display: flex;
+            /* Show the filters when the show class is applied */
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Adjust styling for other elements as needed */
+        .search-input {
+            width: 100%;
+            /* Make the search input full width on smaller screens */
+            border-radius: 0 20px 20px 0;
+        }
+
+        .product-container {
+            width: 100%;
+            /* Make product containers full width on smaller screens */
+            margin: 1% 0;
+            /* Adjust the margin for better spacing */
+        }
+
+        .filter-toggle {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     }
 
-    .filter-toggle {
-        display: block; /* Show the filter toggle button on small screens */
-        margin-top: 10px; /* Add some top margin for better spacing */
-        background-color: #007bff; /* Add a background color for better visibility */
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-    }
-
-    .container {
-        display: flex;
-        flex-direction: column; /* Stack the columns in a vertical layout on smaller screens */
-        align-items: center; /* Center align content on smaller screens */
-    }
-
-    .filters-container.show {
-        display: flex; /* Show the filters when the show class is applied */
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Adjust styling for other elements as needed */
-    .search-input {
-        width: 100%; /* Make the search input full width on smaller screens */
-<<<<<<< Updated upstream
-=======
-        border-radius: 0 20px 20px 0;
->>>>>>> Stashed changes
-    }
-
-    .product-container {
-        width: 100%; /* Make product containers full width on smaller screens */
-        margin: 1% 0; /* Adjust the margin for better spacing */
-    }
-
-    .filter-toggle{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-}
     .name {
         text-align: center;
         white-space: nowrap;
@@ -100,18 +107,15 @@ $where = "";
     }
 
     .product-img-holder img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Maintain aspect ratio */
-}
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Maintain aspect ratio */
+    }
 
-<<<<<<< Updated upstream
-=======
-.input-group-append{
-    border-radius: 20px;
-}
-
->>>>>>> Stashed changes
+    .input-group-append {
+        border-radius: 20px;
+    }
 
     .card {
         border: none;
@@ -128,20 +132,21 @@ $where = "";
     .search-input:focus {
         box-shadow: none !important;
     }
-span.ribbon {
-    position: absolute;
-    top: 9px;
-    right: 8px;
-    background-color: #e74c3c;
-    color: #fff;
-    padding: 5px 10px;
-    /* transform: rotate(45deg); */
-    z-index: 1;
-    border-radius: 32px;
-    font-size: 14px;
-    font-weight: 100;
-    letter-spacing: 1px;
-}
+
+    span.ribbon {
+        position: absolute;
+        top: 9px;
+        right: 8px;
+        background-color: #e74c3c;
+        color: #fff;
+        padding: 5px 10px;
+        /* transform: rotate(45deg); */
+        z-index: 1;
+        border-radius: 32px;
+        font-size: 14px;
+        font-weight: 100;
+        letter-spacing: 1px;
+    }
 </style>
 
 
@@ -149,7 +154,7 @@ span.ribbon {
     <div class="container">
         <div class="row">
 
-        <div class="col-md-4 d-md-none">
+            <div class="col-md-4 d-md-none">
                 <button class="btn btn-primary filter-toggle">Toggle Filters</button>
             </div>
 
@@ -183,7 +188,7 @@ span.ribbon {
                     </div>
                 </div>
                 <div class="card card-outline shadow card-primary rounded-0">
-                <div class="card-header" style="background-color:#0062CC; color:white;">
+                    <div class="card-header" style="background-color:#0062CC; color:white;">
                         <h3 class="card-title"><b>Categories</b></h3>
                     </div>
                     <div class="card-body">
@@ -210,7 +215,7 @@ span.ribbon {
                 </div>
                 <!-- Start price range -->
                 <div class="card card-outline shadow card-primary rounded-0">
-                <div class="card-header" style="background-color:#0062CC; color:white;">
+                    <div class="card-header" style="background-color:#0062CC; color:white;">
                         <h3 class="card-title"><b>Price Range</b></h3>
                     </div>
                     <div class="card-body">
@@ -234,14 +239,10 @@ span.ribbon {
                     <div class="col-md-12">
                         <form action="" id="search_prod">
                             <div class="input-group">
-                            <input type="search" name="search" value="<?= $search ?>" class="search-input form-control" placeholder="Search Product...">
+                                <input type="search" name="search" value="<?= $search ?>" class="search-input form-control" placeholder="Search Product...">
 
                                 <div class="input-group-append" style="background-color:#0062CC;">
-<<<<<<< Updated upstream
-                                    <button class="btn btn-outline-secondary"><i class="fa fa-search" style="color:white;"></i></button>
-=======
                                     <button class="btn "><i class="fa fa-search" style="color:white;"></i></button>
->>>>>>> Stashed changes
                                 </div>
                             </div>
                         </form>
@@ -249,7 +250,7 @@ span.ribbon {
                 </div>
 
                 <div class="row row-cols-sm-1 row-cols-md-2 row-cols-xl-3">
-                <?php
+                    <?php
                     $products = $conn->query("SELECT p.*, b.name AS brand, c.category, COUNT(o.product_id) AS order_count
                         FROM product_list p
                             INNER JOIN brand_list b ON p.brand_id = b.id
@@ -261,22 +262,22 @@ span.ribbon {
                             ORDER BY order_count DESC
                         LIMIT 1;");
 
-                while ($row = $products->fetch_assoc()) :
-                    $row['stocks'] = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$row['id']}'")->fetch_array()[0];
-                    $row['out'] = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$row['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
-        
-                    if (array_key_exists('out', $row)) {
-                        $row['available'] = $row['stocks'] - $row['out'];
-                    } else {
-                        $row['available'] = $row['stocks'];
-                    }
-                ?>
-                
-                    <!--Start Best Seller --->
-                   
-                    
+                    while ($row = $products->fetch_assoc()) :
+                        $row['stocks'] = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$row['id']}'")->fetch_array()[0];
+                        $row['out'] = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$row['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
+
+                        if (array_key_exists('out', $row)) {
+                            $row['available'] = $row['stocks'] - $row['out'];
+                        } else {
+                            $row['available'] = $row['stocks'];
+                        }
+                    ?>
+
+                        <!--Start Best Seller --->
+
+
                         <!--End Best Seller--->
-                        <?php endwhile; ?>
+                    <?php endwhile; ?>
 
                     <?php
                     $where = "";
@@ -301,7 +302,7 @@ span.ribbon {
                     while ($row = $products->fetch_assoc()) :
                         $row['stocks'] = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$row['id']}'")->fetch_array()[0];
                         $row['out'] = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$row['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
-           
+
                         // Check if 'out' key exists in the $row array before using it
                         if (array_key_exists('out', $row)) {
                             $row['available'] = $row['stocks'] - $row['out'];
@@ -327,7 +328,7 @@ span.ribbon {
                                     <p class="price">₱<?= strip_tags(html_entity_decode($row['price'])) ?>
                                         <span class="fas fa-tag"></span>
                                     </p>
-                                   
+
                                 </div>
                             </div>
                         </a>
@@ -346,21 +347,21 @@ span.ribbon {
     </div>
 </div>
 <script>
-$(function() {
-    function toggleFilters() {
-        $('.filters-container').slideToggle();
-    }
+    $(function() {
+        function toggleFilters() {
+            $('.filters-container').slideToggle();
+        }
 
-    // Attach a click event handler to the filter toggle button
-    $('.filter-toggle').click(function(e) {
-        e.stopPropagation(); // Prevent the click from closing the filter section
-        toggleFilters();
-    });
+        // Attach a click event handler to the filter toggle button
+        $('.filter-toggle').click(function(e) {
+            e.stopPropagation(); // Prevent the click from closing the filter section
+            toggleFilters();
+        });
 
-    // Attach a click event handler to the document to close the filter section when clicking outside of it
+        // Attach a click event handler to the document to close the filter section when clicking outside of it
 
 
-   
+
         function validateAndEnableButton() {
             const min_price = parseFloat($("#min_price").val());
             const max_price = parseFloat($("#max_price").val());
@@ -449,7 +450,7 @@ $(function() {
             window.location.search = searchParams.toString();
         });
 
-        
+
 
 
 
@@ -482,6 +483,4 @@ $(function() {
             location.href = "./?p=products" + (category_ids.length > 0 ? "&category_filter=" + category_ids : "") + "<?= isset($_GET['brand_filter']) ? "&brand_filter=" . $_GET['brand_filter'] : "" ?><?= isset($_GET['search']) ? "&search=" . $_GET['search'] : "" ?>";
         })
     })
-
-   
 </script>

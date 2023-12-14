@@ -10,7 +10,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
             ?>
         </div>
     </div>
-    <div class="appointment-list my-5">
+    <div class="appointment-list my-5 pb-5">
         <div class="config-header">
             <h1>Appointment List</h1>
         </div>
@@ -49,6 +49,9 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
                                 case 3: ?>
                                     <b class="text-danger">Rejected</b>
                                 <?php break;
+                                case 4: ?>
+                                    <b class="text-primary">Done</b>
+                                <?php break;
                                 default: ?>
                                     <b class="text-secondary">Pending</b>
                                     <?php break; ?>
@@ -78,6 +81,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
                         <option value="1">Confirmed</option>
                         <option value="2">Cancelled</option>
                         <option value="3">Rejected</option>
+                        <option value="4">Done</option>
                     </select>
                 </div>
                 <div class="modal-footer">
@@ -89,6 +93,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
 </div>
 <script>
     $(document).ready(function() {
+		$('.table').dataTable();
         $('.update_appointment').click(function() {
             $('#update_status').modal('show');
             const appointmentId = $(this).attr('data-id');

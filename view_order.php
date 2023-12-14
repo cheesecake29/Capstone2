@@ -129,18 +129,18 @@ if ($order->num_rows > 0) {
                 <b><?= isset($ref_code) ? $ref_code : "N/A" ?></b>
             </div>
             <div class="ml-3">
-            <?php if (isset($status)  && $status == 3) : ?>
-              
-                <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
-                    <div class="proof_payment_container">
-                        <label for="proof_payment" class="text-muted">Upload Proof of Payment</label>
-                        <input type="text" class="" id="ref_code" name="ref_code" value="<?= isset($ref_code) ? $ref_code : "N/A" ?>" hidden>
-                        <input type="text" class="" id="order_id" name="order_id" value="<?= isset($id) ? $id : "N/A" ?>" hidden>
-                        <input type="text" class="" id="user_name" name="user_name" value="<?= isset($fullname) ? $fullname : "N/A" ?>" hidden>
-                        <input type="file" class="custom_gall form-control-file" id="proof_file" name="proof_file" accept="image/*">
-                        <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
-                    </div>
-                </form>
+                <?php if (isset($status)  && $status == 3) : ?>
+
+                    <form action="" id="proof_form" enctype="multipart/form-data" method="POST">
+                        <div class="proof_payment_container">
+                            <label for="proof_payment" class="text-muted">Upload Proof of Payment</label>
+                            <input type="text" class="" id="ref_code" name="ref_code" value="<?= isset($ref_code) ? $ref_code : "N/A" ?>" hidden>
+                            <input type="text" class="" id="order_id" name="order_id" value="<?= isset($id) ? $id : "N/A" ?>" hidden>
+                            <input type="text" class="" id="user_name" name="user_name" value="<?= isset($fullname) ? $fullname : "N/A" ?>" hidden>
+                            <input type="file" class="custom_gall form-control-file" id="proof_file" name="proof_file" accept="image/*">
+                            <button class="btn btn-flat btn-primary" form="proof_form" id="uploadButton">Upload</button>
+                        </div>
+                    </form>
                 <?php endif; ?>
             </div>
         </div>
@@ -158,20 +158,15 @@ if ($order->num_rows > 0) {
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-secondary">Pending</span>
                     <?php elseif ($status == 1) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-info">Cancelled</span>
-                
+
                     <?php elseif ($status == 2) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Confirmed</span>
                     <?php elseif ($status == 3) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">Shipped</span>
-<<<<<<< Updated upstream
-                    <?php else : ?>
-                        <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
-=======
                     <?php elseif ($status == 4) : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-warning">For Return/Refund</span>
                     <?php else : ?>
                         <span class="badge badge-secondary px-3 rounded-pill p-2 bg-success">Received</span>
->>>>>>> Stashed changes
                     <?php endif; ?>
                 <?php else : ?>
                     N/A
@@ -349,18 +344,16 @@ if ($order->num_rows > 0) {
     <div class="clear-fix my-2"></div>
     <div class="row">
         <div class="col-12 text-right">
-            <?php if(isset($status)  && $status == 0): ?>
-            <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
-            <?php elseif(isset($status)  && $status == 3): ?>
-            <button class="btn btn-danger btn-flat btn-sm" onclick="receiveOrder(<?= $id ?>)" id="btn-received" type="button">Order Received</button>
+            <?php if (isset($status)  && $status == 0) : ?>
+                <button class="btn btn-danger btn-flat btn-sm" id="btn-cancel" type="button">Cancel Order</button>
+            <?php elseif (isset($status)  && $status == 3) : ?>
+                <button class="btn btn-danger btn-flat btn-sm" onclick="receiveOrder(<?= $id ?>)" id="btn-received" type="button">Order Received</button>
             <?php endif; ?>
             <button class="btn btn-dark btn-flat btn-sm" type="button" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
         </div>
     </div>
 </div>
 <script>
-   
-
     $('#btn-cancel').click(function() {
         _conf("Are you sure to cancel this order?", "cancel_order", [])
     })
@@ -462,58 +455,57 @@ if ($order->num_rows > 0) {
         })
     }
 
-<<<<<<< Updated upstream
-=======
     function receiveOrder(orderId) {
-    console.log(orderId);
-    $.ajax({
-        url: _base_url_ + "classes/Master.php?f=order_received",
-        method: 'POST',
-        dataType: 'json',
-        data: {
-            order_id: orderId
-        },
-        error: err => {
-            console.log(err);
-            alert_toast("An error occurred", 'error');
-            end_loader();
-        },
-        success: function(resp) {
-            console.log(resp);
-            if (resp.status == 'success') {
-                // Your success logic
-            } else if (resp.status === 'failed') {
-                // Your failed logic
-            } else {
-                alert_toast('An error occurred.', 'error');
+        console.log(orderId);
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=order_received",
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                order_id: orderId
+            },
+            error: err => {
+                console.log(err);
+                alert_toast("An error occurred", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'success') {
+                    // Your success logic
+                } else if (resp.status === 'failed') {
+                    // Your failed logic
+                } else {
+                    alert_toast('An error occurred.', 'error');
+                }
             }
-        }
-    });
-}
+        });
+    }
 
->>>>>>> Stashed changes
 
-    
 
-    function cancel_order(){
+
+    function cancel_order() {
         start_loader();
         $.ajax({
-            url:_base_url_+'classes/Master.php?f=cancel_order',
-            data:{id : "<?= isset($id) ? $id : '' ?>"},
-            method:'POST',
-            dataType:'json',
-            error:err=>{
+            url: _base_url_ + 'classes/Master.php?f=cancel_order',
+            data: {
+                id: "<?= isset($id) ? $id : '' ?>"
+            },
+            method: 'POST',
+            dataType: 'json',
+            error: err => {
                 console.error(err)
-                alert_toast('An error occurred.','error')
+                alert_toast('An error occurred.', 'error')
                 end_loader()
             },
-            success:function(resp){
-                if(resp.status == 'success'){
+            success: function(resp) {
+                if (resp.status == 'success') {
                     location.reload()
-                }else if(!!resp.msg){
-                    alert_toast(resp.msg,'error')
-                }else{
-                    alert_toast('An error occurred.','error')
+                } else if (!!resp.msg) {
+                    alert_toast(resp.msg, 'error')
+                } else {
+                    alert_toast('An error occurred.', 'error')
                 }
                 end_loader();
             }

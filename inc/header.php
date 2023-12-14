@@ -145,28 +145,11 @@
   <script src="<?php echo base_url ?>dist/js/script.js"></script>
   <script src="<?php echo base_url ?>assets/js/scripts.js"></script>
   <style>
-<<<<<<< Updated upstream
-     html
-   {
-  
-      background-color: #ffff;
-     
-    }
-=======
-  
->>>>>>> Stashed changes
-
-    html
-    body {
+    html body {
       height: 80%;
       width: 100%;
       font-family: 'Poppins', sans-serif;
       text-decoration: none;
-<<<<<<< Updated upstream
-      
-=======
-     
->>>>>>> Stashed changes
       overflow-x: hidden;
       margin: 0;
       font-weight: 600;
@@ -181,19 +164,23 @@
     }
 
     #main-header:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 30vh; /* You can adjust this as needed */
-    max-height: 600px; /* Set a maximum height for smaller screens */
-    background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
-    background-repeat: no-repeat;
-    background-position: center; /* Center the background image */
-    background-size: cover;
-    filter: drop-shadow(0 0 49px 0 #879090); /* Fix typo: 49px instead of 49x */
-    z-index: -1;
-}
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 30vh;
+      /* You can adjust this as needed */
+      max-height: 600px;
+      /* Set a maximum height for smaller screens */
+      background-image: url(<?php echo base_url . $_settings->info('cover') ?>);
+      background-repeat: no-repeat;
+      background-position: center;
+      /* Center the background image */
+      background-size: cover;
+      filter: drop-shadow(0 0 49px 0 #879090);
+      /* Fix typo: 49px instead of 49x */
+      z-index: -1;
+    }
   </style>
 </head>

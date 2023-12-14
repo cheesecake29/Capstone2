@@ -94,6 +94,18 @@
 		border-radius: 50%;
 		display: inline-block;
 	}
+
+	.square {
+		height: 25px;
+		width: 25px;
+		display: inline-block;
+	}
+
+	.indicators {
+		flex-grow: 1;
+		flex-basis: 150px;
+		margin-bottom: 10px;
+	}
 </style>
 <?php
 /*
@@ -130,18 +142,21 @@ function getCalendar($year = '', $month = '')
 	<div class="d-flex flex-column">
 		<div id="calender_section">
 			<h3 class="text-center mt-3 mb-5">ATV Motoshop Calendar</h3>
-			<div class="d-flex justify-content-center mb-3">
-				<div class="today-indicator d-flex align-self-center mx-3">
-					<span class="dot bg-secondary me-1"></span> Date Today
+			<div class="d-flex justify-content-center flex-wrap mb-3">
+				<div class="indicators today-indicator d-flex align-self-center mx-3">
+					<span class="dot bg-secondary mr-2 me-2"></span> Date Today
 				</div>
-				<div class="available-success d-flex align-self-center mx-3">
-					<span class="dot bg-success me-1"></span> Still Available
+				<div class="indicators available-success d-flex align-self-center mx-3">
+					<span class="dot bg-success mr-2 me-2"></span> Still Available
 				</div>
-				<div class="available-success d-flex align-self-center mx-3">
-					<span class="dot bg-danger me-1"></span> Fully Booked
+				<div class="indicators available-success d-flex align-self-center mx-3">
+					<span class="dot bg-danger mr-2 me-2"></span> Fully Booked
 				</div>
-				<div class="closed-indicator d-flex align-self-center mx-3">
-					<span class="dot bg-dark me-1"></span> Closed
+				<div class="indicators closed-indicator d-flex align-self-center mx-3">
+					<span class="dot bg-dark mr-2 me-2"></span> Closed
+				</div>
+				<div class="indicators closed-indicator d-flex align-self-center mx-3">
+					<span class="square bg-dark mr-2 me-2"></span> Few slot is unavailable
 				</div>
 			</div>
 			<div class="d-flex justify-content-center mx-5">
@@ -180,17 +195,19 @@ function getCalendar($year = '', $month = '')
 								$unavailable = $dateYear . '-' . $dateMonth . '-' . $dayCount;
 								$eventNum = 0;
 								$unavailableTotal = 0;
+								$holidayTotal = 0;
 								//Include db configuration file
 								//Get number of events based on the current date
 								$result = $conn->query("SELECT hours FROM appointment WHERE dates = '" . $currentDate . "' AND status = 1 GROUP BY hours");
-								$holiday = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $unavailable . "'");
-								$holidayData = $holiday->fetch_assoc();
+								$unavailableTime = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $unavailable . "' and duration > 0");
+								$holiday = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $unavailable . "' and duration < 1");
 								$eventNum = $result->num_rows;
-								$unavailableTotal = $holiday->num_rows;
-								if ($unavailableTotal > 0) {
-									$secs = $holidayData['duration'] * 3600; // duration * secs
-									$durationPercentage = $secs / 864; // 86,400 secs / 24hours
-								}
+								$unavailableTotal = $unavailableTime->num_rows;
+								$holidayTotal = $holiday->num_rows;
+								// if ($unavailableTotal > 0) {
+								// 	$secs = $unavailableData['duration'] * 3600; // duration * secs
+								// 	$durationPercentage = $secs / 864; // 86,400 secs / 24hours
+								// }
 								//Define date cell color
 						?>
 								<?php if (strtotime($currentDate) == strtotime(date("Y-m-d"))) : ?>
@@ -199,15 +216,17 @@ function getCalendar($year = '', $month = '')
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="bg-success text-white date_cell">
 									<?php elseif ($eventNum === 5) : ?>
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="bg-danger text-white date_cell">
-									<?php elseif ($unavailableTotal == 1) : ?>
-									<li date="<?= $unavailable ?>" data-total="<?= $unavailableTotal ?>" class="date_cell text-white">
+									<?php elseif ($unavailableTotal >= 1) : ?>
+									<li date="<?= $unavailable ?>" data-total="<?= $unavailableTotal ?>" class="date_cell">
+									<?php elseif ($holidayTotal >= 1) : ?>
+									<li date="<?= $unavailable ?>" data-total="<?= $unavailableTotal ?>" class="bg-dark text-white date_cell">
 									<?php else : ?>
 									<li date="<?= $currentDate ?>" data-total="<?= $eventNum ?>" class="date_cell">
 									<?php endif; ?>
 									<div class="h-100">
 										<?php if ($unavailableTotal > 0) : ?>
 											<!-- Fill by time duration -->
-											<div class="bg-dark" style="position: absolute; width: 100%; height: calc(100% - <?= $durationPercentage ?>%)"></div>
+											<div class="bg-dark" style="position: absolute; height: 5px; right: 0px; padding: 10px;"></div>
 										<?php endif; ?>
 										<div class="date_cell_info_hover d-flex flex-column position-absolute">
 											<div class="date_cell_info px-2 pt-1">

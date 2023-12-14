@@ -49,6 +49,9 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
                                 case 3: ?>
                                     <b class="text-danger">Rejected</b>
                                 <?php break;
+                                case 4: ?>
+                                    <b class="text-primary">Done</b>
+                                <?php break;
                                 default: ?>
                                     <b class="text-secondary">Pending</b>
                                     <?php break; ?>
@@ -78,6 +81,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
                         <option value="1">Confirmed</option>
                         <option value="2">Cancelled</option>
                         <option value="3">Rejected</option>
+                        <option value="4">Done</option>
                     </select>
                 </div>
                 <div class="modal-footer">

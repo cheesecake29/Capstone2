@@ -351,8 +351,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-white" id="topNavBar">
         <div class="container  ">
-
-            <a class="navbar-brand" href="./">
+            <a class="navbar-brand text-white" href="./">
                 <img src="<?php echo validate_image($_settings->info('logo')) ?>" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
                 <?php echo $_settings->info('sys_shortname') ?>
             </a>

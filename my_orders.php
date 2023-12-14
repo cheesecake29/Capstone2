@@ -8,64 +8,56 @@ $delivered = $conn->query("SELECT * FROM `order_list` where client_id = '{$_sett
 $return = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 4 order by unix_timestamp(date_created) desc ");
 
 
-<<<<<<< Updated upstream
-=======
 $received = $conn->query("SELECT * FROM `order_list` where client_id = '{$_settings->userdata('id')}' and status = 6 order by unix_timestamp(date_created) desc ");
 
 
->>>>>>> Stashed changes
 $currentStatus = "pending"; // Default status is pending
 
 // Check the current status and update the variable accordingly
 if (isset($_GET['cancelled'])) {
     $currentStatus = "cancelled";
-
-}
-elseif (isset($_GET['confirmed'])) {
+} elseif (isset($_GET['confirmed'])) {
     $currentStatus = "confirmed";
-
-}  elseif (isset($_GET['delivered'])) {
+} elseif (isset($_GET['delivered'])) {
     $currentStatus = "delivered";
-}
- elseif (isset($_GET['return_refund'])) {
+} elseif (isset($_GET['return_refund'])) {
     $currentStatus = "return-refund";
+} elseif (isset($_GET['received'])) {
+    $currentStatus = "received";
 }
-<<<<<<< Updated upstream
-=======
-elseif (isset($_GET['received'])) {
-   $currentStatus = "received";
-}
->>>>>>> Stashed changes
 ?>
 
 
 
 <style>
-   .nav-linkss {
-    color: #004399; /* Set the default text color */
-}
-    .row{
-    display: flex;
-    flex-direction: column;
+    .nav-linkss {
+        color: #004399;
+        /* Set the default text color */
     }
 
-    .navy .nav{
+    .row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .navy .nav {
         display: flex;
         justify-content: space-around;
         align-items: center;
         width: 100%;
-        color:blue;
-        
+        color: blue;
+
     }
 
-    
+
 
     .nav-linkss.active {
-    background-color: #0062CC; /* Set your desired background color */
-    color: white !important; /* Set the text color */
-    padding: 1% 3%;
-}
-  
+        background-color: #0062CC;
+        /* Set your desired background color */
+        color: white !important;
+        /* Set the text color */
+        padding: 1% 3%;
+    }
 </style>
 <div class="content py-5 mt-3">
     <div class="container">
@@ -74,14 +66,14 @@ elseif (isset($_GET['received'])) {
         <div class="row">
             <div class="navy">
                 <div class="nav flex-row " id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-                <a class="nav-linkss <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
-                <a class="nav-linkss <?= ($currentStatus === 'cancelled') ? 'active' : ''; ?>" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="<?= ($currentStatus === 'cancelled') ? 'true' : 'false'; ?>">Cancelled</a>
-                <a class="nav-linkss <?= ($currentStatus === 'confirmed') ? 'active' : ''; ?>" id="v-pills-confirmed-tab" data-toggle="pill" href="#v-pills-confirmed" role="tab" aria-controls="v-pills-confirmed" aria-selected="<?= ($currentStatus === 'confirmed') ? 'true' : 'false'; ?>">Confirmed</a>
-                
-              
-                <a class="nav-linkss <?= ($currentStatus === 'delivered') ? 'active' : ''; ?>" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="<?= ($currentStatus === 'delivered') ? 'true' : 'false'; ?>">Shipped</a>
-                <a class="nav-linkss <?= ($currentStatus === 'received') ? 'active' : ''; ?>" id="v-pills-received-tab" data-toggle="pill" href="#v-pills-received" role="tab" aria-controls="v-pills-received" aria-selected="<?= ($currentStatus === 'received') ? 'true' : 'false'; ?>">Received</a>
-                <a class="nav-linkss <?= ($currentStatus === 'return-refund') ? 'active' : ''; ?>" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="<?= ($currentStatus === 'return-refund') ? 'true' : 'false'; ?>">For Return/Refund</a>
+                    <a class="nav-linkss <?= ($currentStatus === 'pending') ? 'active' : ''; ?>" id="v-pills-pending-tab" data-toggle="pill" href="#v-pills-pending" role="tab" aria-controls="v-pills-pending" aria-selected="<?= ($currentStatus === 'pending') ? 'true' : 'false'; ?>">Pending</a>
+                    <a class="nav-linkss <?= ($currentStatus === 'cancelled') ? 'active' : ''; ?>" id="v-pills-cancelled-tab" data-toggle="pill" href="#v-pills-cancelled" role="tab" aria-controls="v-pills-cancelled" aria-selected="<?= ($currentStatus === 'cancelled') ? 'true' : 'false'; ?>">Cancelled</a>
+                    <a class="nav-linkss <?= ($currentStatus === 'confirmed') ? 'active' : ''; ?>" id="v-pills-confirmed-tab" data-toggle="pill" href="#v-pills-confirmed" role="tab" aria-controls="v-pills-confirmed" aria-selected="<?= ($currentStatus === 'confirmed') ? 'true' : 'false'; ?>">Confirmed</a>
+
+
+                    <a class="nav-linkss <?= ($currentStatus === 'delivered') ? 'active' : ''; ?>" id="v-pills-delivered-tab" data-toggle="pill" href="#v-pills-delivered" role="tab" aria-controls="v-pills-delivered" aria-selected="<?= ($currentStatus === 'delivered') ? 'true' : 'false'; ?>">Shipped</a>
+                    <a class="nav-linkss <?= ($currentStatus === 'received') ? 'active' : ''; ?>" id="v-pills-received-tab" data-toggle="pill" href="#v-pills-received" role="tab" aria-controls="v-pills-received" aria-selected="<?= ($currentStatus === 'received') ? 'true' : 'false'; ?>">Received</a>
+                    <a class="nav-linkss <?= ($currentStatus === 'return-refund') ? 'active' : ''; ?>" id="v-pills-return-tab" data-toggle="pill" href="#v-pills-return" role="tab" aria-controls="v-pills-return" aria-selected="<?= ($currentStatus === 'return-refund') ? 'true' : 'false'; ?>">For Return/Refund</a>
                 </div>
             </div>
             <div class="order-container">
@@ -138,8 +130,8 @@ elseif (isset($_GET['received'])) {
                             </div>
                         </div>
                     </div>
-                      <!-- Cancelled -->
-                      <div class="tab-pane fade" id="v-pills-cancelled" role="tabpanel" aria-labelledby="v-pills-cancelled">
+                    <!-- Cancelled -->
+                    <div class="tab-pane fade" id="v-pills-cancelled" role="tabpanel" aria-labelledby="v-pills-cancelled">
                         <div class="card card-outline card-dark shadow rounded-0">
                             <div class="card-body">
                                 <div class="container-fluid">
@@ -294,8 +286,8 @@ elseif (isset($_GET['received'])) {
                             </div>
                         </div>
                     </div>
-                          <!-- Received -->
-                          <div class="tab-pane fade" id="v-pills-received" role="tabpanel" aria-labelledby="v-pills-received">
+                    <!-- Received -->
+                    <div class="tab-pane fade" id="v-pills-received" role="tabpanel" aria-labelledby="v-pills-received">
                         <div class="card card-outline card-dark shadow rounded-0">
                             <div class="card-body">
                                 <div class="container-fluid">
@@ -321,11 +313,7 @@ elseif (isset($_GET['received'])) {
                                         <tbody>
                                             <?php
                                             $i = 1;
-<<<<<<< Updated upstream
-                                            while ($row = $delivered->fetch_assoc()) :
-=======
                                             while ($row = $received->fetch_assoc()) :
->>>>>>> Stashed changes
                                             ?>
                                                 <tr>
                                                     <td class="text-center"><?= $i++ ?></td>

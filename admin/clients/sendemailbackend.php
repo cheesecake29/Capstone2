@@ -23,8 +23,8 @@ if(isset($_POST['submit'])){
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = '587';
 
-    $mail->setFrom('jewellsalongcong09@gmail.com', 'Arnold TV Motoshop'); // Gmail address which you used as SMTP server
-    $mail->addAddress($_POST['email']); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
+    $mail->setFrom('jewellsalongcong09@gmail.com'); // Gmail address which you used as SMTP server
+    $mail->addAddress('jewellsalongcong09@gmail.com'); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
 
     $mail->isHTML(true);
     $mail->Subject = 'Message Received (Contact Page)';

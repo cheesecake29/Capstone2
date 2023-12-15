@@ -251,6 +251,22 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
     .card-body {
         background-color: white;
     }
+
+    .text-dangers{
+        font-size: 15px;
+        background-color: red;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        padding: 35;
+        color:white;
+       padding: 1%;
+        margin: 4% 2%;
+    }
+
+    .text-danger-btn {
+        background-color: red;
+    }
 </style>
 <div class="content ">
     <div class="container">
@@ -364,9 +380,14 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                 </div>
                                 <div class="place-order form-group text-right">
                                     <?php if ((int)$total > (int)($all_order_config['value'] ?? 0)) : ?>
-                                        <h1 id="warning-label" class="text-danger">Sorry! You've reached the order limit <?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?></h1>
-                                    <?php else : ?>
-                                        <button class="btn btn-flat btn-primary" type="submit" name="submit">
+                                       
+                                        <button class="btn btn-flat btn-primary text-danger-btn" id="warning-label" type="submit" name="submit" disabled>
+                                            Place order
+                                            
+                                        </button>
+                                        <h4 id="warning-label" class="text-dangers">Sorry! You've reached the order limit <?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?></h4>
+                                        <?php else : ?>
+                                        <button class="btn btn-flat btn-primary " id="warning-label" type="submit" name="submit">
                                             Place Order
                                         </button>
                                     <?php endif; ?>

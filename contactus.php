@@ -1,8 +1,5 @@
 <?php
 include 'sendemail.php';
-
-
-
 ?>
 
 <head>
@@ -119,10 +116,23 @@ include 'sendemail.php';
 
   }
 
+  .contact-form,
+  .map{
+    width: 50%;
+  }
+
   .contact {
     display: flex;
     flex-direction: column;
     padding: 4%;
+  }
+
+  .map{
+   display: flex;
+  
+    padding: 4%;
+   
+    width: 50%;
   }
 
   .connect-with-us a {
@@ -232,6 +242,12 @@ include 'sendemail.php';
             <input type="submit" name="submit" class="send-btn" value="Send">
 
         </form>
+    </div>
+
+    <div class="map">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15827434.052939586!2d102.47337735000002!3d14.420265899999992!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397d3fa43913f35%3A0x41df7312dc1ace88!2sThe%20Legian%20Imus%202D!5e0!3m2!1sen!2sph!4v1702599437775!5m2!1sen!2sph" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+
     </div>
    
 </div>

@@ -27,6 +27,14 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="" class="control-label">System Backgrund</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input rounded-circle" id="cimg" name="img" onchange="displayImg(this,$(this))">
+                        <label class="custom-file-label" for="cimg">Choose file</label>
+                    </div>
+                </div>
+
                 <div class="form-group d-flex justify-content-center">
                     <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
                 </div>
@@ -48,6 +56,13 @@
                      <?php echo $_settings->info('sys_shortname')  ?>  
                     </textarea>
 
+                    <div class="form-group">
+                    <label for="" class="control-label">System Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input rounded-circle" id="system_cover" name="cover2" onchange="systemmg(this,$(this))">
+                        <label class="custom-file-label" for="system_cover">Choose file</label>
+                    </div>
+
 
 
                 <div>
@@ -67,11 +82,11 @@
 
 
 <script>
-    function displayImg(input, _this) {
+    function systemmg(input, _this) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                $('#cimg').attr('src', e.target.result);
+                $('#cover2').attr('src', e.target.result);
                 _this.siblings('.custom-file-label').html(input.files[0].name)
             }
 

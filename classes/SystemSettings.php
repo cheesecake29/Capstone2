@@ -95,6 +95,17 @@ class SystemSettings extends DBConnection
 			}
 		}
 
+		if (isset($_FILES['cover2']) && $_FILES['cover2']['tmp_name'] != '') {
+			$fname = 'uploads/' . strtotime(date('y-m-d H:i')) . '_' . $_FILES['cover2']['name'];
+			$move = move_uploaded_file($_FILES['cover2']['tmp_name'], '../' . $fname);
+			if (isset($_SESSION['system_info']['system_cover'])) {
+				$qry = $this->conn->query("UPDATE system_info set meta_value = '{$fname}' where meta_field = 'system_cover' ");
+				if (is_file('../' . $_SESSION['system_info']['system_cover'])) unlink('../' . $_SESSION['system_info']['system_cover']);
+			} else {
+				$qry = $this->conn->query("INSERT into system_info set meta_value = '{$fname}',meta_field = 'system_cover' ");
+			}
+		}
+
 		$update = $this->update_system_info();
 		$flash = $this->set_flashdata('success', 'System Info Successfully Updated.');
 		if ($update && $flash) {

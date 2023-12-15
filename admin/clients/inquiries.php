@@ -1,115 +1,214 @@
-<?php if($_settings->chk_flashdata('success')): ?>
-<script>
-	alert_toast("<?php echo $_settings->flashdata('success') ?>",'success')
-</script>
-<?php endif;?>
-<style>
-    .img-logo{
-        width:3em;
-        height: 3em;
-        object-fit:scale-down;
-        object-position:center center;
-    }
-</style>
-<div class="card card-outline card-primary">
-	<div class="card-header">
-		<h3 class="card-title">List of Inquiries</h3>
-		<div class="card-tools">
-			<a href="javascript:void(0)" id="create_new" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
-		</div>
-	</div>
-	<div class="card-body">
-		<div class="container-fluid">
-        <div class="container-fluid">
-			<table class="table table-bordered table-stripped">
-            <colgroup>
-					<col width="15%">
-					<col width="20%">
-					
-				</colgroup>
-				<thead>
-					<tr>
-						<th>#</th>
-						<th>Name</th>
-						
-					</tr>
-				</thead>
-				<tbody>
-					<?php 
-					$i = 1;
-						$qry = $conn->query("SELECT * from `brand_list` where delete_flag= 0 order by `name` asc ");
-						while($row = $qry->fetch_assoc()):
+<?php
+include 'sendemail.php';
 
-						$categories = $conn->query("SELECT * FROM categories where id =" . $row['category_id'])->fetch_assoc();
-					?>
-						<tr>
-							<td class="text-center"><?php echo $i++; ?></td>
-							<td><?php echo date("Y-m-d H:i",strtotime($row['date_created'])) ?></td>
-                            <td class="text-center">
-                                <img src="<?= validate_image($row['image_path']) ?>" alt="Brand Logo - <?= $row['name'] ?>" class="img-logo img-thumbnail">
-                            </td>
-							<td><?php echo $row['name'] ?></td>
-							<td><?php echo $categories['category'] ?></td>
-							<td class="text-center">
-                                <?php if($row['status'] == 1): ?>
-                                    <span class="badge badge-success mx-3 rounded-pill">Active</span>
-                                <?php else: ?>
-                                    <span class="badge badge-danger mx-3 rounded-pill">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-							<td align="center">
-								 <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-				                  		Action
-				                    <span class="sr-only">Toggle Dropdown</span>
-				                  </button>
-				                  <div class="dropdown-menu" role="menu">
-				                    <a class="dropdown-item edit_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-edit text-primary"></span> Edit</a>
-				                    <div class="dropdown-divider"></div>
-				                    <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
-				                  </div>
-							</td>
-						</tr>
-					<?php endwhile; ?>
-				</tbody>
-			</table>
-		</div>
-		</div>
-	</div>
+
+
+?>
+
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="contact.css">
+  <script src="https://kit.fontawesome.com/8714a42433.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+</head>
+<style>
+  /*--------------------------------------Contact-Us-Layout-----------------------------------------------------*/
+
+
+  .contact-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: space-around;
+    align-items: stretch;
+    padding: 1%;
+  }
+
+  .contact-info h1 {
+    font-size: 24px;
+  }
+
+
+
+  .Address p {
+    font-size: 11px;
+  }
+
+  .contact-h1 {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    color: #fff;
+    background-color: #004399;
+    height: 40px;
+    width: 100%;
+    height: 300px;
+  }
+
+
+  .contact-h1 h1 {
+    margin-top: 3%;
+  }
+
+  .contact-h1 p {
+    margin-top: 1%;
+  }
+
+  .contact-info>div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.619);
+
+    margin: 40px;
+    margin-top: -150px;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+  }
+
+  .contact-info>div img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .contact-info h1,
+  .contact-info p {
+    margin: 5px 0;
+  }
+
+  .connect-with-us {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+
+  .messenger-icon {
+    display: flex;
+    align-items: center;
+
+
+
+    padding: 10px;
+    /* Adjust padding as needed */
+    border-radius: 10px;
+    /* Add border-radius for rounded corners */
+  }
+
+  .messenger-icon i {
+    color: #EF4A98;
+    /* Add some spacing between the icon and the background */
+    font-size: 54px;
+
+    margin: 10%;
+  }
+
+  .contact-section {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  .contact {
+    display: flex;
+    flex-direction: column;
+    padding: 4%;
+  }
+
+  .connect-with-us a {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    color: #004399;
+    font-size: 24px;
+  }
+
+  .contact-section {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: center;
+    align-items: center;
+
+  }
+
+
+
+  .contact-form {
+
+    width: 50%;
+    margin: 5%;
+    border: none;
+    background-color: white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.619);
+  }
+
+
+
+  .text-box,
+  textarea {
+    border-radius: 25px;
+    padding: 2%;
+    border: none;
+    background-color: #D4EEFA;
+    margin: 2% 0;
+  }
+
+  .send-btn {
+    background-color: #004399;
+    color: white;
+    border-radius: 25px;
+    padding: 2%;
+    border: none;
+  }
+
+  /*-------------------------------------End-Contact-Us-Layout-----------------------------------------------------*/
+</style>
+
+<body class="Contactus">
+
+
+    
+    <div class="contact-form">
+      
+        <form class="contact" action="" method="post">
+            <input type="varchar" id="name" name="name" class="text-box" placeholder="Your Name" ronkeydown="return allowOnlyLetters(event)" required>
+            <input type="email" id="email" name="email" class="text-box" placeholder="Your Email" required>
+            <textarea type="text" name="message" id="message" rows="5" placeholder="Message" required></textarea>
+            <input type="submit" name="submit" class="send-btn" value="Send">
+
+        </form>
+    </div>
+   
 </div>
+
+
+  <script type="text/javascript">
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+  </script>
+
+
+</body>
+
 <script>
-	$(document).ready(function(){
-		$('.delete_data').click(function(){
-			_conf("Are you sure to delete this brand permanently?","delete_brand",[$(this).attr('data-id')])
-		})
-        $('#create_new').click(function(){
-            uni_modal("Add New Brand","maintenance/manage_brand.php","mid-large")
-        })
-        $('.edit_data').click(function(){
-            uni_modal("Add New Brand","maintenance/manage_brand.php?id="+$(this).attr('data-id'),"mid-large")
-        })
-        $('.table th, .table td').addClass("align-middle px-2 py-1")
-		$('.table').dataTable();
-	})
-	function delete_brand($id){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_brand",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("An error occured.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.reload();
-				}else{
-					alert_toast("An error occured.",'error');
-					end_loader();
-				}
-			}
-		})
-	}
+  function allowOnlyLetters(event) {
+    // Check if the key pressed is a letter
+    if (event.key.match(/[A-Za-z]/)) {
+      return true; // Allow the key press
+    } else {
+      return false; // Prevent the key press
+    }
+  }
 </script>

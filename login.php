@@ -61,9 +61,14 @@
             <button type="submit">Log in</button>
           </div>
           
+          <div id="no-account">
+            <a href="<?php echo base_url . 'forgot_password.php' ?>"> Forgot password?</a>
+          </div>
+          
           <div id="no-account">No account?
             <a href="<?php echo base_url . 'register.php' ?>"> Signup here.</a>
           </div>
+
         </div>
       </form>
 

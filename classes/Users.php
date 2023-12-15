@@ -222,7 +222,10 @@ class Users extends DBConnection
 		return json_encode($resp);
 	}
 
+	function reset_pass(){
+		//TODO:
 
+	}
 
 	function delete_client()
 	{

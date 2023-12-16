@@ -11,12 +11,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             foreach ($row as $k => $v) {
                 $response[$k] = stripslashes($v);  // Add each key-value pair to the response array
             }
+            // Get total stock of product
             $stocks = $conn->query("SELECT SUM(quantity) FROM stock_list where product_id = '{$response['id']}'")->fetch_array()[0];
+            // Get inprogress order of product where status is not delivered yet
             $out = $conn->query("SELECT SUM(quantity) FROM order_items where product_id = '{$response['id']}' and order_id in (SELECT id FROM order_list where `status` != 5)")->fetch_array()[0];
+            // Get total quantity of the users cart by THIS product id
             $cart_item_count = $conn->query("SELECT SUM(quantity) FROM cart_list where product_id = '{$response['id']}'")->fetch_array()[0];
-            $stocks = $stocks > 0 ? $stocks : 0;
-            $out = $out > 0 ? $out : 0;
-            $response['available'] = $stocks - $out;
+            $stocks = $stocks > 0 ? $stocks : 0; // Set stocks [product total stocks]
+            $out = $out > 0 ? $out : 0; // Set out [inprogress orders]
+
+            // Return available and user total cart count
+            $placeholder_total =  $stocks - $out; // subtract the inprogress orders from the total stocks
+            $response['available'] = $placeholder_total - $cart_item_count; 
             $response['cart_count'] = $cart_item_count > 0 ? $cart_item_count : 0;
         }
     }

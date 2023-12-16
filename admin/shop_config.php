@@ -87,6 +87,10 @@ if ($shop_config->num_rows > 0) {
                     <input name="closing" id="closing" disabled class="form-control" value="<?= isset($config) ? $config['closing'] : ''; ?>" required>
                 </div>
                 <div class="mr-2">
+                    <label for="max_appointment" class="control-label">Maximum Appointment <small>per day</small></label>
+                    <input name="max_appointment" id="max_appointment" type="number" min="1" max="25" class="form-control" value="<?= isset($config) ? $config['max_appointment'] : ''; ?>" required>
+                </div>
+                <div class="mr-2">
                     <label for="appointment_interval" class="control-label">Appointment Interval <small>per minutes</small></label>
                     <input name="appointment_interval" id="appointment_interval" type="number" min="15" class="form-control" value="<?= isset($config) ? $config['appointment_interval'] : ''; ?>" required>
                 </div>
@@ -246,6 +250,7 @@ if ($shop_config->num_rows > 0) {
         // shop config submission
         $('#shop-config').submit(function(e) {
             e.preventDefault();
+            $("#closing").removeAttr('disabled');
             const formData = new FormData($(this)[0]);
             // Display the values
             $.ajax({

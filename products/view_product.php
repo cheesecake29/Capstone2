@@ -396,10 +396,10 @@ if ($variations->num_rows === 1) {
                     </div>
 
                     <div class="share">
-    <a href="javascript:void(0);" onclick="copyShareLink(<?php echo $id; ?>)">
-        <i class="fas fa-share-alt"></i> Share
-    </a>
-</div>
+                        <a href="javascript:void(0);" onclick="copyShareLink(<?php echo $id; ?>)">
+                            <i class="fas fa-share-alt"></i> Share
+                        </a>
+                    </div>
 
                 </div>
             </div>
@@ -689,7 +689,6 @@ if ($variations->num_rows === 1) {
                     },
                     success: function(resp) {
                         if (resp.status == 'success') {
-                            fetch();
                             alert_toast("Product has been added to cart.", 'success');
                             update_cart_count(resp.cart_count);
                             const cartCount = resp.cart_count;
@@ -703,9 +702,7 @@ if ($variations->num_rows === 1) {
                             $('#variation_stock_' + variationId).data('total', updated_var_item_stock);
                             $('#variation_stock_' + variationId).html(updated_var_item_stock + " qty.");
 
-                            console.log("var_item_stock", var_item_stock);
-                            console.log("updated_var_item_stock", updated_var_item_stock);
-
+                            console.log(`variation stock: ${var_item_stock} -> ${updated_var_item_stock}`);
                             if (updated_var_item_stock < 1 || var_item_stock < 1) {
                                 $('#confirm').prop('disabled', true);
                             } else {
@@ -722,6 +719,7 @@ if ($variations->num_rows === 1) {
                         } else {
                             alert_toast("An error occurred", "error");
                         }
+                        fetch();
                         end_loader();
                     }
                 });
@@ -740,8 +738,8 @@ if ($variations->num_rows === 1) {
     // }
 
     function initialize() {
-        console.log("available:", availability);
-        console.log("cart_count:", cart_count);
+        console.log("Remaining Stocks:", availability);
+        console.log("Total User Cart:", cart_count);
         var isAvailable = (availability > 0 && cart_count < availability);
         var availableDiv = document.getElementById('available');
         var unavailableDiv = document.getElementById('unavailable');

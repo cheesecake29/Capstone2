@@ -893,14 +893,16 @@ class Master extends DBConnection
 		if ($withAppointment) {
 			$checkAvailabilityDatesTime = $this->conn->query("SELECT * FROM appointment where hours = '{$meetup_time}' AND dates = '{$meetup_date}'")->num_rows;
 			$checkAvailabilityDates = $this->conn->query("SELECT * FROM appointment where dates = '{$meetup_date}'")->num_rows;
+			$shop_config = $this->conn->query("SELECT max_appointment FROM shop_config where id = 1")->fetch_assoc();
+			$max_appointment = isset($shop_config) ? $shop_config['max_appointment'] : 5;
 			if ($checkAvailabilityDatesTime > 0) {
 				$resp['status'] = 'failed';
-				$resp['msg'] = " Order has failed to place. please check other dates/time";
+				$resp['msg'] = " Order has failed to place. please check other dates and time";
 				$resp['error'] = $this->conn->error;
 				return json_encode($resp);
-			} else if ($checkAvailabilityDates >= 5) {
+			} else if ($checkAvailabilityDates >= (int)$max_appointment) {
 				$resp['status'] = 'failed';
-				$resp['msg'] = " Order has failed to place. please check other dates/time";
+				$resp['msg'] = "Order has failed to place. please check other dates";
 				$resp['error'] = $this->conn->error;
 				return json_encode($resp);
 			}

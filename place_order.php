@@ -252,15 +252,15 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         background-color: white;
     }
 
-    .text-dangers{
+    .text-dangers {
         font-size: 15px;
         background-color: red;
         width: 80%;
         display: flex;
         justify-content: center;
         padding: 35;
-        color:white;
-       padding: 1%;
+        color: white;
+        padding: 1%;
         margin: 4% 2%;
     }
 
@@ -379,14 +379,14 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                     </div>
                                 </div>
                                 <div class="place-order form-group text-right">
-                                    <?php if ((int)$total > (int)($all_order_config['value'] ?? 0)) : ?>
-                                       
-                                        <button class="btn btn-flat btn-primary text-danger-btn" id="warning-label" type="submit" name="submit" disabled>
-                                            Place order
-                                            
-                                        </button>
-                                        <h4 id="warning-label" class="text-dangers">Sorry! You've reached the order limit <?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?></h4>
-                                        <?php else : ?>
+                                    <?php if ($all_order_config) : ?>
+                                        <?php if ((int)$total > (int)($all_order_config['value'] ?? 0)) : ?>
+                                            <button class="btn btn-flat btn-primary text-danger-btn" id="warning-label" type="submit" name="submit" disabled>
+                                                Place order
+                                            </button>
+                                            <h4 id="warning-label" class="text-dangers">Sorry! You've reached the order limit <?= isset($all_order_config) ? number_format($all_order_config['value']) : '' ?></h4>
+                                        <?php endif; ?>
+                                    <?php else : ?>
                                         <button class="btn btn-flat btn-primary " id="warning-label" type="submit" name="submit">
                                             Place Order
                                         </button>
@@ -511,9 +511,9 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             }
                                             ?>
 
-<input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value="" ></input>
-<input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value="" ></input>
-<input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+                                            <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
+                                            <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
+                                            <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
 
                                         </div>
 
@@ -650,7 +650,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                             minTime: '<?= isset($shop_config) ? $shop_config['opening'] : '8 am' ?>',
                             maxTime: '<?= isset($shop_config) ? $shop_config['closing'] : '6 pm' ?>',
                             timeFormat: 'h:i a',
-                            step: 60,
+                            step: <?= isset($shop_config) ? $shop_config['appointment_interval'] : 60 ?>,
                             dropdown: true,
                             scrollbar: true,
                             disableTimeRanges: resp.data

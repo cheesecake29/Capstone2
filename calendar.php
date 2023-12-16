@@ -103,7 +103,7 @@
 
 	.indicators {
 		flex-grow: 1;
-		flex-basis: 150px;
+		flex-basis: 80px;
 		margin-bottom: 10px;
 	}
 </style>
@@ -132,6 +132,7 @@ function getCalendar($year = '', $month = '')
 {
 	global $conn;
 	$dateYear = ($year != '') ? $year : date("Y");
+	$shop_config = $conn->query("SELECT * FROM shop_config WHERE id = 1")->fetch_assoc();
 	$dateMonth = ($month != '') ? $month : date("m");
 	$date = $dateYear . '-' . $dateMonth . '-01';
 	$currentMonthFirstDay = date("N", strtotime($date));
@@ -141,22 +142,31 @@ function getCalendar($year = '', $month = '')
 ?>
 	<div class="d-flex flex-column">
 		<div id="calender_section">
-			<h3 class="text-center mt-3 mb-5">ATV Motoshop Calendar</h3>
-			<div class="d-flex justify-content-center flex-wrap mb-3">
-				<div class="indicators today-indicator d-flex align-self-center mx-3">
+			<div class="my-3">
+				<h3 class="text-center">ATV Motoshop Calendar</h3>
+				<?php if (isset($shop_config)) : ?>
+					<div class="d-flex justify-content-between">
+						<b>Opening: <?= $shop_config['opening'] ?></b>
+						<b>Closing: <?= $shop_config['closing'] ?></b>
+					</div>
+				<?php endif; ?>
+			</div>
+			<div class="dropdown-divider"></div>
+			<div class="d-flex justify-content-center flex-wrap my-3">
+				<div class="indicators today-indicator d-flex flex-column align-items-center align-self-center mx-3">
 					<span class="dot bg-secondary mr-2 me-2"></span> Date Today
 				</div>
-				<div class="indicators available-success d-flex align-self-center mx-3">
+				<div class="indicators available-success d-flex flex-column align-items-center align-self-center mx-3">
 					<span class="dot bg-success mr-2 me-2"></span> Still Available
 				</div>
-				<div class="indicators available-success d-flex align-self-center mx-3">
+				<div class="indicators available-success d-flex flex-column align-items-center align-self-center mx-3">
 					<span class="dot bg-danger mr-2 me-2"></span> Fully Booked
 				</div>
-				<div class="indicators closed-indicator d-flex align-self-center mx-3">
+				<div class="indicators closed-indicator d-flex flex-column align-items-center align-self-center mx-3">
 					<span class="dot bg-dark mr-2 me-2"></span> Closed
 				</div>
-				<div class="indicators closed-indicator d-flex align-self-center mx-3">
-					<span class="square bg-dark mr-2 me-2"></span> Few slot is unavailable
+				<div class="indicators closed-indicator text-center d-flex flex-column align-items-center align-self-center mx-3">
+					<span class="square bg-dark mr-2 me-2"></span> <span class="text-nowrap">Few slot is unavailable</span>
 				</div>
 			</div>
 			<div class="d-flex justify-content-center mx-5">
@@ -358,12 +368,12 @@ function getEvents($date = '')
 	//Include db configuration file
 	global $conn;
 	$eventListHTML = '';
-	$eventListHTML = '<h2 class="text-center">Scheduled on ' . date("l, d M Y", strtotime($date)) . '</h2>';
 	$date = $date ? $date : date("Y-m-d");
 	//Get events based on the current date
 	$result = $conn->query("SELECT hours FROM appointment WHERE dates = '" . $date . "' AND status = 1 GROUP BY hours");
 	$resultUnavailable = $conn->query("SELECT * FROM unavailable_dates WHERE schedule = '" . $date . "'");
 	if ($result->num_rows > 0) {
+		$eventListHTML = '<h2 class="text-center">Unavailable time on ' . date("l, d M Y", strtotime($date)) . '</h2>';
 		$eventListHTML .= '<ul>';
 		while ($row = $result->fetch_assoc()) {
 			$eventListHTML .= '<li>' . $row['hours'] . '</li>';
@@ -371,6 +381,7 @@ function getEvents($date = '')
 		$eventListHTML .= '</ul>';
 	}
 	if ($resultUnavailable->num_rows > 0) {
+		$eventListHTML = '<h2 class="text-center">Scheduled on ' . date("l, d M Y", strtotime($date)) . '</h2>';
 		$eventListHTML .= '<ul>';
 		while ($unRow = $resultUnavailable->fetch_assoc()) {
 			$eventListHTML .= '<li>' . $unRow['schedule'] . ' ' . $unRow['from_hours'] . ' - ' . $unRow['to_hours'] . ' - <b>' . $unRow['comments'] . '</b></li>';

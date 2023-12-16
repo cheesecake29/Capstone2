@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 16, 2023 at 01:07 AM
+-- Generation Time: Dec 16, 2023 at 01:12 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `capstone_two_db`
+-- Database: `atv_motoshop`
 --
 
 -- --------------------------------------------------------
@@ -36,20 +36,6 @@ CREATE TABLE `appointment` (
   `status` int(11) NOT NULL COMMENT '0 - Pending, 1 - Confirmed, 2 - Cancelled, 3 - Rejected, 4 - Done',
   `datetime` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `appointment`
---
-
-INSERT INTO `appointment` (`id`, `client_id`, `order_id`, `dates`, `hours`, `status`, `datetime`) VALUES
-(146, 14, 43, '2023-12-08', '09:00 am', 0, '2023-12-04 07:32:41'),
-(147, 14, 44, '2023-12-08', '10:00 am', 1, '2023-12-05 11:56:20'),
-(148, 14, 45, '2023-12-29', '11:00 am', 1, '2023-12-15 23:43:43'),
-(150, 14, 48, '2023-12-22', '10:00 am', 0, '2023-12-06 11:13:32'),
-(151, 14, 49, '2023-12-29', '10:00 am', 0, '2023-12-15 23:43:35'),
-(152, 14, 51, '2023-12-29', '09:00 am', 1, '2023-12-14 01:45:56'),
-(153, 14, 52, '2023-12-29', '08:30 am', 0, '2023-12-15 23:43:59'),
-(154, 14, 53, '2023-12-29', '08:00 am', 0, '2023-12-15 23:44:53');
 
 -- --------------------------------------------------------
 
@@ -92,13 +78,6 @@ CREATE TABLE `cart_list` (
   `quantity` float NOT NULL,
   `date_added` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `cart_list`
---
-
-INSERT INTO `cart_list` (`id`, `client_id`, `product_id`, `variation_id`, `quantity`, `date_added`) VALUES
-(114, 14, 50, 53, 3, '2023-12-16 07:45:54');
 
 -- --------------------------------------------------------
 
@@ -237,48 +216,6 @@ CREATE TABLE `notifications` (
   `order_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `notifications`
---
-
-INSERT INTO `notifications` (`id`, `client_id`, `description`, `status`, `is_read`, `type`, `order_id`) VALUES
-(1, 13, '0', 0, 1, 1, 0),
-(2, 13, '0', 0, 1, 1, 0),
-(3, 13, 'Your order is confirmed.', 0, 1, 1, 29),
-(4, 13, 'Test Last. has placed an order.', 0, 0, 2, 30),
-(5, 13, 'Your order is confirmed.', 0, 1, 1, 0),
-(6, 14, 'test test  has placed an order.', 0, 0, 2, 31),
-(7, 14, 'test test  has placed an order.', 0, 0, 2, 32),
-(8, 14, 'test test  has placed an order.', 0, 0, 2, 33),
-(9, 14, 'test test  has placed an order.', 0, 0, 2, 34),
-(10, 14, 'test test  has placed an order.', 0, 0, 2, 35),
-(11, 14, 'Your order Test product was delivered.', 0, 1, 1, 35),
-(12, 14, 'Your order Lorem ipum was delivered.', 0, 1, 1, 34),
-(13, 14, 'John Doe  has placed an order.', 0, 0, 2, 36),
-(14, 14, 'John Doe  has placed an order.', 0, 0, 2, 37),
-(15, 14, 'John Doe  has placed an order.', 0, 0, 2, 38),
-(16, 14, 'John Doe  has placed an order.', 0, 0, 2, 39),
-(17, 14, 'John Doe  has placed an order.', 0, 0, 2, 40),
-(18, 14, 'John Doe  has placed an order.', 0, 0, 2, 41),
-(19, 14, 'John Doe  has placed an order.', 0, 0, 2, 42),
-(20, 14, 'John Doe  has placed an order.', 0, 0, 2, 43),
-(21, 14, 'John Doe  has placed an order.', 0, 0, 2, 44),
-(22, 14, 'John Doe  has placed an order.', 0, 0, 2, 45),
-(23, 14, 'Your order Test product is pending.', 0, 1, 1, 45),
-(24, 14, 'Your order Test product is shipped.', 0, 1, 1, 45),
-(25, 14, 'Your order Test product is pending.', 0, 1, 1, 45),
-(26, 14, 'Your order Test product is shipped.', 0, 1, 1, 45),
-(27, 14, 'John Doe  has placed an order.', 0, 0, 2, 46),
-(28, 14, 'John Doe  has placed an order.', 0, 0, 2, 47),
-(29, 14, 'Your order Test product is delivered.', 0, 1, 1, 45),
-(30, 14, 'John Doe  has placed an order.', 0, 0, 2, 48),
-(31, 14, '', 0, 1, 1, 45),
-(32, 14, 'John Doe  has placed an order.', 0, 0, 2, 49),
-(33, 14, 'John Doe  has placed an order.', 0, 0, 2, 50),
-(34, 14, 'John Doe  has placed an order.', 0, 0, 2, 51),
-(35, 14, 'John Doe  has placed an order.', 0, 0, 2, 52),
-(36, 14, 'John Doe  has placed an order.', 0, 0, 2, 53);
-
 -- --------------------------------------------------------
 
 --
@@ -312,24 +249,6 @@ CREATE TABLE `order_items` (
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `order_items`
---
-
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `quantity`, `rated`, `date_added`, `date_updated`) VALUES
-(49, 43, 50, 53, 1, 0, '2023-12-04 15:32:41', NULL),
-(50, 44, 46, 49, 1, 0, '2023-12-04 15:40:52', NULL),
-(51, 45, 50, 53, 1, 1, '2023-12-06 18:51:07', '2023-12-06 19:30:11'),
-(52, 46, 50, 52, 1, 0, '2023-12-06 19:07:06', NULL),
-(53, 47, 50, 53, 1, 0, '2023-12-06 19:12:58', NULL),
-(54, 48, 50, 52, 1, 0, '2023-12-06 19:13:32', NULL),
-(55, 49, 50, 52, 1, 0, '2023-12-06 23:46:21', NULL),
-(56, 49, 52, 55, 1, 0, '2023-12-06 23:46:21', NULL),
-(57, 50, 52, 55, 1, 0, '2023-12-07 22:08:53', NULL),
-(58, 51, 46, 49, 2, 0, '2023-12-14 09:09:01', NULL),
-(59, 52, 52, 55, 1, 0, '2023-12-16 07:43:59', NULL),
-(60, 53, 46, 49, 7, 0, '2023-12-16 07:44:53', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -354,23 +273,6 @@ CREATE TABLE `order_list` (
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `order_list`
---
-
-INSERT INTO `order_list` (`id`, `ref_code`, `client_id`, `total_amount`, `contact`, `province`, `city`, `addressline1`, `addressline2`, `zipcode`, `order_type`, `other_address`, `status`, `date_created`, `date_updated`) VALUES
-(43, '202312-00001', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:32:41', '2023-12-04 15:32:41'),
-(44, '202312-00002', 14, 1500, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-04 15:40:52', '2023-12-04 15:40:52'),
-(45, '202312-00003', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 5, '2023-12-06 18:51:07', '2023-12-06 19:19:00'),
-(46, '202312-00004', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-06 19:07:06', '2023-12-06 19:07:06'),
-(47, '202312-00005', 14, 150, '', '0421', '042106', 'N/A', 'N/A', '4114', 2, '', 0, '2023-12-06 19:12:58', '2023-12-06 19:12:58'),
-(48, '202312-00006', 14, 100, '', '0421', '042106', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-06 19:13:32', '2023-12-06 19:13:32'),
-(49, '202312-00007', 14, 1480, '', '0421', '042106', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-06 23:46:21', '2023-12-06 23:46:21'),
-(50, '202312-00008', 14, 1380, '', '0421', '042106', 'N/A', 'N/A', '4114', 1, '', 0, '2023-12-07 22:08:53', '2023-12-07 22:08:53'),
-(51, '202312-00009', 14, 3000, '', 'CAVITE', 'CITY OF DASMARIÑAS', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-14 09:09:01', '2023-12-14 09:09:01'),
-(52, '202312-00010', 14, 1380, '', 'CAVITE', 'CITY OF DASMARIÑAS', 'N/A', 'N/A', '4114', 3, 'BLK 7 LOT 22 PHASE 2 BRGY. BUROL 1, DASMARINAS CITY, CAVITE', 0, '2023-12-16 07:43:59', '2023-12-16 07:43:59'),
-(53, '202312-00011', 14, 10500, '', 'CAVITE', 'CITY OF DASMARIÑAS', 'N/A', 'N/A', '4114', 4, '', 0, '2023-12-16 07:44:53', '2023-12-16 07:44:53');
-
 -- --------------------------------------------------------
 
 --
@@ -383,17 +285,6 @@ CREATE TABLE `product_image_gallery` (
   `image_url` varchar(255) NOT NULL,
   `is_deleted` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product_image_gallery`
---
-
-INSERT INTO `product_image_gallery` (`id`, `product_id`, `image_url`, `is_deleted`) VALUES
-(1, 46, 'uploads/product_gallery/46_655dd6dce2abd.png', 0),
-(2, 46, 'uploads/product_gallery/46_655dd80aa4c1e.png', 0),
-(3, 46, 'uploads/product_gallery/46_655dd82f9824e.png', 0),
-(4, 46, 'uploads/product_gallery/46_655dd839bde06.png', 0),
-(5, 52, 'uploads/product_gallery/52_65705d4083065.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -417,16 +308,6 @@ CREATE TABLE `product_list` (
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `product_list`
---
-
-INSERT INTO `product_list` (`id`, `brand_id`, `category_id`, `name`, `models`, `description`, `price`, `weight`, `status`, `image_path`, `delete_flag`, `date_created`, `date_updated`) VALUES
-(46, 10, 11, 'Lorem ipum', 'All model', '&lt;p&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: &amp;quot;Open Sans&amp;quot;, Arial, sans-serif; font-size: 14px; text-align: justify;&quot;&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel semper libero. Vestibulum eu urna bibendum, tempus sapien eu, elementum tellus. Nullam congue, est vel semper porta, libero justo varius massa, vestibulum faucibus arcu augue a nisi. Morbi nec rutrum nunc. Phasellus congue consectetur lectus ac aliquam. Integer nec tellus faucibus, lobortis tortor ullamcorper, laoreet massa. Vivamus a odio sem. Donec at rhoncus urna. Nulla aliquet justo vel pulvinar accumsan. Phasellus at augue commodo, volutpat est sit amet, tristique justo.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;', 1500, '500g and below', 1, 'uploads/products/46.jpg?v=1700211715', 0, '2023-11-15 18:31:10', '2023-11-17 17:22:02'),
-(50, 9, 11, 'Test product', 'All', '&lt;p&gt;test only&lt;/p&gt;', 150, '500g and below', 1, 'uploads/products/50.png?v=1700217018', 0, '2023-11-17 18:30:18', '2023-11-17 18:30:18'),
-(51, 9, 11, 'test', 'test', '&lt;p&gt;test&lt;/p&gt;', 100, 'select', 1, '', 1, '2023-11-30 19:07:54', '2023-11-30 19:08:01'),
-(52, 9, 11, 'Product #1', 'For All', '&lt;p&gt;&lt;b&gt;L&lt;span style=&quot;background-color: rgb(244, 245, 250); color: rgb(0, 0, 0); font-family: &amp;quot;Open Sans&amp;quot;, Arial, sans-serif; font-size: 14px; text-align: justify;&quot;&gt;orem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel semper libero. Vestibulum eu urna bibendum, tempus sapien eu, elementum tellus. Nullam congue, est vel semper porta, libero justo varius massa, vestibulum faucibus arcu augue a nisi. Morbi nec rutrum nunc. Phasellus congue consectetur lectus ac aliquam. Integer nec tellus faucibus, lobortis tortor ullamcorper, laoreet massa. Vivamus a odio sem. Donec at rhoncus urna. Nulla aliquet justo vel pulvinar accumsan. Phasellus at augue commodo, volutpat est sit amet, tristique justo.&lt;/span&gt;&lt;/b&gt;&lt;/p&gt;', 1380, '500g and below', 1, 'uploads/products/52.png?v=1701862720', 0, '2023-12-06 19:38:40', '2023-12-06 19:38:40');
-
 -- --------------------------------------------------------
 
 --
@@ -445,17 +326,6 @@ CREATE TABLE `product_reviews` (
   `date_created` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `product_reviews`
---
-
-INSERT INTO `product_reviews` (`id`, `product_id`, `variation_id`, `product_name`, `author_name`, `author_email`, `author_rate`, `author_comment`, `date_created`) VALUES
-(1, 50, 52, 'Test product', 'test, test', 'test@email.com', 4, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor i', '2023-11-23 18:18:36'),
-(2, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Vel turpis nunc eget lorem. Duis ut diam quam nulla porttitor massa id. Commodo sed egestas egestas fringilla phasellus faucibus. Augue eget arcu dictum varius duis at consectetur lorem. Sed enim ut sem viverra. Aliquam ultrices sagittis orci a scelerisqu', '2023-11-23 18:19:32'),
-(3, 46, 50, 'Lorem ipum', 'test, test', 'test@email.com', 3, 'Proin gravida hendrerit lectus a. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Id aliquet risus feugiat in ante. Rutrum tellus pellentesque eu tincidunt tortor aliquam. Turpis egestas integer eget aliquet nibh praesent tristique ma', '2023-11-23 18:19:45'),
-(4, 50, 53, 'Test product', 'test, test', 'test@email.com', 5, 'Tellus mauris a diam maecenas sed enim ut. Semper eget duis at tellus at. Pulvinar mattis nunc sed blandit libero volutpat sed cras ornare. A arcu cursus vitae congue. Magna fringilla urna porttitor rhoncus dolor purus. Id velit ut tortor pretium viverra ', '2023-11-23 18:19:54'),
-(5, 50, 53, 'Test product', 'Doe, John', 'test@email.com', 4, 'Test test', '2023-12-06 19:30:11');
-
 -- --------------------------------------------------------
 
 --
@@ -473,19 +343,6 @@ CREATE TABLE `product_variations` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `product_variations`
---
-
-INSERT INTO `product_variations` (`id`, `product_id`, `variation_name`, `variation_price`, `variation_stock`, `delete_flag`, `default_flag`, `date_created`, `date_updated`) VALUES
-(49, 46, 'Black', 1500, 100, 0, 0, '2023-11-17 17:01:55', NULL),
-(50, 46, 'Red', 1250, 87, 0, 0, '2023-11-17 17:01:55', NULL),
-(51, 46, 'White', 1150, 93, 0, 0, '2023-11-17 17:01:55', NULL),
-(52, 50, 'Small', 100, 10, 0, 0, '2023-11-17 18:30:18', NULL),
-(53, 50, 'Large', 150, 20, 0, 0, '2023-11-17 18:30:18', NULL),
-(54, 51, 'Default', 100, 1, 1, 0, '2023-11-30 19:07:54', '2023-11-30 19:08:01'),
-(55, 52, 'Helmet', 1380, 10, 0, 0, '2023-12-06 19:38:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -607,16 +464,6 @@ CREATE TABLE `stock_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `stock_list`
---
-
-INSERT INTO `stock_list` (`id`, `product_id`, `quantity`, `type`, `date_created`) VALUES
-(33, 46, 280, 1, '2023-11-15 18:31:10'),
-(40, 50, 30, 1, '2023-11-17 18:30:18'),
-(41, 51, 1, 1, '2023-11-30 19:07:54'),
-(42, 52, 10, 1, '2023-12-06 19:38:40');
-
 -- --------------------------------------------------------
 
 --
@@ -657,15 +504,6 @@ CREATE TABLE `unavailable_dates` (
   `duration` int(25) DEFAULT 0,
   `comments` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `unavailable_dates`
---
-
-INSERT INTO `unavailable_dates` (`id`, `schedule`, `from_hours`, `to_hours`, `duration`, `comments`) VALUES
-(8, '2023-12-26', '01:00 am', '12:00 pm', 11, 'Store is closed'),
-(9, '2023-12-27', '01:00 am', '03:30 pm', 15, 'Test test'),
-(17, '2023-12-25', '01:00 am', '12:30 am', -1, 'Christmas Day');
 
 -- --------------------------------------------------------
 
@@ -868,7 +706,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `brand_list`
@@ -880,7 +718,7 @@ ALTER TABLE `brand_list`
 -- AUTO_INCREMENT for table `cart_list`
 --
 ALTER TABLE `cart_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -910,7 +748,7 @@ ALTER TABLE `meet_up_address`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `order_config`
@@ -928,7 +766,7 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `order_list`
 --
 ALTER TABLE `order_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `product_image_gallery`
@@ -940,19 +778,19 @@ ALTER TABLE `product_image_gallery`
 -- AUTO_INCREMENT for table `product_list`
 --
 ALTER TABLE `product_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `product_reviews`
 --
 ALTER TABLE `product_reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `product_variations`
 --
 ALTER TABLE `product_variations`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc', AUTO_INCREMENT=56;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT COMMENT 'auto inc';
 
 --
 -- AUTO_INCREMENT for table `service_list`

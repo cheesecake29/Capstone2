@@ -71,6 +71,123 @@ if ($shop_config->num_rows > 0) {
 
         border-width: 1px 0 0 1px;
     }
+
+    /* Default styles for all screen sizes */
+.order-configuration {
+  padding: 0;
+}
+
+.config-body {
+  width: 100%;
+}
+
+/* Media queries for different screen sizes */
+@media only screen and (max-width: 480px) {
+  /* 320px - 480px: Mobile devices */
+  .config-body {
+    width: 100%;
+  }
+
+  .config-body form {
+    width: 100%;
+  }
+
+  .config-body form .d-flex {
+    flex-direction: column;
+  }
+
+  .config-body form .d-flex .mr-2,
+  .config-body form .d-flex .mr-2 .schedule-interval {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .main-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  /* 481px - 768px: iPads, Tablets */
+  .config-body {
+    width: 100%;
+  }
+
+  .config-body form {
+    width: 100%;
+  }
+
+  .config-body form .d-flex {
+    flex-direction: column;
+  }
+
+  .config-body form .d-flex .mr-2,
+  .config-body form .d-flex .mr-2 .schedule-interval {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .main-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  /* 769px - 1024px: Small screens, laptops */
+  .config-body {
+    width: 100%;
+  }
+
+  .config-body form {
+    width: 100%;
+  }
+
+  .config-body form .d-flex {
+    flex-direction: column;
+  }
+
+  .config-body form .d-flex .mr-2,
+  .config-body form .d-flex .mr-2 .schedule-interval {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .main-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1200px) {
+  /* 1025px - 1200px: Desktops, large screens */
+  .config-body {
+    width: 100%;
+  }
+
+  .config-body form {
+    width: 100%;
+  }
+
+  .config-body form .d-flex {
+    flex-direction: column;
+  }
+
+  .config-body form .d-flex .mr-2,
+  .config-body form .d-flex .mr-2 .schedule-interval {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .main-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+}
+
+
+
 </style>
 <div class="order-configuration px-3 bg-white mb-5">
     <h1 class="pt-3">Shop Configuration</h1>
@@ -87,11 +204,22 @@ if ($shop_config->num_rows > 0) {
                     <input name="closing" id="closing" disabled class="form-control" value="<?= isset($config) ? $config['closing'] : ''; ?>" required>
                 </div>
                 <div class="mr-2">
-                    <label for="max_appointment" class="control-label">Maximum Appointment <small>per day</small></label>
-                    <input name="max_appointment" id="max_appointment" type="number" min="1" max="25" class="form-control" value="<?= isset($config) ? $config['max_appointment'] : ''; ?>" required>
+                    <label for="max_appointment" class="control-label">Maximum Customer<small>per day</small></label>
+                    <input 
+  name="max_appointment" 
+  id="max_appointment" 
+  type="number" 
+  min="1"  
+  max="25" 
+  class="form-control" 
+  value="<?= isset($config['max_appointment']) ? $config['max_appointment'] : ''; ?>" 
+  required
+>
+
+
                 </div>
                 <div class="mr-2">
-                    <label for="appointment_interval" class="control-label">Appointment Interval <small>per minutes</small></label>
+                    <label for="appointment_interval" class="control-label">Time Interval <small>per minutes</small></label>
                     <input name="appointment_interval" id="appointment_interval" type="number" min="15" class="form-control" value="<?= isset($config) ? $config['appointment_interval'] : ''; ?>" required>
                 </div>
                 <div class="d-flex align-items-end">
@@ -146,7 +274,8 @@ if ($shop_config->num_rows > 0) {
                 ?>
                     <tr>
                         <td><?= date('Y-m-d h:m:s a', strtotime($row['schedule'])) ?></td>
-                        <td><?= $row['from_hours'] . ' - ' . $row['to_hours'] ?></td>
+                        <td><?= isset($row['from_hours']) ? $row['from_hours'] : 'N/A'; ?> - <?= isset($row['to_hours']) ? $row['to_hours'] : 'N/A'; ?></td>
+
                         <td><?= $row['comments'] ?></td>
                         <td><button class="btn btn-link text-danger remove_config" data-id="<?php echo $row['id'] ?>"><i class="fas fa-trash"></i></button></td>
                     </tr>

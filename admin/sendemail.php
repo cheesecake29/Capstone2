@@ -10,7 +10,8 @@ $mail = new PHPMailer(true);
 $alert = '';
 
 if(isset($_POST['submit'])){
-  $name = $_POST['name'];
+ 
+  $subject = $_POST['subject'];
   $email = $_POST['email'];
   $message = $_POST['message'];
 
@@ -27,12 +28,12 @@ if(isset($_POST['submit'])){
     $mail->addAddress($_POST['email']); // Email address where you want to receive emails (you can use any of your gmail address including the gmail address which you used as SMTP server)
 
     $mail->isHTML(true);
-    $mail->Subject = 'Message Received (Contact Page)';
-    $mail->Body = "<h3>Name : $name <br>Email: $email <br>Message : $message</h3>";
+    $mail->Subject = $subject;
+    $mail->Body = "$message";
 
     $mail->send();
     $alert = '<div class="alert-success">
-                 <span>Message Sent! Thank you for contacting us.</span>
+                 <span>Reply Sent!</span>
                 </div>';
   } catch (Exception $e){
     $alert = '<div class="alert-error">

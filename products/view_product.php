@@ -384,7 +384,7 @@ if ($variations->num_rows === 1) {
                         <?php endif; ?>
 
                     </div>
-                    <span id="limit" style="font-size: 0.8rem; color: #dc3545;">Out of stocks!</span>
+                   
                 </div>
 
                 <div class="d-block mt-3">

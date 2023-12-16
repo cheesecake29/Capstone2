@@ -125,11 +125,10 @@ if ($order->num_rows > 0) {
                                   
                                     
                                 
-                                    <?php elseif ($status == 3) : ?>
+                                        <?php else : ?>
                                         <span class="badge badge-success px-3 rounded-pill">Delivered</span>
                                    
-                                    <?php else : ?>
-                                        <span class="badge badge-danger px-3 rounded-pill">For Return/Refund</span>
+                                   
                                     <?php endif; ?>
                                 <?php else : ?>
                                     N/A

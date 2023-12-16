@@ -3,24 +3,101 @@ $order_config = $conn->query("SELECT og.*, pl.id as product_id from order_config
 ?>
 
 <style>
- .upper-content{
+  .upper-content {
     display: flex;
-    justify-content:center ;
-    align-content:center;
- }
+    
+  }
 
- .order-configuration{
+  .order-configuration {
     background-color: white;
     width: 100%;
- }
+  }
+
+
+
+  
+
+  .config-body form .upper-content .d-flex {
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .order-config-list table {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+
+  .config-body form .upper-content .mr-2 {
+    margin-right: 0;
+    margin-bottom: 10px;
+    width: 100%; /* Set width to 100% */
+  }
+
+
+
+  @media only screen and (max-width: 375px) {
+  /* 320px - 480px: Mobile devices */
+  .config-body form .upper-content .d-flex {
+    flex-direction: column;
+    align-items: center;
+    padding: 1%;
+  }
+  
+}
+
+@media only screen and (max-width: 768px) {
+    /* Adjust the max-width as needed */
+    .config-body form .upper-content {
+      flex-direction: column;
+      align-items: center;
+      padding: 1%;
+    }
+
+    .config-body form .upper-content .mr-2 {
+      margin-bottom: 0;
+      padding: 1%;
+    }
+  }
+
+@media only screen and (min-width: 769px) and (max-width: 1024px) {
+  /* 769px - 1024px: Small screens, laptops */
+  .config-body form .upper-content .d-flex {
+    flex-direction: row;
+    justify-content: center;
+    padding: 1%;
+  }
+
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1200px) {
+  /* 1025px - 1200px: Desktops, large screens */
+  .config-body form .upper-content .d-flex {
+    flex-direction: row;
+    justify-content: center;
+    padding: 1%;
+  }
+}
+
+@media only screen and (min-width: 1201px) {
+  /* 1201px and more: Extra large screens, TV */
+  .config-body form .upper-content .d-flex {
+    flex-direction: row;
+    justify-content: center;
+    padding: 1%;
+  }
+}
+
+  
 </style>
+
 <div class="order-configuration">
     
     <div class="dropdown-divider my-3"></div>
     <div class="config-body">
         <form id="order-config" action="">
             <div class="upper-content d-flex align-items-end">
-                <div class=" mr-2">
+                <div class="mr-2">
                     <label for="max-price" class="control-label">Product</label>
                     <select name="type" id="type" class="custom-select select2" required>
                         <!-- <option value="" disabled selected> Select product</option> -->
@@ -34,7 +111,7 @@ $order_config = $conn->query("SELECT og.*, pl.id as product_id from order_config
                     </select>
                 </div>
             <div class="mr-2">
-                    <label for="max-price" class="control-label">Maximum order price <?= isset($type) ? $type : '' ?></label>
+                    <label for="max-price" class="control-label">Maximum price limit <?= isset($type) ? $type : '' ?></label>
                     <input name="max-price" id="max-price" type="text" class="form-control rounded-0 CurrencyInput" value="<?php echo isset($value) ? $value : ''; ?>" required>
                 </div>
                 <!-- <div class="mr-2">

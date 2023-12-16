@@ -252,15 +252,15 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
         background-color: white;
     }
 
-    .text-dangers {
+    .text-dangers{
         font-size: 15px;
         background-color: red;
         width: 80%;
         display: flex;
         justify-content: center;
         padding: 35;
-        color: white;
-        padding: 1%;
+        color:white;
+       padding: 1%;
         margin: 4% 2%;
     }
 
@@ -515,9 +515,9 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                                             }
                                             ?>
 
-                                            <input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value=""></input>
-                                            <input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value=""></input>
-                                            <input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
+<input name="different_addressline1" id="different_addressline1" rows="3" class="form-control rounded-0" placeholder="Address Line 1 (Different Address)" value="" ></input>
+<input name="different_addressline2" id="different_addressline2" rows="3" class="form-control rounded-0" placeholder="Address Line 2 (Different Address)" value="" ></input>
+<input type="text" name="different_zipcode" id="different_zipcode" rows="3" class="form-control zipcode" placeholder="Zip Code (Different Address)" value=""></input>
 
                                         </div>
 
@@ -654,7 +654,7 @@ if ($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2) {
                             minTime: '<?= isset($shop_config) ? $shop_config['opening'] : '8 am' ?>',
                             maxTime: '<?= isset($shop_config) ? $shop_config['closing'] : '6 pm' ?>',
                             timeFormat: 'h:i a',
-                            step: <?= isset($shop_config) ? $shop_config['appointment_interval'] : 60 ?>,
+                            step: 60,
                             dropdown: true,
                             scrollbar: true,
                             disableTimeRanges: resp.data

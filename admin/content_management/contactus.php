@@ -39,6 +39,9 @@
                     <label class="label" for="link"style="font-size: 13px; color: #4A4A4B; ">Social Media Link</label>
 					<input type="link" class="form-control form-control-sm" name="link" id="link" value="<?php echo $_settings->info('link') ?>"> 
 
+                    <label class="label" for="map"style="font-size: 13px; color: #4A4A4B; ">Google Map</label>
+					<input type="map" class="form-control form-control-sm" name="map" id="map" value="<?php echo $_settings->info('map') ?>">
+
                 </div>
 
                 <div class="form-group">

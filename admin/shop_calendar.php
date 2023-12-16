@@ -58,7 +58,7 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
                             <?php endswitch; ?>
                         </td>
                         <td><?= date('Y-m-d h:m:s a', strtotime($row['datetime'])) ?></td>
-                        <td><button class="btn btn-link text-primary update_appointment" data-id="<?php echo $row['id'] ?>"><i class="fas fa-edit"></i></button></td>
+                        <td><button class="btn btn-link text-primary update_appointment" onclick="updateAppointment(<?= $row['id'] ?>)" data-id=" <?php echo $row['id'] ?>"><i class="fas fa-edit"></i></button></td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>
@@ -92,13 +92,12 @@ $appointmentList = $conn->query("SELECT a.*, cl.firstname, cl.lastname, a.status
     </div>
 </div>
 <script>
+    function updateAppointment(appointmentId) {
+        $('#update_status').modal('show');
+        $('#appointment_id').val(appointmentId);
+    }
     $(document).ready(function() {
-		$('.table').dataTable();
-        $('.update_appointment').click(function() {
-            $('#update_status').modal('show');
-            const appointmentId = $(this).attr('data-id');
-            $('#appointment_id').val(appointmentId);
-        })
+        $('.table').dataTable();
         // max order config submission
         $('#update-appt-status').submit(function(e) {
             e.preventDefault();

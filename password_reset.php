@@ -1,4 +1,9 @@
-<?php require_once('./config.php') ?>
+<?php 
+require_once('./config.php');
+
+$token = isset($_GET['token']) ? $_GET['token'] : '';
+$email = isset($_GET['email']) ? urldecode($_GET['email']) : '';
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,8 +30,10 @@
         <div class="signin-textfield-container">
         <div class="text-field-sign">
           <div class="input-area">
-            <label class="label" for="email">Email</label>
-            <input type="email" name="email" id="email" placeholder="Enter your email" required>
+            <input type="email" name="email" id="email" placeholder="Enter your email" value="<?php echo $email ?>" hidden>
+            <input type="token" name="token" id="token" placeholder="Enter your email" value="<?php echo $token ?>" hidden>
+            <label class="label" for="newPass">Enter your new password</label>
+            <input type="password" name="newPass" id="newPass" placeholder="Enter your new password" required>
           </div>
         </div>
 
@@ -63,31 +70,37 @@ $(document).ready(function () {
     $('#register-frm').submit(function (e) {
         e.preventDefault();
         var _this = $(this);
-        var email = $('#email').val();
         start_loader();
 
+        // Log form data for debugging
+        console.log("Form Data:", new FormData($(this)[0]));
+
         $.ajax({
-            url: "reset_password.php",
+            url: "changePassword.php",
             data: new FormData($(this)[0]),
             cache: false,
             contentType: false,
             processData: false,
             method: 'POST',
             dataType: 'json',
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log("AJAX Error:", jqXHR.responseText);
-                alert_toast("An error occurred", 'error');
-                end_loader();
-            },
             success: function (resp) {
                 console.log("Response:", resp);
 
                 // Log the response status for further debugging
                 console.log("Response status:", resp.status);
 
+                // Temporarily remove the condition to check for success
+                console.log("Response:", resp);
+
+                // Log the response status for further debugging
+                console.log("Response status:", resp.status);
+                if (!resp) {
+                    console.log("Empty response. Check the PHP script.");
+                    return;
+                }
                 if (resp.status === 'success') {
-                    alert("Kindly check your email to reset your password");
-                    location.href = "login.php?email=" + encodeURIComponent(email);
+                    alert("Your password has been successfully reset. You may now proceed to log in.");
+                    window.location.replace("login.php");
                 } else if (resp.status === 'failed' && resp.msg) {
                     var errorMessage = $('<div class="alert alert-danger err-msg"></div>').text(resp.msg);
                     _this.prepend(errorMessage);
@@ -96,11 +109,17 @@ $(document).ready(function () {
                     alert_toast("An error occurred", 'error');
                     end_loader();
                     console.log("Unexpected response:", resp);
-                    location.href = "login.php";
+                    window.location.replace("login.php");
                 }
                 $('html, body').scrollTop(0);
-            }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error:", jqXHR.responseText);
+                alert_toast("An error occurred: " + errorThrown, 'error');
+                end_loader();
+            },
         });
     });
 });
+
 </script>
